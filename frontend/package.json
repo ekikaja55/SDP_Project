@@ -53,5 +53,9 @@
 	},
 	"keywords": [
 		"svelte"
-	]
+	],
+	"dependencies": {
+		"axios": "^1.12.2",
+		"cookie-parser": "^1.4.7"
+	}
 }
