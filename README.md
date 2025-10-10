@@ -1,6 +1,3 @@
----
-
-````markdown
 # 🧠 **SDP_Project — Fullstack Auth System (SvelteKit + Express + JWT)**
 
 ## 📚 **Deskripsi Umum**
