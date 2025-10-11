@@ -13,7 +13,7 @@
 </script>
 
 <div class="p-4">
-	<h1 class="text-xl">Selamat datang, {currentUser?.user_nama? "test" : "null"}</h1>
+	<h1 class="text-xl">INI HALAMAN TODO LIST</h1>
 	<button on:click={logout} class="mt-3 px-4 py-2 bg-red-600 text-white rounded">
 		Logout
 	</button>

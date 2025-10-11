@@ -3,6 +3,7 @@
 
 export interface Review {
 	id: number;
+	user_nama: string;
 	produk_id: number;
 	review_rating: number;
 	review_isi: string;
