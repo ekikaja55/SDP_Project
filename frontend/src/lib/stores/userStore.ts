@@ -5,7 +5,7 @@
 import {
 	api,
 	errorHandler,
-	type apiResponse,
+	type ApiResponse,
 	type LoginDTO,
 	type MessageState,
 	type RegisterDTO,
@@ -23,7 +23,7 @@ export async function login(data: LoginDTO) {
 	loading.set(true);
 	messageHandle.set(null);
 	try {
-		const res = await api.post<apiResponse<User>>('/auth/login', data);
+		const res = await api.post<ApiResponse<User>>('/auth/login', data);
 		messageHandle.set({
 			type: 'success',
 			message: res.data.message
@@ -45,7 +45,7 @@ export async function register(data: RegisterDTO) {
 	messageHandle.set(null);
 
 	try {
-		const res = await api.post<apiResponse<User>>('/auth/register', data);
+		const res = await api.post<ApiResponse<User>>('/auth/register', data);
 		messageHandle.set({
 			type: 'success',
 			message: res.data.message
@@ -62,7 +62,7 @@ export async function register(data: RegisterDTO) {
 // handling refresh token
 export async function checkAuth() {
 	try {
-		const res = await api.get<apiResponse<User>>('/auth/refreshtoken');
+		const res = await api.get<ApiResponse<User>>('/auth/refreshtoken');
 		userStore.set(res.data.result);
 	} catch {
 		userStore.set(null);
@@ -74,7 +74,7 @@ export async function logout() {
 	loading.set(true);
 	messageHandle.set(null);
 	try {
-		const res = await api.get<apiResponse<User>>('/auth/logout');
+		const res = await api.get<ApiResponse<User>>('/auth/logout');
 		messageHandle.set({
 			type: 'success',
 			message: res.data.message
