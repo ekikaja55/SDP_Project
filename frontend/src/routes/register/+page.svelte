@@ -1,77 +1,96 @@
+<!-- src/routes/register/+page.svelte-->
+<!-- page untuk register -->
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { register, type RegisterDTO } from '$lib';
+	import { loading, messageHandle, register, userStore, type RegisterDTO } from '$lib';
+	import { onMount } from 'svelte';
+	import { get } from 'svelte/store';
 
-	let credentials: RegisterDTO = {
+	let dataRegister: RegisterDTO = {
 		user_nama: '',
 		user_email: '',
-		user_password: ''
+		user_password: '',
+		user_confirm_password: ''
 	};
-	let error = '';
-	let success = '';
-	let isLoading = false;
+
+	onMount(() => {
+		const user = get(userStore);
+		if (user) goto(`/dashboard/${user.user_role}`);
+	});
 
 	async function handleRegister() {
-		isLoading = true;
-		error = '';
-		success = '';
-		try {
-			await register(credentials);
-			success = 'Registrasi berhasil! Mengalihkan...';
-			setTimeout(() => goto('/login'), 2000);
-		} catch (err: any) {
-			error = err.response?.data?.message || err.message || 'Registrasi gagal, mohon coba lagi.';
-		} finally {
-			isLoading = false;
-		}
+		await register(dataRegister);
+		const message = get(messageHandle);
 	}
 </script>
 
-<div class="flex min-h-screen flex-col items-center justify-center bg-gray-100">
-	<div class="w-80 rounded-lg bg-white p-8 shadow-md">
-		<h1 class="mb-6 text-center text-2xl font-bold">Register</h1>
+<main class="flex min-h-screen flex-col items-center justify-center">
+	<div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-md">
+		<h1 class="mb-6 text-center text-2xl font-semibold">Register</h1>
 
-		{#if error}
-			<p class="mb-3 text-center text-sm text-red-500">{error}</p>
-		{/if}
-		{#if success}
-			<p class="mb-3 text-center text-sm text-green-600">{success}</p>
-		{/if}
-
-		<form on:submit|preventDefault={handleRegister} class="flex flex-col gap-3">
+		<form on:submit|preventDefault={handleRegister}>
+			<label class="mb-2 block text-sm font-medium">Nama</label>
 			<input
 				type="text"
-				bind:value={credentials.user_nama}
-				placeholder="Nama Lengkap"
-				class="w-full rounded border p-2"
+				bind:value={dataRegister.user_nama}
 				required
+				class="mb-4 w-full rounded border p-2"
+				placeholder="Masukkan nama lengkap..."
 			/>
+
+			<label class="mb-2 block text-sm font-medium">Email</label>
 			<input
 				type="email"
-				bind:value={credentials.user_email}
-				placeholder="Email"
-				class="w-full rounded border p-2"
+				bind:value={dataRegister.user_email}
 				required
+				class="mb-4 w-full rounded border p-2"
+				placeholder="Masukkan email..."
 			/>
+
+			<label class="mb-2 block text-sm font-medium">Password</label>
 			<input
 				type="password"
-				bind:value={credentials.user_password}
-				placeholder="Password"
-				class="w-full rounded border p-2"
+				bind:value={dataRegister.user_password}
 				required
+				class="mb-4 w-full rounded border p-2"
+				placeholder="Masukkan password..."
 			/>
+
+			<label class="mb-2 block text-sm font-medium">Konfirmasi Password</label>
+			<input
+				type="password"
+				bind:value={dataRegister.user_confirm_password}
+				required
+				class="mb-4 w-full rounded border p-2"
+				placeholder="Ulangi password..."
+			/>
+
 			<button
 				type="submit"
-				disabled={isLoading}
-				class="mt-1 w-full rounded bg-green-600 py-2 text-white transition hover:bg-green-700 disabled:bg-gray-400"
+				class="w-full rounded bg-green-500 p-2 text-white transition hover:bg-green-600"
+				disabled={$loading}
 			>
-				{isLoading ? 'Memproses...' : 'Daftar'}
+				{#if $loading}
+					<span>Loading...</span>
+				{:else}
+					<span>Register</span>
+				{/if}
 			</button>
 		</form>
 
 		<p class="mt-4 text-center text-sm">
 			Sudah punya akun?
-			<a href="/login" class="text-blue-600 hover:underline">Login</a>
+			<a href="/login" class="text-blue-600 hover:underline">Login di sini</a>
 		</p>
+
+		{#if $messageHandle}
+			<p
+				class={`mt-4 text-center ${
+					$messageHandle.type === 'error' ? 'text-red-500' : 'text-green-500'
+				}`}
+			>
+				{$messageHandle.message}
+			</p>
+		{/if}
 	</div>
-</div>
+</main>

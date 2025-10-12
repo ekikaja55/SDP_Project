@@ -44,6 +44,12 @@ export async function register(data: RegisterDTO) {
 	loading.set(true);
 	messageHandle.set(null);
 
+  if (data.user_password !== data.user_confirm_password) {
+		messageHandle.set({ type: 'error', message: 'Password tidak cocok' });
+		loading.set(false);
+		return;
+	}
+
 	try {
 		const res = await api.post<ApiResponse<User>>('/auth/register', data);
 		messageHandle.set({

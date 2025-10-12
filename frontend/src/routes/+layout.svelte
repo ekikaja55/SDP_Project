@@ -1,10 +1,24 @@
 <!-- src/routes/+layout.svelte -->
-<!-- untuk template global navbar umum-->
+<!-- handling layout global seluruh routes -->
 <script lang="ts">
-	import { page } from '$app/stores';
-	import { derived } from 'svelte/store';
+	import { afterNavigate } from '$app/navigation';
+	import { onMount } from 'svelte';
+	import { writable } from 'svelte/store';
+	import '../app.css';
 
-	const isDashboard = derived(page, ($page) => $page.url.pathname.startsWith('/dashboard'));
+	const isDashboard = writable(false);
+
+	onMount(() => {
+		updatePath(location.pathname);
+
+		afterNavigate((nav) => {
+			updatePath(nav.to?.url.pathname || '');
+		});
+	});
+
+	function updatePath(path: string) {
+		isDashboard.set(path.startsWith('/dashboard'));
+	}
 </script>
 
 {#if !$isDashboard}
@@ -24,7 +38,7 @@
 		</main>
 
 		<footer class="mt-auto bg-gray-900 p-4 text-center text-gray-300">
-			<p>&copy; {new Date().getFullYear()} SDP Project. All rights reserved.</p>
+			<p>&copy; {new Date().getFullYear()} Kanti’s Store. All rights reserved.</p>
 		</footer>
 	</div>
 {:else}
