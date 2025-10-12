@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { login } from '$lib/stores';
-	import type { LoginDTO } from '$lib/types';
+	import { login,type LoginDTO } from '$lib';
 
 	let credentials: LoginDTO = {
 		user_email: '',

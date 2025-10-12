@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { register } from '$lib/stores';
-	import type { RegisterDTO } from '$lib/types';
+	import { register, type RegisterDTO } from '$lib';
 
 	let credentials: RegisterDTO = {
 		user_nama: '',
