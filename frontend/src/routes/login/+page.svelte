@@ -1,64 +1,83 @@
+<!-- src/routes/login/+page.svelte-->
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { login,type LoginDTO } from '$lib';
+	import { loading, login, messageHandle, userStore } from '$lib';
+	import { svelte } from '@sveltejs/vite-plugin-svelte';
+	import { onMount } from 'svelte';
+	import { get } from 'svelte/store';
 
-	let credentials: LoginDTO = {
-		user_email: '',
-		user_password: ''
-	};
-	let error = '';
-	let isLoading = false;
+	let email = '';
+	let password = '';
+
+	onMount(() => {
+		const user = get(userStore);
+		if (user) {
+			// kalau udah login, langsung redirect
+			goto('/dashboard');
+		}
+	});
 
 	async function handleLogin() {
-		isLoading = true;
-		error = '';
-		try {
-			await login(credentials);
-			goto('/dashboard');
-		} catch (err: any) {
-			error =
-				err.response?.data?.message || err.message || 'Login gagal, periksa kembali data Anda.';
-		} finally {
-			isLoading = false;
+		await login({ user_email: email, user_password: password });
+
+		const message = get(messageHandle);
+		const user = get(userStore);
+
+		// kalau login sukses, arahkan ke dashboard sesuai role
+		if (message?.type === 'success' && user) {
+			if (user.user_role === 'admin') {
+				goto('/dashboard/admin');
+			} else {
+				goto('/dashboard/user');
+			}
 		}
 	}
 </script>
 
-<div class="flex min-h-screen flex-col items-center justify-center bg-gray-100">
-	<div class="w-80 rounded-lg bg-white p-8 shadow-md">
-		<h1 class="mb-6 text-center text-2xl font-bold">Login</h1>
+<main class="flex min-h-screen flex-col items-center justify-center bg-gray-100">
+	<div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-md">
+		<h1 class="mb-6 text-center text-2xl font-semibold">Login</h1>
 
-		{#if error}
-			<p class="mb-3 text-center text-sm text-red-500">{error}</p>
-		{/if}
-
-		<form on:submit|preventDefault={handleLogin} class="flex flex-col gap-3">
+		<form on:submit|preventDefault={handleLogin}>
+			<label class="mb-2 block text-sm font-medium">Email</label>
 			<input
 				type="email"
-				bind:value={credentials.user_email}
-				placeholder="Email"
-				class="w-full rounded border p-2"
+				bind:value={email}
 				required
+				class="mb-4 w-full rounded border p-2"
+				placeholder="Masukkan email..."
 			/>
+
+			<label class="mb-2 block text-sm font-medium">Password</label>
 			<input
 				type="password"
-				bind:value={credentials.user_password}
-				placeholder="Password"
-				class="w-full rounded border p-2"
+				bind:value={password}
 				required
+				class="mb-4 w-full rounded border p-2"
+				placeholder="Masukkan password..."
 			/>
+
 			<button
 				type="submit"
-				disabled={isLoading}
-				class="mt-1 w-full rounded bg-blue-600 py-2 text-white transition hover:bg-blue-700 disabled:bg-gray-400"
+				class="w-full rounded bg-blue-500 p-2 text-white transition hover:bg-blue-600"
+				disabled={$loading}
 			>
-				{isLoading ? 'Memproses...' : 'Masuk'}
+				{#if $loading}
+					<span>Loading...</span>
+				{:else}
+					<span>Login</span>
+				{/if}
 			</button>
 		</form>
 
-		<p class="mt-4 text-center text-sm">
-			Belum punya akun?
-			<a href="/register" class="text-blue-600 hover:underline">Daftar</a>
-		</p>
+		{#if $messageHandle}
+			<p
+				class={`mt-4 text-center ${
+					$messageHandle.type === 'error' ? 'text-red-500' : 'text-green-500'
+				}`}
+			>
+				{$messageHandle.message}
+			</p>
+		{/if}
 	</div>
-</div>
+</main>
