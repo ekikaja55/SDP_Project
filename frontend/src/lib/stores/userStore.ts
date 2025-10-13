@@ -18,7 +18,28 @@ export const userStore = writable<User | null>(null);
 export const loading = writable(false);
 export const messageHandle = writable<MessageState | null>(null);
 
-// handling login
+/**
+ * Function Handle Store Login User
+ *
+ * @param {LoginDTO} data - Data Login credentials basis object yang berisi:
+ *   @param {string} data.user_email - Email User.
+ *   @param {string} data.user_password - Password User.
+ * @returns {Promise<ApiResponse<User>>} API response berisi message dan akses token.
+ *
+ * @example
+ * const credentials = {
+ * user_email: "rizki@gmail.com",
+ * user_password: "123"
+ * };
+ * const result = await login(credentials);
+ * console.log(result.message);
+ * @example <caption>Expected Output</caption>
+ * {
+ * "message": "Sukses Login",
+ * "result":  { accessToken }
+ * }
+ */
+
 export async function login(data: LoginDTO) {
 	loading.set(true);
 	messageHandle.set(null);
@@ -39,7 +60,29 @@ export async function login(data: LoginDTO) {
 	}
 }
 
-// handling register
+/**
+ * Function Handle Store Register User
+ * @param {RegisterDTO} data - Data Register kredensial user basis objek yang terdiri :
+ *    @param {string} user_nama - Nama User.
+ *    @param {string} user_email - Email User.
+ *    @param {string} user_password - Password User.
+ *    @param {string} user_confirm_password - Confirm Password User.
+ * @returns {Promise<ApiResponse<User>>} API response berisi message dan data user.
+ * @example
+ * const credentials = {
+ * user_nama = "rizki",
+ * user_email = "rizki@example.com",
+ * user_password = "123",
+ * user_confirm_password = "123"
+ * }
+ * const result = await register(credentials);
+ * console.log(result);
+ * @example <caption>Expected Output</caption>
+ * {
+ * "message": "Sukses Register",
+ * "result": { user }
+ * }
+ */
 export async function register(data: RegisterDTO) {
 	loading.set(true);
 	messageHandle.set(null);
@@ -65,7 +108,18 @@ export async function register(data: RegisterDTO) {
 		loading.set(false);
 	}
 }
-// handling refresh token
+/**
+ * Function handling refresh token
+ * @returns {Promise<ApiResponse<User>>} - API Message Berisi Message dan Result
+ * @example
+ * const result = await checkAuth();
+ * console.log(result);
+ * @example <caption>Expected Output</caption>
+ * {
+ * "message": "Sukses Refresh Token",
+ * "result": { accessToken }
+ * }
+ */
 export async function checkAuth() {
 	try {
 		const res = await api.get<ApiResponse<User>>('/auth/refreshtoken');
@@ -75,7 +129,15 @@ export async function checkAuth() {
 	}
 }
 
-// handling logout
+/**
+ * Function handling logout()
+ * @returns {Promise<ApiResponse<User>>} - API Message Berisi Message dan Result
+ *  @example
+ * const result = await logout();
+ * console.log(result);
+ * @example <caption>Expected Output</caption>
+ * {"message": "Sukses Refresh Token" }
+ */
 export async function logout() {
 	loading.set(true);
 	messageHandle.set(null);
