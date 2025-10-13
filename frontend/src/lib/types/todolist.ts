@@ -3,7 +3,7 @@
 
 // type untuk todolist
 export interface Todolist {
-	id: number;
+	id: string;
 	todolist_desc: string;
 	todolist_status: string;
 	createdAt: string;

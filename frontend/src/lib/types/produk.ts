@@ -5,7 +5,7 @@ import type { Review } from './review';
 
 // type untuk produk
 export interface Produk {
-	id: number;
+	id: string;
 	produk_nama: string;
 	produk_gambar: string;
 	produk_stok: number;

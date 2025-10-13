@@ -2,10 +2,10 @@
 // setup type  metode pembayaran  handling
 
 export interface MetodeBayar {
-	id: number;
-	metodebayar_nama: string;
-	metodebayar_qr?: string;
-	metodebayar_norek?: string;
+	id: string;
+	metode_nama: string;
+	metode_qr?: string;
+	metode_norek?: string;
 	createdAt: string;
 	updatedAt: string;
 	deletedAt?: string;

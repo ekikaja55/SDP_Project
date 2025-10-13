@@ -10,7 +10,7 @@ export interface User {
 	user_email: string;
 	user_role: string;
 	// satu user bisa punya banyak Transaksi di type transaksi
-	transaksi: Transaksi[];
+	user_transaksi: Transaksi[];
 	createdAt: string;
 	updatedAt: string;
 }

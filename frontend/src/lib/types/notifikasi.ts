@@ -2,10 +2,10 @@
 // untuk types handling notifikasi
 
 export interface Notifikasi {
-	id: number;
-	user_nama: string;
-	notifikasi_pesan: string;
-  notifikasi_is_read:boolean;
+	id: string;
+	notifikasi_nama: string;
+	notifikasi_isi: string;
+  notifikasi_is_read:string;
   createdAt:string;
   updated_at:string;
 }

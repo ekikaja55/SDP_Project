@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String      @id @default(auto()) @map("_id") @db.ObjectId
+  user_email     String      @unique
+  user_password  String
+  user_nama      String
+  user_role      String
+  user_transaksi Transaksi[]
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  deletedAt      DateTime?
+}
+
+type Transaksi {
+  transaksi_img         String
+  transaksi_grand_total BigInt
+  transaksi_status      String
+  transaksi_detail      TransaksiDetail[]
+}
+
+type TransaksiDetail {
+  detail_nama      String
+  detail_stok      Int
+  detail_sub_total BigInt
+}
+
+model Produk {
+  id                String    @id @default(auto()) @map("_id") @db.ObjectId
+  produk_nama       String
+  produk_gambar     String?
+  produk_stok       Int
+  produk_harga      BigInt
+  produk_avg_rating Float
+  produk_review     Review[]
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  deletedAt         DateTime?
+}
+
+type Review {
+  review_nama   String
+  review_rating Int
+  review_isi    String
+  createdAt     DateTime @default(now())
+}
+
+model Todolist {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  todolist_desc   String
+  todolist_status String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  deletedAt       DateTime?
+}
+
+model Notifikasi {
+  id                String    @id @default(auto()) @map("_id") @db.ObjectId
+  notifikasi_nama   String
+  notifikasi_isi    String
+  notifikasi_isread String
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  deletedAt         DateTime?
+}
+
+model MetodeBayar {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  metode_nama  String
+  metode_qr    String?
+  metode_norek String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+}
