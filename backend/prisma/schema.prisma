@@ -8,15 +8,16 @@ datasource db {
 }
 
 model User {
-  id             String      @id @default(auto()) @map("_id") @db.ObjectId
-  user_email     String      @unique
-  user_password  String
-  user_nama      String
-  user_role      String
-  user_transaksi Transaksi[]
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
-  deletedAt      DateTime?
+  id                 String      @id @default(auto()) @map("_id") @db.ObjectId
+  user_email         String      @unique
+  user_password      String
+  user_nama          String
+  user_role          String
+  user_refresh_token String?
+  user_transaksi     Transaksi[]
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+  deletedAt          DateTime?
 }
 
 type Transaksi {
