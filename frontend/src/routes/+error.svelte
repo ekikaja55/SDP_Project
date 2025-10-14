@@ -8,7 +8,7 @@
 	export let status: number;
   console.log("masuk");
 
-	console.log(error.status);
+	console.log(error);
 	console.log(status);
 </script>
 
