@@ -1,6 +1,6 @@
 // src/routes/dashboard/+layout.svelte
 // handling middleware kalo user akses "/dashboard/..."
-import { checkAuth, userStore } from '$lib/stores/userStore';
+import { checkAuth, userStore } from '$lib';
 import { get } from 'svelte/store';
 import { redirect } from '@sveltejs/kit';
 

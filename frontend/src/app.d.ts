@@ -24,7 +24,7 @@ declare global {
 		 */
 		interface Error {
 			message: string;
-			code?: number;
+			status?: number;
 		}
 
 		// Biarkan kosong dulu, belum butuh di setup ini.
