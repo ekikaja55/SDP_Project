@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const prisma = require("../../prisma/prisma");
 const register = async (req, res) => {
   try {
-    const { user_nama, user_email, user_password } =
+    const { user_nama, user_email, user_password, user_confirm_password } =
       await userSchema.validateAsync(req.body, { abortEarly: false });
     const adaUser = await prisma.user.findFirst({
       where: { user_email: user_email },
@@ -22,9 +22,12 @@ const register = async (req, res) => {
     });
     return res.status(201).json({ message: "Sukses Register", result: user });
   } catch (error) {
-    return res
-      .status(400)
-      .json({ message: error.details.map((detail) => detail.message) });
+    if (error.isJoi) {
+      return res
+        .status(400)
+        .json({ message: error.details.map((detail) => detail.message) });
+    }
+    return res.status(500).json({ message: "Terjadi kesalahan pada server" });
   }
 };
 const login = async (req, res) => {
