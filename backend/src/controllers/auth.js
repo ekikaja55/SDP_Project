@@ -81,7 +81,7 @@ const refreshToken = async (req, res) => {
     });
     if (!user) return res.status(403).json({ message: "User tidak ditemukan" });
     jwt.verify(
-      cookies.refreshTokenm,
+      cookies.refreshToken,
       process.env.REFRESH_TOKEN_SECRET,
       (err) => {
         if (err)
