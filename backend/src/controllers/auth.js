@@ -25,9 +25,14 @@ const register = async (req, res) => {
     if (error.isJoi) {
       return res
         .status(400)
-        .json({ message: error.details.map((detail) => detail.message) });
+        .json({
+          message: error.details.map((detail) => detail.message),
+          result: null,
+        });
     }
-    return res.status(500).json({ message: "Terjadi kesalahan pada server" });
+    return res
+      .status(500)
+      .json({ message: "Terjadi kesalahan pada server", result: null });
   }
 };
 const login = async (req, res) => {

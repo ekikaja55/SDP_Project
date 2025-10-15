@@ -1,5 +1,5 @@
 const express = require("express");
-const { authRouter } = require("./src/routes");
+const { authRouter, productRouter, todolistRouter } = require("./src/routes");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const app = express();
@@ -14,6 +14,7 @@ app.use(
     credentials: true,
   })
 );
-
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/product", productRouter);
+app.use("/api/v1/todolist", todolistRouter);
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
