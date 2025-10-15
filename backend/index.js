@@ -14,6 +14,7 @@ app.use(
     credentials: true,
   })
 );
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/product", productRouter);
 app.use("/api/v1/todolist", todolistRouter);

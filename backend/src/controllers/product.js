@@ -12,8 +12,24 @@ const getAllProducts = async (req, res) => {
 };
 const insertProduct = async (req, res) => {
   try {
-    const {} = req.body;
-  } catch (error) {}
+    const { produk_nama, produk_stok, produk_harga } = req.body;
+    const gambar = req.file ? `/uploads/${req.file.filename}` : null;
+    await prisma.produk.create({
+      data: {
+        produk_nama,
+        produk_stok: parseInt(produk_stok),
+        produk_harga: parseInt(produk_harga),
+        produk_gambar: gambar,
+      },
+    });
+    return res
+      .status(201)
+      .json({ message: "Sukses insert produk", result: null });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Terjadi kesalahan pada server", result: null });
+  }
 };
 const updateProduct = async (req, res) => {
   try {
