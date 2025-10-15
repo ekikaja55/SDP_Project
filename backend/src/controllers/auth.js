@@ -23,12 +23,10 @@ const register = async (req, res) => {
     return res.status(201).json({ message: "Sukses Register", result: user });
   } catch (error) {
     if (error.isJoi) {
-      return res
-        .status(400)
-        .json({
-          message: error.details.map((detail) => detail.message),
-          result: null,
-        });
+      return res.status(400).json({
+        message: error.details.map((detail) => detail.message),
+        result: null,
+      });
     }
     return res
       .status(500)
@@ -122,6 +120,8 @@ const logout = async (req, res) => {
     if (!cookies?.refreshToken) {
       return res.status(200).json({ message: "success logout" });
     }
+    console.log(cookies?.refreshToken);
+
     const refreshToken = cookies.refreshToken;
     const user = await prisma.user.findFirst({
       where: { user_refresh_token: refreshToken },
