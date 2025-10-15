@@ -44,11 +44,19 @@ const login = async (req, res) => {
     );
     if (!validPassword)
       return res.status(400).json({ message: "Password salah" });
-    user.user_password = null;
-    const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+    const userJwt = await prisma.user.findFirst({
+      where: { user_email: user_email },
+      select: {
+        id: true,
+        user_email: true,
+        user_nama: true,
+        user_role: true,
+      },
+    });
+    const accessToken = jwt.sign(userJwt, process.env.ACCESS_TOKEN_SECRET, {
       expiresIn: "1d",
     });
-    const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {
+    const refreshToken = jwt.sign(userJwt, process.env.REFRESH_TOKEN_SECRET, {
       expiresIn: "7d",
     });
     await prisma.user.update({
