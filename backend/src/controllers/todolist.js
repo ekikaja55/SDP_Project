@@ -1,8 +1,10 @@
 const prisma = require("../../prisma/prisma");
 const insertTodolist = async (req, res) => {
   try {
-    const { todolist_desc, todolist_status } = req.body;
-    await prisma.todolist.create({ data: { todolist_desc, todolist_status } });
+    const { todolist_desc } = req.body;
+    await prisma.todolist.create({
+      data: { todolist_desc, todolist_status: "Belum Dikerjakan" },
+    });
     return res
       .status(201)
       .json({ message: "Sukses insert todolist", result: null });
