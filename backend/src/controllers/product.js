@@ -2,7 +2,27 @@ const prisma = require("../../prisma/prisma");
 
 const getAllProducts = async (req, res) => {
   try {
-    const products = await prisma.produk.findMany();
+    const { nama, filterstok } = req.query;
+    const whereClause = {
+      deletedAt: null,
+    };
+    if (nama && nama.trim() !== "") {
+      whereClause.produk_nama = {
+        contains: nama,
+        mode: "insensitive",
+      };
+    }
+    if (filterstok) {
+      if (filterstok.toLowerCase() === "habis") {
+        whereClause.produk_stok = 0;
+      } else if (filterstok.toLowerCase() === "ada") {
+        whereClause.produk_stok = { gt: 0 };
+      }
+    }
+
+    const products = await prisma.produk.findMany({
+      where: whereClause,
+    });
     return res
       .status(200)
       .json({ message: "Sukses ambil produk", result: products });
@@ -83,8 +103,35 @@ const deleteProduct = async (req, res) => {
 
 const getProductKatalog = async (req, res) => {
   try {
+    const { nama, filterharga, filterrating } = req.query;
+    const whereClause = {
+      produk_stok: { gt: 0 },
+      deletedAt: null,
+    };
+    if (nama && nama.trim() !== "") {
+      whereClause.produk_nama = {
+        contains: nama,
+        mode: "insensitive",
+      };
+    }
+    const orderByClause = [];
+    if (filterharga) {
+      if (filterharga.toLowerCase() === "termurah") {
+        orderByClause.push({ produk_harga: "asc" });
+      } else if (filterharga.toLowerCase() === "termahal") {
+        orderByClause.push({ produk_harga: "desc" });
+      }
+    }
+    if (filterrating) {
+      if (filterrating.toLowerCase() === "tertinggi") {
+        orderByClause.push({ produk_rating: "desc" });
+      } else if (filterrating.toLowerCase() === "terendah") {
+        orderByClause.push({ produk_rating: "asc" });
+      }
+    }
     const products = await prisma.produk.findMany({
-      where: { produk_stok: { gt: 0 } },
+      where: whereClause,
+      orderBy: orderByClause.length > 0 ? orderByClause : undefined,
     });
     if (products.length <= 0)
       return res.status(404).json({ message: "Tidak ada data", result: null });

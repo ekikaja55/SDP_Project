@@ -25,6 +25,7 @@ type Transaksi {
   transaksi_grand_total BigInt
   transaksi_status      String
   transaksi_detail      TransaksiDetail[]
+  createdAt             DateTime          @default(now())
 }
 
 type TransaksiDetail {

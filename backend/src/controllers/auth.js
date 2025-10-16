@@ -20,7 +20,9 @@ const register = async (req, res) => {
         user_role: "customer",
       },
     });
-    return res.status(201).json({ message: "Sukses Register", result: user });
+    return res
+      .status(201)
+      .json({ message: "Sukses Register, silahkan login", result: user });
   } catch (error) {
     if (error.isJoi) {
       return res.status(400).json({
