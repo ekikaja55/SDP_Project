@@ -2,6 +2,7 @@ const express = require("express");
 const { authRouter, productRouter, todolistRouter } = require("./src/routes");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const path = require("path");
 const app = express();
 const port = 3000;
 app.use(express.json());
