@@ -8,8 +8,8 @@
 	<div>
 		<div class="border-b border-blue-700 px-6 py-4 text-2xl font-bold">User Panel</div>
 		<nav class="mt-4 flex flex-col space-y-2 px-4">
-			<a href="/dashboard/user" class="rounded-lg px-3 py-2 transition hover:bg-blue-800"> Home </a>
-			<a href="/dashboard/user/settings" class="rounded-lg px-3 py-2 transition hover:bg-blue-800">
+			<a href="/dashboard/customer" class="rounded-lg px-3 py-2 transition hover:bg-blue-800"> Home </a>
+			<a href="/dashboard/customer/settings" class="rounded-lg px-3 py-2 transition hover:bg-blue-800">
 				Settings
 			</a>
 		</nav>

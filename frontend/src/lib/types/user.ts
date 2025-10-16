@@ -5,15 +5,18 @@ import type { Transaksi } from './transaksi';
 
 // type untuk user
 export interface User {
-	id: number;
+	id: string;
 	user_nama: string;
 	user_email: string;
 	user_role: string;
 	// satu user bisa punya banyak Transaksi di type transaksi
-	user_transaksi: Transaksi[];
+	user_transaksi?: Transaksi[];
 	createdAt: string;
 	updatedAt: string;
 }
+
+export type UserAuth = Omit<User, 'user_password' | 'createdAt' | 'updatedAt'>;
+
 
 // type untuk Login user
 export interface LoginDTO {

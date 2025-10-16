@@ -1,6 +1,5 @@
 <!-- src/routes/+pages.svelte -->
 <!-- untuk LANDING PAGE -->
-<!-- src/routes/+page.svelte -->
 <script lang="ts">
 	let products = [
 		{

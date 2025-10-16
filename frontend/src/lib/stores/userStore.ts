@@ -2,6 +2,7 @@
 // ini handling  function dan reactive state untuk user ( login, register, logout)
 
 // handling functiion axios
+import { goto } from '$app/navigation';
 import {
 	api,
 	errorHandler,
@@ -9,12 +10,14 @@ import {
 	type LoginDTO,
 	type MessageState,
 	type RegisterDTO,
-	type User
+	type User,
+	type UserAuth
 } from '$lib';
+import { jwtDecode } from 'jwt-decode';
 import { writable } from 'svelte/store';
 
 // inisiasi state modelan redux
-export const userStore = writable<User | null>(null);
+export const userStore = writable<UserAuth | null>(null);
 export const loading = writable(false);
 export const messageHandle = writable<MessageState | null>(null);
 
@@ -24,7 +27,7 @@ export const messageHandle = writable<MessageState | null>(null);
  * @param {LoginDTO} data - Data Login credentials basis object yang berisi:
  *   @param {string} data.user_email - Email User.
  *   @param {string} data.user_password - Password User.
- * @returns {Promise<ApiResponse<User>>} API response berisi message dan akses token.
+ * @returns {Promise<ApiResponse<UserAuth>>} API response berisi message dan akses token.
  *
  * @example
  * const data = {
@@ -34,7 +37,7 @@ export const messageHandle = writable<MessageState | null>(null);
  * @example <caption>Expected Output</caption>
  * {
  * "message": "Sukses Login",
- * "result":  { accessToken }
+ * "result":  accessToken //string literal
  * }
  */
 
@@ -42,12 +45,26 @@ export async function login(data: LoginDTO) {
 	loading.set(true);
 	messageHandle.set(null);
 	try {
-		const res = await api.post<ApiResponse<User>>('/auth/login', data);
+		console.log('============================================');
+		console.log('fn login userStore -> masuk 1');
+
+		const res = await api.post<ApiResponse<string>>('/auth/login', data);
+		console.log('fn login userStore -> masuk after fetch');
+
 		messageHandle.set({
 			type: 'success',
 			message: res.data.message
 		});
-		userStore.set(res.data.result);
+
+		console.log(
+			'fn login userStore -> isi token hasil fetch\n' + JSON.stringify(res.data.result, null, 2)
+		);
+    const dataUser: UserAuth = jwtDecode(res.data.result);
+		console.log('isi access token setelah di decode\n' + JSON.stringify(dataUser, null, 2));
+		// userStore.set(dataUser);
+    window.location.href = `/dashboard/${dataUser.user_role}`;
+    // goto(`/dashboard/${dataUser.user_role}`)
+
 	} catch (err: unknown) {
 		messageHandle.set({
 			type: 'error',
@@ -115,8 +132,9 @@ export async function register(data: RegisterDTO) {
  */
 export async function checkAuth() {
 	try {
-		const res = await api.get<ApiResponse<User>>('/auth/refreshtoken');
-		userStore.set(res.data.result);
+		const res = await api.get<ApiResponse<string>>('/auth/refreshtoken');
+		const dataUser: UserAuth = jwtDecode(res.data.result);
+		userStore.set(dataUser);
 	} catch {
 		userStore.set(null);
 	}

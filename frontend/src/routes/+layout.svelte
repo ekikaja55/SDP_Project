@@ -1,47 +1,45 @@
 <!-- src/routes/+layout.svelte -->
-<!-- handling layout global seluruh routes -->
 <script lang="ts">
-	import { afterNavigate } from '$app/navigation';
-	import { onMount } from 'svelte';
-	import { writable } from 'svelte/store';
+	import { page } from '$app/state';
+	import { logout } from '$lib';
 	import '../app.css';
 
-	const isDashboard = writable(false);
+	export let data;
 
-	onMount(() => {
-		updatePath(location.pathname);
+	// langsung reactive statement (tanpa derived)
+	$: isDashboard = page.url.pathname.startsWith('/dashboard');
+	$: console.log('sekarang di path + ' + page.url.pathname);
 
-		afterNavigate((nav) => {
-			updatePath(nav.to?.url.pathname || '');
-		});
-	});
-
-	function updatePath(path: string) {
-		isDashboard.set(path.startsWith('/dashboard'));
+  function goHome() {
+		window.location.href = '/';
+	}
+	function goDashboard() {
+		window.location.href = `/dashboard/${data.user.user_role}`;
 	}
 </script>
 
-{#if !$isDashboard}
-	<!-- Layout Umum -->
-	<div class="flex min-h-screen flex-col bg-gray-50 text-gray-800">
-		<nav class="flex justify-between bg-blue-600 p-4 text-white">
-			<div class="text-lg font-bold">SDP Project</div>
-			<div class="space-x-4">
-				<a href="/" class="hover:underline">Home</a>
+<div class="flex min-h-screen flex-col bg-gray-50 text-gray-800">
+	<nav class="flex justify-between bg-blue-600 p-4 text-white">
+		<div class="text-lg font-bold">Kanti’s Store</div>
+		<div class="space-x-4">
+			<button on:click={goHome} class="hover:underline">Home</button>
+			{#if data.user}
+				<button on:click={goDashboard} class="hover:underline">Dashboard</button>
+				<button on:click={logout} class="hover:underline">Logout</button>
+			{:else}
 				<a href="/login" class="hover:underline">Login</a>
 				<a href="/register" class="hover:underline">Register</a>
-			</div>
-		</nav>
+			{/if}
+		</div>
+	</nav>
 
-		<main class="flex-1 p-6">
-			<slot />
-		</main>
+	<main class="flex-1">
+		<slot />
+	</main>
 
+	{#if !isDashboard}
 		<footer class="mt-auto bg-gray-900 p-4 text-center text-gray-300">
 			<p>&copy; {new Date().getFullYear()} Kanti’s Store. All rights reserved.</p>
 		</footer>
-	</div>
-{:else}
-	<!-- Untuk dashboard layout, biar tidak tumpang tindih -->
-	<slot />
-{/if}
+	{/if}
+</div>

@@ -1,10 +1,7 @@
 <!-- src/routes/register/+page.svelte-->
 <!-- page untuk register -->
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { loading, messageHandle, register, userStore, type RegisterDTO } from '$lib';
-	import { onMount } from 'svelte';
-	import { get } from 'svelte/store';
 
 	let dataRegister: RegisterDTO = {
 		user_nama: '',
@@ -13,24 +10,16 @@
 		user_confirm_password: ''
 	};
 
-	onMount(() => {
-		const user = get(userStore);
-		if (user) goto(`/dashboard/${user.user_role}`);
-	});
 
-	async function handleRegister() {
-		await register(dataRegister);
-		const message = get(messageHandle);
-	}
 </script>
 
 <main class="flex min-h-screen flex-col items-center justify-center">
 	<div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-md">
 		<h1 class="mb-6 text-center text-2xl font-semibold">Register</h1>
 
-		<form on:submit|preventDefault={handleRegister}>
+		<form on:submit|preventDefault={()=>{register(dataRegister)}}>
 			<label class="mb-2 block text-sm font-medium">Nama</label>
-			<input
+			<input  
 				type="text"
 				bind:value={dataRegister.user_nama}
 				required

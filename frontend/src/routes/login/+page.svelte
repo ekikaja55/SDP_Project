@@ -1,81 +1,56 @@
 <!-- src/routes/login/+page.svelte-->
 <!-- page untuk login -->
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { loading, login, messageHandle, userStore, type LoginDTO } from '$lib';
-	import { onMount } from 'svelte';
-	import { get } from 'svelte/store';
-
-	let dataLogin: LoginDTO = {
-		user_email: '',
-		user_password: ''
-	};
-	onMount(() => {
-		const user = get(userStore);
-		if (user) goto(`/dashboard/${user.user_role}`);
-	});
-
-	async function handleLogin() {
-		await login(dataLogin);
-
-		const message = get(messageHandle);
-		const user = get(userStore);
-
-		if (message?.type === 'success' && user) {
-			goto(`/dashboard/${user.user_role}`);
-		}
-	}
+	import { loading, login, messageHandle, type LoginDTO } from '$lib';
+	let dataLogin: LoginDTO = { user_email: '', user_password: '' };
 </script>
 
-<main class="flex min-h-screen flex-col items-center justify-center">
-	<div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-md">
-		<h1 class="mb-6 text-center text-2xl font-semibold">Login Akun</h1>
+<form
+	on:submit|preventDefault={() => login(dataLogin)}
+	class="mx-auto mt-16 w-full max-w-sm rounded-lg bg-white p-8 shadow-md"
+>
+	<h2 class="mb-6 text-center text-2xl font-semibold text-gray-800">Login ke Akunmu</h2>
 
-		<form on:submit|preventDefault={handleLogin}>
-			<label class="mb-2 block text-sm font-medium">Email</label>
-			<input
-				type="email"
-				bind:value={dataLogin.user_email}
-				required
-				class="mb-4 w-full rounded border p-2"
-				placeholder="Masukkan email..."
-			/>
-
-			<label class="mb-2 block text-sm font-medium">Password</label>
-			<input
-				type="password"
-				bind:value={dataLogin.user_password}
-				required
-				class="mb-4 w-full rounded border p-2"
-				placeholder="Masukkan password..."
-			/>
-
-			<button
-				type="submit"
-				class="w-full rounded bg-blue-500 p-2 text-white transition hover:bg-blue-600"
-				disabled={$loading}
-			>
-				{#if $loading}
-					<span>Loading...</span>
-				{:else}
-					<span>Login</span>
-				{/if}
-			</button>
-		</form>
-
-		{#if $messageHandle}
-			<p
-				class={`mt-4 text-center ${
-					$messageHandle.type === 'error' ? 'text-red-500' : 'text-green-500'
-				}`}
-			>
-				{$messageHandle.message}
-			</p>
-		{/if}
-
-		<p class="mt-4 text-center text-sm text-gray-600">
-			Belum punya akun?
-			<a href="/register" class="text-blue-500 hover:underline">Daftar sekarang</a>
-		</p>
+	<div class="mb-4">
+		<label class="mb-2 block text-sm font-medium text-gray-700">Email</label>
+		<input
+			type="email"
+			bind:value={dataLogin.user_email}
+			placeholder="Masukkan email kamu"
+			class="w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+			required
+		/>
 	</div>
-</main>
+
+	<div class="mb-6">
+		<label class="mb-2 block text-sm font-medium text-gray-700">Password</label>
+		<input
+			type="password"
+			bind:value={dataLogin.user_password}
+			placeholder="Masukkan password"
+			class="w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+			required
+		/>
+	</div>
+
+	<button
+		type="submit"
+		disabled={$loading}
+		class="w-full rounded-md bg-blue-600 py-2 font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50"
+	>
+		{#if $loading}
+			<span>Memproses...</span>
+		{:else}
+			<span>Login</span>
+		{/if}
+	</button>
+
+	{#if $messageHandle}
+		<p
+			class="mt-4 text-center text-sm font-medium
+			{$messageHandle.type === 'error' ? 'text-red-600' : 'text-green-600'}"
+		>
+			{$messageHandle.message}
+		</p>
+	{/if}
+</form>
