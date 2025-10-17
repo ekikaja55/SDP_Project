@@ -32,7 +32,7 @@
 			dan berkhasiat untuk kesehatan serta kecantikan Anda.
 		</p>
 		<a
-			href="/login"
+			href="/catalog"
 			class="mt-8 rounded-full bg-green-600 px-6 py-3 text-white shadow-lg transition hover:bg-green-700"
 		>
 			Belanja Sekarang

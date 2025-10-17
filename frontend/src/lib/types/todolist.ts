@@ -12,14 +12,16 @@ export interface Todolist {
 }
 
 /**
- *interface khusus untuk tambah produk
+ *interface khusus untuk tambah & update produk
  *DTO itu Data Transfer Object
  *definisi DTO adalah struktur data ringan yang dirancang untuk mentransfer informasi antar proses *atau layer, tanpa menyertakan logika bisnis atau properti yang tidak relevan biasanya untuk *penamaan type CRUD, karena itu aku kasi penamaanya ada penambahan DTO misalnya nanti mau ganti nama *juga gpp
  */
-export interface TodoListCreateDTO {
-	todolist_desc: string;
-	todolist_status: string;
+export interface TodoListDTO {
+	id?: string | null;
+	todolist_desc?: string;
+	todolist_status?: string;
 }
-
 // optional: interface untuk update kenapa partial? biar semua fieldnya bisa opsional
-export interface TodolistUpdateDTO extends Partial<TodoListCreateDTO> {}
+// export interface TodoListUpdateDTO extends Partial<TodoListCreateDTO> {
+// 	id: string; // ID wajib biar tahu todo mana yang diupdate
+// }

@@ -10,11 +10,14 @@
 	$: isDashboard = page.url.pathname.startsWith('/dashboard');
 	$: console.log('sekarang di path + ' + page.url.pathname);
 
-  function goHome() {
+	function goHome() {
 		window.location.href = '/';
 	}
 	function goDashboard() {
-		window.location.href = `/dashboard/${data.user.user_role}`;
+		window.location.href = `/dashboard/${data.user?.user_role}`;
+	}
+	function goCatalog() {
+		window.location.href = `/catalog`;
 	}
 </script>
 
@@ -23,6 +26,9 @@
 		<div class="text-lg font-bold">Kanti’s Store</div>
 		<div class="space-x-4">
 			<button on:click={goHome} class="hover:underline">Home</button>
+			{#if data.user?.user_role === 'customer' || !data.user}
+				<button on:click={goCatalog} class="hover:underline">Catalog</button>
+			{/if}
 			{#if data.user}
 				<button on:click={goDashboard} class="hover:underline">Dashboard</button>
 				<button on:click={logout} class="hover:underline">Logout</button>

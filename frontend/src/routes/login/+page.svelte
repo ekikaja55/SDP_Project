@@ -1,7 +1,7 @@
 <!-- src/routes/login/+page.svelte-->
 <!-- page untuk login -->
 <script lang="ts">
-	import { loading, login, messageHandle, type LoginDTO } from '$lib';
+	import { loadingUser, login, messageHandleUser, type LoginDTO } from '$lib';
 	let dataLogin: LoginDTO = { user_email: '', user_password: '' };
 </script>
 
@@ -9,7 +9,7 @@
 	on:submit|preventDefault={() => login(dataLogin)}
 	class="mx-auto mt-16 w-full max-w-sm rounded-lg bg-white p-8 shadow-md"
 >
-	<h2 class="mb-6 text-center text-2xl font-semibold text-gray-800">Login ke Akunmu</h2>
+	<h2 class="mb-6 text-center text-2xl font-semibold text-gray-800">Login ke Akun</h2>
 
 	<div class="mb-4">
 		<label class="mb-2 block text-sm font-medium text-gray-700">Email</label>
@@ -35,22 +35,22 @@
 
 	<button
 		type="submit"
-		disabled={$loading}
+		disabled={$loadingUser}
 		class="w-full rounded-md bg-blue-600 py-2 font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50"
 	>
-		{#if $loading}
+		{#if $loadingUser}
 			<span>Memproses...</span>
 		{:else}
 			<span>Login</span>
 		{/if}
 	</button>
 
-	{#if $messageHandle}
+	{#if $messageHandleUser}
 		<p
 			class="mt-4 text-center text-sm font-medium
-			{$messageHandle.type === 'error' ? 'text-red-600' : 'text-green-600'}"
+			{$messageHandleUser.type === 'error' ? 'text-red-600' : 'text-green-600'}"
 		>
-			{$messageHandle.message}
+			{$messageHandleUser.message}
 		</p>
 	{/if}
 </form>

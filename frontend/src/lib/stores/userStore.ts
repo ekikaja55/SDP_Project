@@ -18,8 +18,8 @@ import { writable } from 'svelte/store';
 
 // inisiasi state modelan redux
 export const userStore = writable<UserAuth | null>(null);
-export const loading = writable(false);
-export const messageHandle = writable<MessageState | null>(null);
+export const loadingUser = writable(false);
+export const messageHandleUser = writable<MessageState | null>(null);
 
 /**
  * Function Handle Store Login User
@@ -42,8 +42,8 @@ export const messageHandle = writable<MessageState | null>(null);
  */
 
 export async function login(data: LoginDTO) {
-	loading.set(true);
-	messageHandle.set(null);
+	loadingUser.set(true);
+	messageHandleUser.set(null);
 	try {
 		console.log('============================================');
 		console.log('fn login userStore -> masuk 1');
@@ -51,7 +51,7 @@ export async function login(data: LoginDTO) {
 		const res = await api.post<ApiResponse<string>>('/auth/login', data);
 		console.log('fn login userStore -> masuk after fetch');
 
-		messageHandle.set({
+		messageHandleUser.set({
 			type: 'success',
 			message: res.data.message
 		});
@@ -66,12 +66,12 @@ export async function login(data: LoginDTO) {
     // goto(`/dashboard/${dataUser.user_role}`)
 
 	} catch (err: unknown) {
-		messageHandle.set({
+		messageHandleUser.set({
 			type: 'error',
 			message: errorHandler(err)
 		});
 	} finally {
-		loading.set(false);
+		loadingUser.set(false);
 	}
 }
 
@@ -97,28 +97,28 @@ export async function login(data: LoginDTO) {
  * }
  */
 export async function register(data: RegisterDTO) {
-	loading.set(true);
-	messageHandle.set(null);
+	loadingUser.set(true);
+	messageHandleUser.set(null);
 
 	if (data.user_password !== data.user_confirm_password) {
-		messageHandle.set({ type: 'error', message: 'Password tidak cocok' });
-		loading.set(false);
+		messageHandleUser.set({ type: 'error', message: 'Password tidak cocok' });
+		loadingUser.set(false);
 		return;
 	}
 
 	try {
 		const res = await api.post<ApiResponse<User>>('/auth/register', data);
-		messageHandle.set({
+		messageHandleUser.set({
 			type: 'success',
 			message: res.data.message
 		});
 	} catch (err: unknown) {
-		messageHandle.set({
+		messageHandleUser.set({
 			type: 'error',
 			message: errorHandler(err)
 		});
 	} finally {
-		loading.set(false);
+		loadingUser.set(false);
 	}
 }
 /**
@@ -147,21 +147,21 @@ export async function checkAuth() {
  * {"message": "Sukses Refresh Token" }
  */
 export async function logout() {
-	loading.set(true);
-	messageHandle.set(null);
+	loadingUser.set(true);
+	messageHandleUser.set(null);
 	try {
 		const res = await api.get<ApiResponse<User>>('/auth/logout');
-		messageHandle.set({
+		messageHandleUser.set({
 			type: 'success',
 			message: res.data.message
 		});
 	} catch (err: unknown) {
-		messageHandle.set({
+		messageHandleUser.set({
 			type: 'error',
 			message: errorHandler(err)
 		});
 	} finally {
-		loading.set(false);
+		loadingUser.set(false);
 	}
 	userStore.set(null);
 	window.location.href = '/';
