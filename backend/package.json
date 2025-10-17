@@ -22,6 +22,9 @@
     "multer": "^2.0.2"
   },
   "devDependencies": {
+    "better-docs": "^2.7.3",
+    "jsdoc": "^4.0.5",
+    "minami": "^1.2.3",
     "prisma": "^6.17.0"
   }
 }

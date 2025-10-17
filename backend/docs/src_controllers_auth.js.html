@@ -1,4 +1,91 @@
-/**
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> src/controllers/auth.js</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    Documentation
+                </a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Modules</h3><ul><li><a href="controllers_auth.module_js.html">controllers/auth.js</a></li><li><a href="controllers_product.module_js.html">controllers/product.js</a></li><li><a href="controllers_todolist.module_js.html">controllers/todolist.js</a></li><li><a href="index.module_js.html">index.js</a></li><li><a href="middleware_upload.module_js.html">middleware/upload.js</a></li><li><a href="module-routes_auth.html">routes/auth</a></li><li><a href="module-routes_product.html">routes/product</a></li><li><a href="module-routes_todolist.html">routes/todolist</a></li><li><a href="routes_index.module_js.html">routes/index.js</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>src/controllers/auth.js</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * @fileoverview Controller untuk autentikasi pengguna (register, login, refresh token, logout)
  * @module controllers/auth.js
  */
@@ -24,12 +111,12 @@ const prisma = require("../../prisma/prisma");
  * @route POST /api/v1/register
  * @param {Request} req - Express Request Object (berisi `user_nama`, `user_email`, `user_password`, dan `user_confirm_password`)
  * @param {Response} res - Express Response Object
- * @returns {Promise<void>} JSON Response
+ * @returns {Promise&lt;void>} JSON Response
  *
  * @throws {ValidationError} Jika validasi input gagal
  * @throws {Error} Jika terjadi kesalahan pada server
  *
- * @example <caption>Request Body</caption>
+ * @example &lt;caption>Request Body&lt;/caption>
  * {
  *   "user_nama": "Fabaon",
  *   "user_email": "fabaon55@gmail.com",
@@ -37,13 +124,13 @@ const prisma = require("../../prisma/prisma");
  *   "user_confirm_password": "123456"
  * }
  *
- * @example <caption>Response Success (201)</caption>
+ * @example &lt;caption>Response Success (201)&lt;/caption>
  * {
  *   "message": "Sukses Register, silahkan login",
  *   "result": null
  * }
  *
- * @example <caption>Response Error (400)</caption>
+ * @example &lt;caption>Response Error (400)&lt;/caption>
  * {
  *   "message": "Email sudah terdaftar",
  *   "result": null
@@ -93,21 +180,21 @@ const register = async (req, res) => {
  * @route POST /api/v1/login
  * @param {Request} req - Express Request Object (berisi `user_email` dan `user_password`)
  * @param {Response} res - Express Response Object
- * @returns {Promise<void>} JSON Response
+ * @returns {Promise&lt;void>} JSON Response
  *
- * @example <caption>Request Body</caption>
+ * @example &lt;caption>Request Body&lt;/caption>
  * {
  *   "user_email": "fabaon55@gmail.com",
  *   "user_password": "123456"
  * }
  *
- * @example <caption>Response Success (200)</caption>
+ * @example &lt;caption>Response Success (200)&lt;/caption>
  * {
  *   "message": "Sukses Login",
- *   "result": "<JWT Access Token>"
+ *   "result": "&lt;JWT Access Token>"
  * }
  *
- * @example <caption>Response Error (400)</caption>
+ * @example &lt;caption>Response Error (400)&lt;/caption>
  * {
  *   "message": "Email belum terdaftar",
  *   "result": null
@@ -173,15 +260,15 @@ const login = async (req, res) => {
  * @route GET /api/v1/refresh-token
  * @param {Request} req - Express Request Object (berisi cookie `refreshToken`)
  * @param {Response} res - Express Response Object
- * @returns {Promise<void>} JSON Response
+ * @returns {Promise&lt;void>} JSON Response
  *
- * @example <caption>Response Success (200)</caption>
+ * @example &lt;caption>Response Success (200)&lt;/caption>
  * {
  *   "message": "Refresh Token Sukses",
- *   "result": "<JWT Access Token>"
+ *   "result": "&lt;JWT Access Token>"
  * }
  *
- * @example <caption>Response Error (403)</caption>
+ * @example &lt;caption>Response Error (403)&lt;/caption>
  * {
  *   "message": "Invalid Refresh Token"
  * }
@@ -229,9 +316,9 @@ const refreshToken = async (req, res) => {
  * @route POST /api/v1/logout
  * @param {Request} req - Express Request Object (berisi cookie `refreshToken`)
  * @param {Response} res - Express Response Object
- * @returns {Promise<void>} JSON Response
+ * @returns {Promise&lt;void>} JSON Response
  *
- * @example <caption>Response Success (200)</caption>
+ * @example &lt;caption>Response Success (200)&lt;/caption>
  * {
  *   "message": "Success Logout"
  * }
@@ -263,3 +350,33 @@ const logout = async (req, res) => {
 };
 
 module.exports = { register, login, refreshToken, logout };
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+
+</body>
+</html>
