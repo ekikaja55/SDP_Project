@@ -508,15 +508,6 @@ Akses:
 
 ---
 
-## **Tim Pengembang**
-
-| Nama                     | NRP       | Peran              | Kontribusi Utama                 |
-| ------------------------ | --------- | ------------------ | -------------------------------- |
-| Rizki Arkant Pratama     | 223011701 | Frontend Developer | Implementasi SvelteKit UI & Auth |
-| Alender Rico Wong        | 223011699 | Frontend Developer | UI Page Login & Register         |
-| Fabian Kurniawan Limanto | 223011701 | Backend Developer  | API Auth Express & JWT           |
-
----
 
 ## **Catatan Teknis**
 
