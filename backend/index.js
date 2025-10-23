@@ -14,7 +14,7 @@
  *
  * @example
  * // Menjalankan server secara lokal:
- * node index.js
+ * npx nodemon index.js
  *
  * // Output di terminal:
  * Example app listening on port 3000!
@@ -28,7 +28,7 @@
  *   "message": "Sukses ambil todolist",
  *   "result": [
  *     {
- *       "id": "1",
+ *       "id": "string",
  *       "todolist_desc": "Belajar Express",
  *       "todolist_status": "Belum Dikerjakan"
  *     }
@@ -42,12 +42,6 @@
  *   "result": null
  * }
  *
- * @example
- * // Response error jika endpoint tidak ditemukan:
- * {
- *   "status": false,
- *   "message": "Route not found"
- * }
  */
 
 const express = require("express");

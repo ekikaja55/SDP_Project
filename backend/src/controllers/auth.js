@@ -52,7 +52,7 @@ const prisma = require("../../prisma/prisma");
 const register = async (req, res) => {
   try {
     const { user_nama, user_email, user_password, user_confirm_password } =
-      await userSchema.validateAsync(req.body, { abortEarly: false });
+    await userSchema.validateAsync(req.body, { abortEarly: false });
 
     const adaUser = await prisma.user.findFirst({
       where: { user_email: user_email },
@@ -75,6 +75,8 @@ const register = async (req, res) => {
       .status(201)
       .json({ message: "Sukses Register, silahkan login", result: null });
   } catch (error) {
+    console.log(error);
+
     if (error.isJoi) {
       return res.status(400).json({
         message: error.details.map((detail) => detail.message),
