@@ -1,5 +1,6 @@
 <!-- src/routes/cart/+page.svelte -->
 <script lang="ts">
+	// test ini rico
 	import { goto } from '$app/navigation';
 	import { cartStore, grandTotalStore } from '$lib';
 	import { onMount } from 'svelte';
