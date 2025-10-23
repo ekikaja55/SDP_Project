@@ -1,8 +1,10 @@
-// src/lib/stores/userStore.ts
-// ini handling  function dan reactive state untuk user ( login, register, logout)
+/**
+ * src/lib/stores/userStore.ts
+ *
+ * ini handling  function dan reactive state untuk user ( login, register, logout)
+ */
 
 // handling functiion axios
-import { goto } from '$app/navigation';
 import {
 	api,
 	errorHandler,
@@ -14,12 +16,13 @@ import {
 	type UserAuth
 } from '$lib';
 import { jwtDecode } from 'jwt-decode';
-import { writable } from 'svelte/store';
+import { writable, type Writable } from 'svelte/store';
 
 // inisiasi state modelan redux
-export const userStore = writable<UserAuth | null>(null);
-export const loadingUser = writable(false);
-export const messageHandleUser = writable<MessageState | null>(null);
+
+export const userStore: Writable<UserAuth | null> = writable<UserAuth | null>(null);
+export const loadingUser: Writable<boolean> = writable(false);
+export const messageHandleUser: Writable<MessageState | null> = writable<MessageState | null>(null);
 
 /**
  * Function Handle Store Login User
@@ -59,12 +62,11 @@ export async function login(data: LoginDTO) {
 		console.log(
 			'fn login userStore -> isi token hasil fetch\n' + JSON.stringify(res.data.result, null, 2)
 		);
-    const dataUser: UserAuth = jwtDecode(res.data.result);
+		const dataUser: UserAuth = jwtDecode(res.data.result);
 		console.log('isi access token setelah di decode\n' + JSON.stringify(dataUser, null, 2));
 		// userStore.set(dataUser);
-    window.location.href = `/dashboard/${dataUser.user_role}`;
-    // goto(`/dashboard/${dataUser.user_role}`)
-
+		window.location.href = `/dashboard/${dataUser.user_role}`;
+		// goto(`/dashboard/${dataUser.user_role}`)
 	} catch (err: unknown) {
 		messageHandleUser.set({
 			type: 'error',

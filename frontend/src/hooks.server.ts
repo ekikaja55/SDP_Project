@@ -12,7 +12,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	console.log('Token ditemukan?', token ? 'YA' : 'TIDAK');
 
 	if (token) {
-		try {
+		try { 
 			const user = jwtDecode<UserAuth>(token);
 			event.locals.user = user;
 			console.log('============ DECODE TOKEN BERHASIL ============');

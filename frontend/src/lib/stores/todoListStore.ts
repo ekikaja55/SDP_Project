@@ -1,5 +1,8 @@
-// src/lib/stores/todoListStore.ts
-// ini handling  function dan reactive state untuk crud todolist
+/**
+ * src/lib/stores/todoListStore.ts
+ *
+ * ini handling  function dan reactive state untuk crud todolist
+ */
 
 import {
 	api,
@@ -11,12 +14,11 @@ import {
 	type Todolist,
 	type TodoListDTO
 } from '$lib';
-import { writable } from 'svelte/store';
+import { writable, type Writable } from 'svelte/store';
 
-export const todoListStore = writable<Todolist[] | null>(null);
-export const todoListSingleStore = writable<Todolist | null>(null);
-export const loadingTodo = writable(false);
-export const messageHandleTodo = writable<MessageState | null>(null);
+export const todoListStore: Writable<Todolist[] | null> = writable<Todolist[] | null>(null);
+export const loadingTodo:Writable<boolean> = writable(false);
+export const messageHandleTodo: Writable<MessageState | null> = writable<MessageState | null>(null);
 
 // handling get all todo
 export async function getAllTodo(status?: string) {
@@ -124,15 +126,5 @@ export async function deleteTodo(id: string) {
 		});
 	} finally {
 		loadingTodo.set(false);
-	}
-}
-
-// handling refetching setelah insert update delete
-async function refetchTodo() {
-	try {
-		const res = await api.get<ApiResponse<Todolist[]>>('/todolist');
-		todoListStore.set(res.data.result);
-	} catch (err) {
-		console.error(err);
 	}
 }

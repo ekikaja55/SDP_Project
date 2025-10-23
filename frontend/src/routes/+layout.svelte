@@ -12,6 +12,7 @@
 
 	function goHome() {
 		window.location.href = '/';
+    // goto('')
 	}
 	function goDashboard() {
 		window.location.href = `/dashboard/${data.user?.user_role}`;

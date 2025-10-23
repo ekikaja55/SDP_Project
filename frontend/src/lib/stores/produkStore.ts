@@ -13,12 +13,12 @@ import {
 	type Produk,
 	type ProdukDTO
 } from '$lib';
-import { writable } from 'svelte/store';
+import { writable, type Writable } from 'svelte/store';
 
-export const produkStore = writable<Produk[]>([]);
-export const produkCatalogStore = writable<Produk[]>([]);
-export const loadingProduk = writable(false);
-export const messageHandleProduk = writable<MessageState | null>(null);
+export const produkStore: Writable<Produk[]> = writable<Produk[]>([]);
+export const produkCatalogStore:Writable<Produk[]> = writable<Produk[]>([]);
+export const loadingProduk:Writable<boolean>   = writable(false);
+export const messageHandleProduk: Writable<MessageState | null> = writable<MessageState | null>(null);
 
 // GET ALL PRODUK
 export async function getAllProduk(searchNama?: string, filterStok?: string) {

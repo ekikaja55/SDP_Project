@@ -35,3 +35,13 @@ export interface ProdukDTO {
 
 // optional: interface untuk update kenapa partial? biar semua fieldnya bisa opsional
 // export interface ProdukUpdateDTO extends Partial<ProdukCreateDTO> {}
+
+// interface khusus handling cart
+export interface CartProduk {
+	id: string;
+	produk_nama: string;
+	produk_gambar: string | File;
+	qty?:number;
+  produk_harga: number;
+  produk_total?:number;
+}

@@ -1,14 +1,23 @@
 <!-- src/routes/catalog/+page.svelte -->
 <!-- pages untuk katalog produk -->
 <script lang="ts">
-	import { getKatalogProduk, loadingGlobal, produkCatalogStore, type Produk } from '$lib';
+	import { goto } from '$app/navigation';
+	import {
+		cartStore,
+		getKatalogProduk,
+		loadingGlobal,
+		produkCatalogStore,
+		type Produk
+	} from '$lib';
 	import { onMount } from 'svelte';
 
 	const BASE_URL = import.meta.env.VITE_API_URL_UPLOADS;
 
-	let searchNama:string = '';
-	let filterHarga:string = '';
-	let filterRating:string = '';
+	let searchNama: string = '';
+	let filterHarga: string = '';
+	let filterRating: string = '';
+
+	$: console.log('length cartStore :', $cartStore.length);
 
 	onMount(() => {
 		refreshCatalog();
@@ -25,12 +34,9 @@
 		refreshCatalog();
 	}
 
-	function handleAddToCart(produk: Produk) {
-		console.log('Add to cart:', produk.produk_nama);
-	}
 
-	function handleBuyNow(produk: Produk) {
-		console.log('Beli sekarang:', produk.produk_nama);
+	function openCart() {
+		goto('cart');
 	}
 </script>
 
@@ -47,7 +53,7 @@
 
 	<select
 		bind:value={filterHarga}
-		class="rounded-lg border border-gray-300 px-4 py-2 text-sm"
+		class="rounded-lg border border-gray-300 px-10 py-2 text-sm"
 		on:change={refreshCatalog}
 	>
 		<option value="">Urutkan Harga</option>
@@ -57,7 +63,7 @@
 
 	<select
 		bind:value={filterRating}
-		class="rounded-lg border border-gray-300 px-4 py-2 text-sm"
+		class="rounded-lg border border-gray-300 px-10 py-2 text-sm"
 		on:change={refreshCatalog}
 	>
 		<option value="">Urutkan Rating</option>
@@ -70,6 +76,12 @@
 		on:click={resetFilter}
 	>
 		Reset Filter
+	</button>
+	<button
+		class="rounded-lg bg-blue-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-300"
+		on:click={() => openCart()}
+	>
+		Lihat Cart : {$cartStore.length}
 	</button>
 </div>
 
@@ -100,15 +112,9 @@
 					<div class="mt-3 flex justify-between gap-3">
 						<button
 							class="w-full rounded-lg bg-blue-600 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
-							on:click={() => handleAddToCart(produk)}
+							on:click={() => cartStore.add(produk)}
 						>
 							Add to Cart
-						</button>
-						<button
-							class="w-full rounded-lg bg-green-600 py-2 text-sm font-semibold text-white transition hover:bg-green-700"
-							on:click={() => handleBuyNow(produk)}
-						>
-							Beli Sekarang
 						</button>
 					</div>
 				</div>

@@ -6,3 +6,4 @@ export * from './loadingHandlingStore';
 export * from './userStore';
 export * from './produkStore';
 export * from './todoListStore';
+export * from './cartStore';
