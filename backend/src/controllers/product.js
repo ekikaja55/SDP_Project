@@ -50,17 +50,14 @@ const getAllProducts = async (req, res) => {
   try {
     const { nama, filterstok } = req.query;
     const whereClause = {};
-
     if (nama && nama.trim() !== "") {
       whereClause.produk_nama = { contains: nama, mode: "insensitive" };
     }
-
     if (filterstok) {
       const stok = filterstok.toLowerCase();
       if (stok === "habis") whereClause.produk_stok = 0;
       else if (stok === "ada") whereClause.produk_stok = { gt: 0 };
     }
-
     const produkList = await prisma.produk.findMany({
       where: whereClause,
       orderBy: { createdAt: "desc" },

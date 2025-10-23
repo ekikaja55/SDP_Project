@@ -21,6 +21,7 @@ model User {
 }
 
 type Transaksi {
+  transaksi_id          String            @default(uuid())
   transaksi_img         String
   transaksi_grand_total BigInt
   transaksi_status      String
@@ -36,7 +37,7 @@ type TransaksiDetail {
 
 model Produk {
   id                String    @id @default(auto()) @map("_id") @db.ObjectId
-  produk_nama       String
+  produk_nama       String    @unique
   produk_gambar     String?
   produk_stok       Int
   produk_harga      BigInt

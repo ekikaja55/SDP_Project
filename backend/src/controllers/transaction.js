@@ -1,0 +1,223 @@
+const prisma = require("../../prisma/prisma");
+const insertTransaction = async (req, res) => {
+  try {
+    const user = req.userLogin;
+    let { transaksi_grand_total, transaksi_detail } = req.body;
+    if (
+      !transaksi_detail ||
+      !Array.isArray(transaksi_detail) ||
+      transaksi_detail.length === 0
+    ) {
+      return res.status(400).json({
+        message: "Transaksi detail tidak boleh kosong",
+        result: null,
+      });
+    }
+    for (const item of transaksi_detail) {
+      const produk = await prisma.produk.findFirst({
+        where: { produk_nama: item.detail_nama },
+      });
+      if (!produk) {
+        return res.status(404).json({
+          message: `Produk ${item.detail_nama} tidak ditemukan`,
+          result: null,
+        });
+      }
+      if (produk.produk_stok < item.detail_stok) {
+        return res.status(400).json({
+          message: `Stok produk ${item.detail_nama} tidak mencukupi`,
+          result: null,
+        });
+      }
+      await prisma.produk.update({
+        where: { produk_nama: item.detail_nama },
+        data: {
+          produk_stok: produk.produk_stok - item.detail_stok,
+        },
+      });
+    }
+    const gambar = req.file.filename;
+    transaksi_detail = transaksi_detail.map((d) => ({
+      ...d,
+      detail_stok: Number(d.detail_stok),
+      detail_sub_total: Number(d.detail_sub_total),
+    }));
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        user_transaksi: {
+          push: {
+            transaksi_img: gambar,
+            transaksi_grand_total,
+            transaksi_status: "Belum Dikonfirmasi",
+            transaksi_detail,
+          },
+        },
+      },
+    });
+    await prisma.notifikasi.create({
+      data: {
+        notifikasi_nama: "Pesanan Baru",
+        notifikasi_isi: "Pesanan baru telah dipesan oleh " + user.user_nama,
+        notifikasi_isread: "False",
+      },
+    });
+    return res
+      .status(200)
+      .json({ message: "Sukses tambah transaksi", result: null });
+  } catch (error) {
+    console.log(error.message);
+
+    return res
+      .status(500)
+      .json({ message: "Terjadi kesalahan pada server", result: null });
+  }
+};
+const getStatusCustomer = async (req, res) => {
+  try {
+    const { filterStatus } = req.query;
+    const user = await prisma.user.findUnique({
+      where: { id: req.userLogin.id },
+      select: {
+        user_transaksi: true,
+      },
+    });
+    console.log(user);
+
+    let listTransaksi = user.user_transaksi;
+    if (filterStatus) {
+      listTransaksi = listTransaksi.filter(
+        (t) =>
+          t.transaksi_status === filterStatus &&
+          t.transaksi_status !== "Pesanan Dibatalkan" &&
+          t.transaksi_status !== "Pesanan Selesai"
+      );
+    } else {
+      listTransaksi = listTransaksi.filter(
+        (t) =>
+          t.transaksi_status !== "Pesanan Dibatalkan" &&
+          t.transaksi_status !== "Pesanan Selesai"
+      );
+    }
+    console.log(listTransaksi);
+
+    if (listTransaksi.length <= 0)
+      return res.status(404).json({ message: "Tidak ada data", result: null });
+    const semuaProduk = await prisma.produk.findMany({
+      select: {
+        produk_nama: true,
+        produk_gambar: true,
+      },
+    });
+    const transaksiLengkap = listTransaksi.map((t) => ({
+      ...t,
+      transaksi_detail: t.transaksi_detail.map((d) => {
+        const produk = semuaProduk.find((p) => p.produk_nama === d.detail_nama);
+        return {
+          ...d,
+          produk_gambar: produk ? produk.produk_gambar : null,
+        };
+      }),
+    }));
+    const data = JSON.parse(
+      JSON.stringify(transaksiLengkap, (_, value) =>
+        typeof value === "bigint" ? value.toString() : value
+      )
+    );
+    res.status(200).json({ message: "Sukses ambil data", result: data });
+  } catch (error) {
+    console.log(error);
+
+    return res
+      .status(500)
+      .json({ message: "Terjadi kesalahan pada server", result: null });
+  }
+};
+const getHistoriCustomer = async (req, res) => {
+  try {
+    const { filterStatus } = req.query;
+    const user = await prisma.user.findUnique({
+      where: { id: req.userLogin.id },
+      select: {
+        user_transaksi: true,
+      },
+    });
+    let listTransaksi = user.user_transaksi;
+    if (filterStatus) {
+      listTransaksi = listTransaksi.filter(
+        (t) => t.transaksi_status === filterStatus
+      );
+    }
+    if (listTransaksi.length <= 0)
+      return res.status(404).json({ message: "Tidak ada data", result: null });
+    const semuaProduk = await prisma.produk.findMany({
+      select: {
+        produk_nama: true,
+        produk_gambar: true,
+      },
+    });
+    const transaksiLengkap = listTransaksi.map((t) => ({
+      ...t,
+      transaksi_detail: t.transaksi_detail.map((d) => {
+        const produk = semuaProduk.find((p) => p.produk_nama === d.detail_nama);
+        return {
+          ...d,
+          produk_gambar: produk ? produk.produk_gambar : null,
+        };
+      }),
+    }));
+    const data = JSON.parse(
+      JSON.stringify(transaksiLengkap, (_, value) =>
+        typeof value === "bigint" ? value.toString() : value
+      )
+    );
+    res.status(200).json({ message: "Sukses ambil data", result: data });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Terjadi kesalahan pada server", result: null });
+  }
+};
+
+const ubahStatusTransaksi = async (req, res) => {
+  try {
+    const userId = req.userLogin.id;
+    const { transaksi_id } = req.params;
+    const { transaksi_status } = req.body;
+    const user = await prisma.user.findFirst({
+      where: { user_transaksi: { some: { transaksi_id } } },
+      select: { id: true, user_transaksi: true },
+    });
+
+    if (!user) return res.status(404).json({ message: "User tidak ditemukan" });
+    const transaksiBaru = user.user_transaksi.map((t) => {
+      console.log("Perbandingan:", t.transaksi_id, transaksi_id);
+      return t.transaksi_id === transaksi_id
+        ? { ...t, transaksi_status: transaksi_status }
+        : t;
+    });
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { user_transaksi: transaksiBaru },
+    });
+    res
+      .status(200)
+      .json({ message: "Status transaksi berhasil diubah", result: null });
+  } catch (error) {
+    console.log(error.message);
+
+    return res
+      .status(500)
+      .json({ message: "Terjadi kesalahan pada server", result: null });
+  }
+};
+
+const getLaporanPenjualanAdmin = async (req, res) => {};
+
+module.exports = {
+  insertTransaction,
+  getStatusCustomer,
+  getHistoriCustomer,
+  getLaporanPenjualanAdmin,
+  ubahStatusTransaksi,
+};

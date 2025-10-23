@@ -51,7 +51,13 @@
  */
 
 const express = require("express");
-const { authRouter, productRouter, todolistRouter } = require("./src/routes");
+const {
+  authRouter,
+  productRouter,
+  todolistRouter,
+  transactionRouter,
+  reviewRouter,
+} = require("./src/routes");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const path = require("path");
@@ -80,6 +86,8 @@ app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/product", productRouter);
 app.use("/api/v1/todolist", todolistRouter);
+app.use("/api/v1/transaction", transactionRouter);
+app.use("/api/v1/review", reviewRouter);
 
 // Jalankan server
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
