@@ -122,6 +122,9 @@ const login = async (req, res) => {
     const user = await prisma.user.findFirst({
       where: { user_email: user_email },
     });
+
+    console.log("isi user : ", user);
+
     if (!user)
       return res.status(400).json({ message: "Email belum terdaftar" });
 
@@ -172,6 +175,8 @@ const login = async (req, res) => {
       .status(200)
       .json({ message: "Sukses Login", result: accessToken });
   } catch (error) {
+    console.log(error.message);
+
     return res.status(401).json({ message: "Gagal Login" });
   }
 };
