@@ -39,7 +39,7 @@
 	}
 </script>
 
-<h2 class="mb-4 text-2xl font-semibold text-gray-800">Status Pemesanan</h2>
+<h2 class="mb-4 text-2xl font-semibold text-gray-800">Transaction Status</h2>
 
 <div class="mb-6 flex items-center justify-between">
 	<label class="font-medium text-gray-700">Filter Status:</label>
@@ -71,12 +71,14 @@
 				<div class="flex flex-col md:flex-row md:gap-4">
 					<div class="w-full space-y-3 md:w-3/4">
 						<span
-							class="rounded-full px-3 py-2 text-sm font-bold bg-blue-600 text-white border border-blue-200"
+							class="max-w-full rounded-full border border-blue-200 bg-blue-500 px-3 py-2 text-sm font-bold text-white md:text-center"
 						>
-							ID Transaksi : {item.transaksi_id}
+							id : {item.transaksi_id}
 						</span>
 						{#each item.transaksi_detail as produk}
-							<div class="mt-3 flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 p-3">
+							<div
+								class="mt-3 flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 p-3"
+							>
 								<img
 									src={`${BASE_URL}/uploads/${produk.produk_gambar}`}
 									alt={produk.detail_nama}
