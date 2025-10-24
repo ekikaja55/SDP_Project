@@ -1,5 +1,3 @@
-<!--src/routes/dashboard/customer/status_pemesanan/+page.svelte -->
-<!-- halaman untuk cek status pemesanan (customer)  -->
 <script lang="ts">
 	import { getStatusTransaksi, loadingTrans, transaksiStore } from '$lib';
 	import { onMount } from 'svelte';
@@ -43,7 +41,6 @@
 
 <h2 class="mb-4 text-2xl font-semibold text-gray-800">Status Pemesanan</h2>
 
-<!-- Filter Dropdown -->
 <div class="mb-6 flex items-center justify-between">
 	<label class="font-medium text-gray-700">Filter Status:</label>
 	<select
@@ -67,46 +64,52 @@
 	</div>
 {:else if $transaksiStore && $transaksiStore.length > 0}
 	<div class="flex flex-col gap-6">
-		{#each $transaksiStore as item, index}
+		{#each $transaksiStore as item}
 			<div
 				class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm transition hover:shadow-md"
 			>
-				<div class="mb-3 flex items-center justify-between">
-					<h3 class="text-lg font-semibold text-gray-800">{generateId(index + 1)}</h3>
-					<span
-						class={`rounded-full px-3 py-1 text-sm font-medium ${getStatusColor(item.transaksi_status)}`}
-					>
-						{item.transaksi_status}
-					</span>
-				</div>
-
-				<p class="mb-4 text-gray-700">
-					<span class="font-medium">Grand Total:</span>
-					<span class="ml-1 font-semibold text-blue-600">Rp {item.transaksi_grand_total}</span>
-				</p>
-
-				<div class="space-y-3">
-					<p class="font-semibold text-gray-800">Detail Pesanan:</p>
-					<div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+				<div class="flex flex-col md:flex-row md:gap-4">
+					<div class="w-full space-y-3 md:w-3/4">
 						{#each item.transaksi_detail as produk}
-							<div
-								class="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 p-3 transition hover:bg-gray-100"
-							>
+							<div class="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 p-3">
 								<img
 									src={`${BASE_URL}/uploads/${produk.produk_gambar}`}
 									alt={produk.detail_nama}
-									class="h-16 w-16 rounded-lg border object-cover"
+									class="h-16 w-16 flex-shrink-0 rounded-lg border object-cover"
 								/>
-								<div class="flex flex-col text-sm text-gray-700">
-									<span class="font-medium text-gray-900">{produk.detail_nama}</span>
-									<span>Harga: Rp {produk.produk_harga}</span>
-									<span>Qty: {produk.detail_stok}</span>
-									<span class="font-semibold text-blue-600"
-										>Subtotal: Rp {produk.detail_sub_total}</span
-									>
+								<div class="flex-grow">
+									<span class="block font-medium text-gray-900">{produk.detail_nama}</span>
+									<div class="flex gap-4 text-sm text-gray-600">
+										<span>Qty: {produk.detail_stok}</span>
+										<span>Harga: Rp {produk.produk_harga}</span>
+									</div>
+								</div>
+								<div class="flex-shrink-0 text-right">
+									<span class="text-sm text-gray-500">Subtotal</span>
+									<p class="font-semibold text-blue-600">
+										Rp {produk.detail_sub_total}
+									</p>
 								</div>
 							</div>
 						{/each}
+					</div>
+
+					<div
+						class="mt-4 flex w-full flex-row items-center justify-between border-t pt-4 md:mt-0 md:w-1/4 md:flex-col md:items-end md:justify-between md:border-none md:pt-0"
+					>
+						<span
+							class={`rounded-full px-3 py-1 text-sm font-medium ${getStatusColor(
+								item.transaksi_status
+							)}`}
+						>
+							{item.transaksi_status}
+						</span>
+						<div class="text-right">
+							<span class="text-sm text-gray-500">Grand Total</span>
+							<p class="text-lg font-semibold text-blue-600">
+								Rp {item.transaksi_grand_total}
+							</p>
+						</div>
 					</div>
 				</div>
 			</div>
