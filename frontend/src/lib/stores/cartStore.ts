@@ -1,6 +1,8 @@
 import { browser } from '$app/environment';
 import type { CartProduk } from '$lib';
-import { derived, get, writable } from 'svelte/store';
+import { derived, get, writable, type Writable } from 'svelte/store';
+
+export const msgCart: Writable<boolean> = writable<boolean>(false);
 
 function createCartStore() {
 	let initial: CartProduk[] = [];
@@ -12,7 +14,6 @@ function createCartStore() {
 	}
 
 	const store = writable<CartProduk[]>(initial);
-
 	// persist otomatis
 	store.subscribe((value) => {
 		if (browser) {
@@ -36,6 +37,7 @@ function createCartStore() {
 
 		add(produk: CartProduk) {
 			console.log('add cart:', produk);
+			// msgCart.set(false);
 			const current = get(store);
 			const exist = current.find((item) => item.id === produk.id);
 
@@ -65,6 +67,7 @@ function createCartStore() {
 				};
 				updated = [...current, newItem];
 				console.log('produk baru ditambahkan');
+				msgCart.set(true);
 			}
 
 			store.set(updated);
@@ -125,9 +128,7 @@ function createCartStore() {
 			store.set([]);
 			if (browser) localStorage.setItem('cartList', JSON.stringify([]));
 			console.log('cart cleared');
-		},
-
-
+		}
 	};
 }
 

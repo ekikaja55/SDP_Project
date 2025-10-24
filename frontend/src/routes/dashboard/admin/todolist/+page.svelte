@@ -60,8 +60,8 @@
 	}
 </script>
 
-<div class="p-4">
-	<h1 class="mb-4 text-xl font-bold">Halaman MANAGE TODOLIST</h1>
+<div class="space-y-8">
+	<h1 class="text-2xl font-bold mb-4">MANAGE TODOLIST</h1>
 
 	<form
 		on:submit|preventDefault={handleSubmit}

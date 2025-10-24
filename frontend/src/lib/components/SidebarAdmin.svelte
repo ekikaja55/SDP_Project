@@ -18,8 +18,8 @@
 			<a href="/dashboard/admin/todolist" class="rounded-lg px-3 py-2 transition hover:bg-gray-800">
 				Manage Todolist
 			</a>
-			<a href="/dashboard/admin/settings" class="rounded-lg px-3 py-2 transition hover:bg-gray-800">
-				Settings
+			<a href="/dashboard/admin/transaction" class="rounded-lg px-3 py-2 transition hover:bg-gray-800">
+				Manage Transaction
 			</a>
 		</nav>
 	</div>

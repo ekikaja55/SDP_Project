@@ -6,10 +6,12 @@
 		cartStore,
 		getKatalogProduk,
 		loadingGlobal,
+		msgCart,
 		produkCatalogStore,
 		type CartProduk
 	} from '$lib';
 	import { onMount } from 'svelte';
+	import NotificationModal from '../../lib/components/NotificationModal.svelte';
 	export let data;
 	const BASE_URL = import.meta.env.VITE_API_URL_UPLOADS;
 
@@ -51,6 +53,14 @@
 		cartStore.add(produk);
 	}
 </script>
+
+{#if $msgCart}
+    <NotificationModal
+			message="Sukses tambah cart"
+			type="success"
+			onClose={() => msgCart.set(false)}
+		/>
+{/if}
 
 <h1 class="my-6 text-center text-2xl font-semibold">Katalog Produk</h1>
 

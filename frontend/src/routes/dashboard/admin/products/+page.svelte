@@ -67,8 +67,8 @@
 	}
 </script>
 
-<div class="space-y-8 p-6">
-	<h1 class="text-2xl font-semibold text-gray-800">Manage Produk</h1>
+<div class="space-y-8">
+	<h1 class="text-2xl font-bold mb-4">MANAGE PRODUK</h1>
 
 	{#if $messageHandleProduk}
 		<div

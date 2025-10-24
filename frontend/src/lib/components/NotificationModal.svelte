@@ -3,7 +3,7 @@
 
 	export let message: string = '';
 	export let type: 'success' | 'error';
-	export let duration: number = 2500;
+	// export let duration: number = 2500;
 	export let onClose: () => void;
 
 	let visible = true;

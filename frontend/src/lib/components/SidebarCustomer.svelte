@@ -30,6 +30,12 @@
 			>
 				Cek History Pemesanan
 			</a>
+      <a
+				href="/dashboard/customer/review_rating"
+				class="rounded-lg px-3 py-2 transition hover:bg-blue-800"
+			>
+				Review & Rating Produk
+			</a>
 		</nav>
 	</div>
 
