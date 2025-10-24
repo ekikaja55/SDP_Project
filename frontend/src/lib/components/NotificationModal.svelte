@@ -1,65 +1,54 @@
-<!-- src/lib/components/notificationModal.svelte -->
 <script lang="ts">
 	import { fade, fly } from 'svelte/transition';
 
 	export let message: string = '';
 	export let type: 'success' | 'error';
 	export let duration: number = 2500;
-	export let onClose: () => void; // callback prop modern
+	export let onClose: () => void;
 
 	let visible = true;
-	let timeout: ReturnType<typeof setTimeout>;
-
-	$: if (visible) {
-		clearTimeout(timeout);
-		timeout = setTimeout(() => close(), duration);
-	}
 
 	function close() {
-		clearTimeout(timeout);
 		visible = false;
 		onClose?.();
 	}
 </script>
 
 {#if visible}
-	<!-- Overlay -->
 	<div
 		role="button"
 		tabindex="0"
 		in:fade={{ duration: 200 }}
 		out:fade={{ duration: 200 }}
-		class="fixed inset-0 z-50 flex cursor-default items-center justify-center bg-black/40"
+		class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
 		on:click={close}
 		on:keydown={(e) => e.key === 'Enter' && close()}
-		aria-label="Tutup notifikasi"
 	>
-		<!-- Modal -->
 		<div
-			in:fly={{ y: 40, duration: 200 }}
-			out:fly={{ y: -40, duration: 150 }}
+			in:fly={{ y: 30, duration: 200 }}
+			out:fly={{ y: -30, duration: 150 }}
 			on:click|stopPropagation
-			class="w-[90%] max-w-sm rounded-xl p-6 text-center shadow-lg
-				{type === 'success' ? 'bg-green-600' : ''}
-				{type === 'error' ? 'bg-red-600' : ''}
-				text-white"
+			class="w-[90%] max-w-sm rounded-2xl p-6 text-center shadow-xl
+        transition-all duration-300
+        {type === 'success'
+				? 'border border-zinc-300 bg-zinc-200 text-green-800'
+				: 'border border-zinc-300 bg-zinc-200 text-red-800'}"
 		>
-			<p class="mb-2 text-lg font-semibold">
-				{#if type === 'success'}
-					✅ Berhasil
-				{:else}
-					❌ Gagal
-				{/if}
+			<p class="mb-3 text-lg font-semibold">
+				{type === 'success' ? 'Berhasil' : 'Gagal'}
 			</p>
 
-			<p>{message}</p>
+			<p class="text-sm">{message}</p>
 
 			<button
-				class="mt-4 rounded bg-white/20 px-4 py-1 transition hover:bg-white/30"
+				class="mt-5 rounded-lg border px-5 py-1.5 font-medium transition
+				{type === 'success'
+					? 'border-green-600 text-green-700 hover:bg-green-600 hover:text-white'
+					: 'border-red-600 text-red-700 hover:bg-red-600 hover:text-white'}"
 				on:click={close}
 			>
 				Tutup
 			</button>
-		</div>
+    </div>
 	</div>
 {/if}

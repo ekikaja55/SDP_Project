@@ -1,17 +1,62 @@
 <!-- src/routes/cart/+page.svelte -->
 <script lang="ts">
-	// test ini rico
 	import { goto } from '$app/navigation';
-	import { cartStore, grandTotalStore } from '$lib';
+	import {
+		addTransaksi,
+		cartStore,
+		grandTotalStore,
+		loadingTrans,
+		messageHandleTrans,
+		type TransaksiDTO,
+		type TransaksiDetail
+	} from '$lib';
 	import { onMount } from 'svelte';
+	import NotificationModal from '../../lib/components/NotificationModal.svelte';
 	const BASE_URL = import.meta.env.VITE_API_URL_UPLOADS;
+
+	let metodePembayaran = '';
+	let transaksiImg: File | null = null;
 
 	onMount(() => {
 		console.log('page cart fn OnMount() -> masuk');
 	});
 
-	function handleCheckout() {
+	function handleFileChange(e: Event) {
+		const target = e.target as HTMLInputElement;
+		if (target.files && target.files.length > 0) {
+			transaksiImg = target.files[0];
+			console.log('File transaksi_img dipilih:', transaksiImg.name);
+		}
+	}
+
+	function handleMetodeChange(e: Event) {
+		const target = e.target as HTMLSelectElement;
+		metodePembayaran = target.value;
+		console.log('Metode pembayaran dipilih:', metodePembayaran);
+	}
+
+	async function handleCheckout() {
 		console.log('Checkout:', $cartStore);
+		console.log('Metode pembayaran:', metodePembayaran);
+		console.log('File transaksi_img:', transaksiImg);
+
+		const temp: TransaksiDetail[] = $cartStore.map((item) => {
+			return {
+				detail_nama: item.produk_nama ?? 'test dummy',
+				detail_stok: item.qty?.toString() ?? '0',
+				detail_sub_total: item.produk_total?.toString() ?? '0'
+			};
+		});
+
+		const data: TransaksiDTO = {
+			transaksi_img: transaksiImg ?? 'gamasuk_gambar',
+			transaksi_grand_total: $grandTotalStore.toLocaleString(),
+			transaksi_detail: [...temp]
+		};
+
+		console.log('array temp setelah diolah', temp);
+		console.log('array final', data);
+		await addTransaksi(data);
 	}
 
 	function handleBack() {
@@ -22,9 +67,23 @@
 	function updateQty(id: string, qty: number) {
 		cartStore.setQty(id, qty);
 	}
+
+	// let open = false;
+	// function openModal() {
+	// 	open = true;
+	// }
 </script>
 
 <div class="min-h-screen bg-gray-100 p-6">
+	{#if $messageHandleTrans}
+		<NotificationModal
+			message={$messageHandleTrans.message}
+			type={$messageHandleTrans.type}
+			onClose={() => messageHandleTrans.set(null)}
+		/>
+	{/if}
+
+
 	<div class="mx-auto max-w-4xl rounded-2xl bg-white p-6 shadow">
 		<div class="mb-6 flex justify-between">
 			<button
@@ -88,11 +147,57 @@
 				</p>
 			</div>
 
+			<div class="mt-6">
+				<label class="mb-2 block font-semibold text-gray-700">Metode Pembayaran</label>
+				<select
+					class="w-full rounded-lg border p-2"
+					on:change={handleMetodeChange}
+					bind:value={metodePembayaran}
+				>
+					<option value="">-- Pilih Metode Pembayaran --</option>
+					<option value="qris">QRIS</option>
+					<option value="bri">Transfer BRI</option>
+					<option value="bca">Transfer BCA</option>
+				</select>
+
+				{#if metodePembayaran === 'qris'}
+					<div class="mt-4 text-center">
+						<img src="/images/qris.svg" alt="QRIS" class="mx-auto w-60 rounded-lg border" />
+						<p class="mt-2 text-gray-700">Scan QRIS untuk pembayaran</p>
+					</div>
+				{:else if metodePembayaran === 'bri'}
+					<div class="mt-4 text-center">
+						<p class="font-semibold text-gray-700">BRI: 1234 5678 9012 3456</p>
+						<p class="text-sm text-gray-500">a.n. Kanti Kosasih</p>
+					</div>
+				{:else if metodePembayaran === 'bca'}
+					<div class="mt-4 text-center">
+						<p class="font-semibold text-gray-700">BCA: 9876 5432 1098 7654</p>
+						<p class="text-sm text-gray-500">a.n. Kanti Kosasih</p>
+					</div>
+				{/if}
+			</div>
+
+			<div class="mt-6">
+				<label class="mb-2 block font-semibold text-gray-700">Upload Bukti Transaksi</label>
+				<input
+					type="file"
+					accept="image/*"
+					on:change={handleFileChange}
+					class="w-full rounded-lg border p-2"
+				/>
+			</div>
+
 			<div class="mt-6 flex justify-between">
 				<button
 					on:click={handleCheckout}
+					disabled={$loadingTrans}
 					class="rounded-lg bg-blue-600 px-6 py-2 font-medium text-white hover:bg-blue-700"
-					>Checkout</button
+					>{#if $loadingTrans}
+						<span>Memproses...</span>
+					{:else}
+						<span>Checkout</span>
+					{/if}</button
 				>
 				<button
 					class="rounded-lg bg-red-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-600"

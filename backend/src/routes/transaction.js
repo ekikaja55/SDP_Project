@@ -13,7 +13,7 @@ const cekBukti = require("../middlewares/cekBukti");
 const router = express.Router();
 router.post(
   "/",
-  [cekLogin, cekRole("customer"), upload.single("transaksi_gambar"), cekBukti],
+  [cekLogin, cekRole("customer"), upload.single("transaksi_img"), cekBukti],
   insertTransaction
 );
 router.get("/status", [cekLogin, cekRole("customer")], getStatusCustomer);

@@ -7,3 +7,4 @@ export * from './userStore';
 export * from './produkStore';
 export * from './todoListStore';
 export * from './cartStore';
+export * from './transaksiStore';

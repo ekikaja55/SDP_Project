@@ -7,10 +7,10 @@
 		getKatalogProduk,
 		loadingGlobal,
 		produkCatalogStore,
-		type Produk
+		type CartProduk
 	} from '$lib';
 	import { onMount } from 'svelte';
-
+	export let data;
 	const BASE_URL = import.meta.env.VITE_API_URL_UPLOADS;
 
 	let searchNama: string = '';
@@ -34,9 +34,21 @@
 		refreshCatalog();
 	}
 
-
 	function openCart() {
+		if (!data.user) {
+			goto('login');
+			return;
+		}
+
 		goto('cart');
+	}
+
+	function addCart(produk: CartProduk) {
+		if (!data.user) {
+			goto('login');
+			return;
+		}
+		cartStore.add(produk);
 	}
 </script>
 
@@ -112,7 +124,7 @@
 					<div class="mt-3 flex justify-between gap-3">
 						<button
 							class="w-full rounded-lg bg-blue-600 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
-							on:click={() => cartStore.add(produk)}
+							on:click={() => addCart(produk)}
 						>
 							Add to Cart
 						</button>

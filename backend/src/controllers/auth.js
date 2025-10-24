@@ -52,7 +52,7 @@ const prisma = require("../../prisma/prisma");
 const register = async (req, res) => {
   try {
     const { user_nama, user_email, user_password, user_confirm_password } =
-    await userSchema.validateAsync(req.body, { abortEarly: false });
+      await userSchema.validateAsync(req.body, { abortEarly: false });
 
     const adaUser = await prisma.user.findFirst({
       where: { user_email: user_email },
@@ -154,6 +154,13 @@ const login = async (req, res) => {
       data: { user_refresh_token: refreshToken },
     });
 
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      maxAge: 24 * 60 * 60 * 1000, // 1 hari
+    });
+
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: false,
@@ -191,11 +198,16 @@ const login = async (req, res) => {
 const refreshToken = async (req, res) => {
   try {
     const cookies = req.cookies;
-    if (!cookies?.refreshToken)
-      return res.status(401).json({ message: "Tidak Login" });
+    const refreshToken = cookies?.refreshToken;
+
+    if (!refreshToken) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized - Token tidak ditemukan" });
+    }
 
     const user = await prisma.user.findFirst({
-      where: { user_refresh_token: cookies.refreshToken },
+      where: { user_refresh_token: refreshToken },
       select: {
         id: true,
         user_email: true,
@@ -203,28 +215,53 @@ const refreshToken = async (req, res) => {
         user_role: true,
       },
     });
-    if (!user) return res.status(403).json({ message: "User tidak ditemukan" });
+
+    if (!user) {
+      return res
+        .status(403)
+        .json({ message: "Forbidden - Refresh token tidak valid" });
+    }
 
     jwt.verify(
-      cookies.refreshToken,
+      refreshToken,
       process.env.REFRESH_TOKEN_SECRET,
-      (err) => {
-        if (err)
-          return res.status(403).json({ message: "Invalid Refresh Token" });
+      (err, decoded) => {
+        if (err) {
+          console.error("Refresh token invalid:", err);
+          return res
+            .status(403)
+            .json({ message: "Invalid or expired refresh token" });
+        }
 
-        const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-          expiresIn: "1d",
+        const newAccessToken = jwt.sign(
+          {
+            id: user.id,
+            user_email: user.user_email,
+            user_nama: user.user_nama,
+            user_role: user.user_role,
+          },
+          process.env.ACCESS_TOKEN_SECRET,
+          { expiresIn: "1d" }
+        );
+
+        res.cookie("accessToken", newAccessToken, {
+          httpOnly: true,
+          secure: false,
+          sameSite: "lax",
+          maxAge: 24 * 60 * 60 * 1000, // 1 hari
         });
-        return res
-          .status(200)
-          .json({ message: "Refresh Token Sukses", result: accessToken });
+
+        return res.status(200).json({
+          message: "Access token berhasil diperbarui",
+          result: newAccessToken,
+        });
       }
     );
   } catch (error) {
-    return res.status(500).json({ message: "internal server error" });
+    console.error("Error saat refresh token:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
 /**
  * Logout user dari sistem.
  *
@@ -241,11 +278,23 @@ const refreshToken = async (req, res) => {
 const logout = async (req, res) => {
   try {
     const cookies = req.cookies;
-    if (!cookies?.refreshToken) {
-      return res.status(200).json({ message: "success logout" });
+
+    if (!cookies?.refreshToken && !cookies?.accessToken) {
+      res.clearCookie("accessToken", {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+      });
+      res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+      });
+      return res.status(200).json({ message: "Success Logout" });
     }
 
     const refreshToken = cookies.refreshToken;
+
     const user = await prisma.user.findFirst({
       where: { user_refresh_token: refreshToken },
     });
@@ -257,10 +306,21 @@ const logout = async (req, res) => {
       });
     }
 
-    res.clearCookie("refreshToken", { httpOnly: true });
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    });
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    });
+
     return res.status(200).json({ message: "Success Logout" });
   } catch (error) {
-    return res.status(500).json({ message: "internal server error" });
+    console.error("Logout error:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 

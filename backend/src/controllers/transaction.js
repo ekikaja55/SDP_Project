@@ -3,17 +3,33 @@ const insertTransaction = async (req, res) => {
   try {
     const user = req.userLogin;
     let { transaksi_grand_total, transaksi_detail } = req.body;
+    transaksi_detail = JSON.parse(transaksi_detail);
+    // console.log(user);
+
+    // console.log(typeof transaksi_detail);
+
+    // console.log(transaksi_detail);
+    // console.log(transaksi_detail.length);
+    // console.log(Array.isArray(transaksi_detail));
+    // console.log(transaksi_detail.length === 0);
+
+    // console.log(transaksi_grand_total);
+
     if (
       !transaksi_detail ||
       !Array.isArray(transaksi_detail) ||
-      transaksi_detail.length === 0
+      transaksi_detail.length <= 0
     ) {
       return res.status(400).json({
         message: "Transaksi detail tidak boleh kosong",
         result: null,
       });
     }
+
     for (const item of transaksi_detail) {
+      console.log("masuk for");
+      console.log("item", item.detail_nama);
+
       const produk = await prisma.produk.findFirst({
         where: { produk_nama: item.detail_nama },
       });
@@ -29,19 +45,35 @@ const insertTransaction = async (req, res) => {
           result: null,
         });
       }
+
       await prisma.produk.update({
-        where: { produk_nama: item.detail_nama },
+        where: { id: produk.id },
         data: {
           produk_stok: produk.produk_stok - item.detail_stok,
         },
       });
     }
+    console.log("masuk setelah if");
+
     const gambar = req.file.filename;
     transaksi_detail = transaksi_detail.map((d) => ({
       ...d,
       detail_stok: Number(d.detail_stok),
       detail_sub_total: Number(d.detail_sub_total),
     }));
+
+    console.log("hasil mapping transaksi detail : ", transaksi_detail);
+
+    console.log("value sebelum diubah", transaksi_grand_total);
+    console.log("type sebelum diubah", typeof transaksi_grand_total);
+
+    transaksi_grand_total = Number(
+      String(transaksi_grand_total).replace(/[^\d.-]/g, "")
+    );
+
+    console.log("value setelah diubah", transaksi_grand_total);
+    console.log("type setelah diubah", typeof transaksi_grand_total);
+
     await prisma.user.update({
       where: { id: user.id },
       data: {
@@ -64,7 +96,11 @@ const insertTransaction = async (req, res) => {
     });
     return res
       .status(200)
-      .json({ message: "Sukses tambah transaksi", result: null });
+      .json({
+        message:
+          "Sukses melakukan transaksi, silahkan tunggu konfirmasi pemesanan",
+        result: null,
+      });
   } catch (error) {
     console.log(error.message);
 
@@ -85,6 +121,8 @@ const getStatusCustomer = async (req, res) => {
     console.log(user);
 
     let listTransaksi = user.user_transaksi;
+    console.log("list transaksi : ", listTransaksi);
+
     if (filterStatus) {
       listTransaksi = listTransaksi.filter(
         (t) =>
@@ -107,6 +145,7 @@ const getStatusCustomer = async (req, res) => {
       select: {
         produk_nama: true,
         produk_gambar: true,
+        produk_harga: true,
       },
     });
     const transaksiLengkap = listTransaksi.map((t) => ({
@@ -116,6 +155,7 @@ const getStatusCustomer = async (req, res) => {
         return {
           ...d,
           produk_gambar: produk ? produk.produk_gambar : null,
+          produk_harga: produk ? produk.produk_harga : null,
         };
       }),
     }));
@@ -124,6 +164,9 @@ const getStatusCustomer = async (req, res) => {
         typeof value === "bigint" ? value.toString() : value
       )
     );
+
+    console.log("data get status: ", JSON.stringify(data, null, 2));
+
     res.status(200).json({ message: "Sukses ambil data", result: data });
   } catch (error) {
     console.log(error);
@@ -177,7 +220,7 @@ const getHistoriCustomer = async (req, res) => {
       .status(500)
       .json({ message: "Terjadi kesalahan pada server", result: null });
   }
-};
+Z};
 
 const ubahStatusTransaksi = async (req, res) => {
   try {

@@ -11,3 +11,4 @@ export * from './review';
 export * from './todolist';
 export * from './transaksi';
 export * from './user';
+export * from './transaksiDetail';
