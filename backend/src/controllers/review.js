@@ -24,9 +24,16 @@ const getProdukYangPernahDibeli = async (req, res) => {
       return res
         .status(404)
         .json({ message: "Belum ada transaksi", result: null });
+    const productList = await prisma.produk.findMany({
+      where: { produk_nama: { in: Array.from(namaUnik) } },
+      select: {
+        produk_nama: true,
+        produk_gambar: true,
+      },
+    });
     res.status(200).json({
       message: "Sukses ambil nama produk yang pernah dibeli",
-      result: Array.from(namaUnik),
+      result: productList,
     });
   } catch (error) {
     return res
