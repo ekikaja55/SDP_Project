@@ -4,6 +4,7 @@
 import type { TransaksiDetail } from './transaksiDetail';
 
 export interface Transaksi {
+	transaksi_id: string;
 	transaksi_img: string | File;
 	transaksi_grand_total: number;
 	transaksi_status: string;

@@ -70,8 +70,13 @@
 			>
 				<div class="flex flex-col md:flex-row md:gap-4">
 					<div class="w-full space-y-3 md:w-3/4">
+						<span
+							class="rounded-full px-3 py-2 text-sm font-bold bg-blue-600 text-white border border-blue-200"
+						>
+							ID Transaksi : {item.transaksi_id}
+						</span>
 						{#each item.transaksi_detail as produk}
-							<div class="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 p-3">
+							<div class="mt-3 flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 p-3">
 								<img
 									src={`${BASE_URL}/uploads/${produk.produk_gambar}`}
 									alt={produk.detail_nama}

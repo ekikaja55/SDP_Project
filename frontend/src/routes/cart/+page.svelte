@@ -83,7 +83,6 @@
 		/>
 	{/if}
 
-
 	<div class="mx-auto max-w-4xl rounded-2xl bg-white p-6 shadow">
 		<div class="mb-6 flex justify-between">
 			<button
@@ -190,6 +189,13 @@
 
 			<div class="mt-6 flex justify-between">
 				<button
+					class="rounded-lg bg-red-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-600"
+					on:click={() => cartStore.clear()}
+				>
+					Clear Cart
+				</button>
+
+				<button
 					on:click={handleCheckout}
 					disabled={$loadingTrans}
 					class="rounded-lg bg-blue-600 px-6 py-2 font-medium text-white hover:bg-blue-700"
@@ -199,12 +205,6 @@
 						<span>Checkout</span>
 					{/if}</button
 				>
-				<button
-					class="rounded-lg bg-red-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-600"
-					on:click={() => cartStore.clear()}
-				>
-					Clear Cart
-				</button>
 			</div>
 		{/if}
 	</div>
