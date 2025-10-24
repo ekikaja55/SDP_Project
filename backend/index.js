@@ -51,6 +51,8 @@ const {
   todolistRouter,
   transactionRouter,
   reviewRouter,
+  notifikasiRouter,
+  userRouter,
 } = require("./src/routes");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -82,6 +84,7 @@ app.use("/api/v1/product", productRouter);
 app.use("/api/v1/todolist", todolistRouter);
 app.use("/api/v1/transaction", transactionRouter);
 app.use("/api/v1/review", reviewRouter);
-
+app.use("/api/v1/notifikasi", notifikasiRouter);
+app.use("/api/v1/user", userRouter);
 // Jalankan server
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

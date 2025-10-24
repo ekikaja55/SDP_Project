@@ -7,10 +7,12 @@
  */
 
 const authRouter = require("./auth");
+const notifikasiRouter = require("./notifikasi");
 const productRouter = require("./product");
 const reviewRouter = require("./review");
 const todolistRouter = require("./todolist");
 const transactionRouter = require("./transaction");
+const userRouter = require("./user");
 
 module.exports = {
   authRouter,
@@ -18,4 +20,6 @@ module.exports = {
   todolistRouter,
   transactionRouter,
   reviewRouter,
+  notifikasiRouter,
+  userRouter,
 };

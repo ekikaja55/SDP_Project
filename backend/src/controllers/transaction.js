@@ -94,13 +94,11 @@ const insertTransaction = async (req, res) => {
         notifikasi_isread: "False",
       },
     });
-    return res
-      .status(200)
-      .json({
-        message:
-          "Sukses melakukan transaksi, silahkan tunggu konfirmasi pemesanan",
-        result: null,
-      });
+    return res.status(200).json({
+      message:
+        "Sukses melakukan transaksi, silahkan tunggu konfirmasi pemesanan",
+      result: null,
+    });
   } catch (error) {
     console.log(error.message);
 
@@ -220,7 +218,8 @@ const getHistoriCustomer = async (req, res) => {
       .status(500)
       .json({ message: "Terjadi kesalahan pada server", result: null });
   }
-Z};
+  Z;
+};
 
 const ubahStatusTransaksi = async (req, res) => {
   try {
@@ -255,7 +254,53 @@ const ubahStatusTransaksi = async (req, res) => {
   }
 };
 
-const getLaporanPenjualanAdmin = async (req, res) => {};
+const getLaporanPenjualanAdmin = async (req, res) => {
+  try {
+    const { filterbulan, filtertahun } = req.query;
+    const semuaUser = await prisma.user.findMany({
+      select: {
+        user_nama: true,
+        user_transaksi: true,
+      },
+    });
+    const semuaTransaksi = semuaUser.flatMap((user) =>
+      (user.user_transaksi || []).map((t) => ({
+        ...t,
+        user_nama: user.user_nama,
+      }))
+    );
+    let transaksiFilter = semuaTransaksi;
+    if (filterbulan || filtertahun) {
+      transaksiFilter = semuaTransaksi.filter((t) => {
+        const createdAt = new Date(t.createdAt);
+        const bulan = createdAt.getMonth() + 1; // Januari = 0
+        const tahun = createdAt.getFullYear();
+        const cocokBulan = filterbulan ? bulan === Number(filterbulan) : true;
+        const cocokTahun = filtertahun ? tahun === Number(filtertahun) : true;
+        return cocokBulan && cocokTahun;
+      });
+    }
+    if (transaksiFilter.length === 0) {
+      return res.status(404).json({
+        message: "Tidak ada data transaksi untuk periode ini",
+        result: null,
+      });
+    }
+    const transaksiAman = JSON.parse(
+      JSON.stringify(transaksiFilter, (_, value) =>
+        typeof value === "bigint" ? Number(value) : value
+      )
+    );
+    res.status(200).json({
+      message: "Sukses ambil laporan penjualan",
+      result: transaksiAman,
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Terjadi kesalahan pada server", result: null });
+  }
+};
 
 module.exports = {
   insertTransaction,
