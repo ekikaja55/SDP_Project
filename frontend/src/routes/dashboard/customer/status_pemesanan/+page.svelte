@@ -20,11 +20,6 @@
 		await getStatusTransaksi(selectedStatus);
 	}
 
-	function generateId(index: number) {
-		const temp = index.toString().padStart(3, '000');
-		return `T-${temp}`;
-	}
-
 	function getStatusColor(status: string) {
 		switch (status) {
 			case 'Belum Dikonfirmasi':

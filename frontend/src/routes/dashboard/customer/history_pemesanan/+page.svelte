@@ -78,7 +78,10 @@
 				class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm transition hover:shadow-md"
 			>
 				<div class="mb-3 flex items-center justify-between">
-					<h3 class="text-lg font-semibold text-gray-800">{generateId(index + 1)}</h3>
+					<p class="text-gray-700">
+						<span class="font-medium">Id Trans:</span>
+						<span class="ml-1 text-sm text-blue-600">{item.transaksi_id}</span>
+					</p>
 					<span
 						class={`rounded-full px-3 py-1 text-sm font-medium ${getStatusColor(item.transaksi_status)}`}
 					>

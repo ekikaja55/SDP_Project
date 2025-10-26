@@ -8,3 +8,9 @@ export interface TransaksiDetail {
 	produk_gambar?: string;
 	produk_harga?: string;
 }
+
+export interface LaporanTransaksiDetail {
+	detail_nama: string;
+	detail_stok: string;
+	detail_sub_total: string;
+}

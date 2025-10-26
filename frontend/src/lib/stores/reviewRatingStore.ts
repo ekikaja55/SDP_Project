@@ -27,7 +27,6 @@ export async function getReviewRatingCustomer() {
 		const res = await api.get<ApiResponse<ReviewCustomer[]>>('/review');
 		reviewCustStore.set(res.data.result);
 	} catch (err: unknown) {
-		messageHandleReview.set({ type: 'error', message: errorHandler(err) });
 		reviewCustStore.set([]);
 	} finally {
 		loadingReview.set(false);

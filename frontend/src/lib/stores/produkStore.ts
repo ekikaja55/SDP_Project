@@ -146,7 +146,7 @@ export async function getKatalogProduk(
 
 		console.log('URL final katalog:', url);
 
-		const res = await api.get<{ message: string; result: Produk[] }>(url);
+		const res = await api.get<ApiResponse<Produk[]>>(url);
 		produkCatalogStore.set(res.data.result ?? []);
 		messageHandleGlobal.set({ type: 'success', message: res.data.message });
 	} catch (err: unknown) {

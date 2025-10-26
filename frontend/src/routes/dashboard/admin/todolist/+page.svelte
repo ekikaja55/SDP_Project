@@ -115,7 +115,7 @@
 		<select
 			bind:value={filterStatus}
 			on:change={handleFilter}
-			class="rounded border border-gray-300 p-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+			class="rounded border border-gray-300 p-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 w-50"
 		>
 			<option value="">Semua</option>
 			<option value="Selesai">Selesai</option>

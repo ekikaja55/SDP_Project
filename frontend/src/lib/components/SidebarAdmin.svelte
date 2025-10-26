@@ -21,6 +21,9 @@
 			<a href="/dashboard/admin/transaction" class="rounded-lg px-3 py-2 transition hover:bg-gray-800">
 				Manage Transaction
 			</a>
+      <a href="/dashboard/admin/manage_customer" class="rounded-lg px-3 py-2 transition hover:bg-gray-800">
+				Customer Data
+			</a>
 		</nav>
 	</div>
 

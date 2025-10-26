@@ -55,6 +55,8 @@ function createCartStore() {
 						: item
 				);
 				console.log('produk sudah ada, qty ditambah');
+				msgCart.set(true);
+
 			} else {
 				// Tambahkan produk baru ke cart
 				const newItem: CartProduk = {

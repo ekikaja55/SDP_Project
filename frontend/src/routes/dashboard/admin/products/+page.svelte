@@ -166,7 +166,7 @@
 		/>
 		<select
 			bind:value={filterStok}
-			class="rounded border-gray-300 p-2 focus:border-blue-500 focus:ring focus:ring-blue-200"
+			class="rounded border-gray-300 p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 w-50"
 		>
 			<option value="">Semua Stok</option>
 			<option value="ada">Ada</option>

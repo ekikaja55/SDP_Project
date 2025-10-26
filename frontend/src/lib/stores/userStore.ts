@@ -9,8 +9,10 @@ import {
 	api,
 	errorHandler,
 	type ApiResponse,
+	type Customer,
 	type LoginDTO,
 	type MessageState,
+	type QueryCustomer,
 	type RegisterDTO,
 	type User,
 	type UserAuth
@@ -21,8 +23,16 @@ import { writable, type Writable } from 'svelte/store';
 // inisiasi state modelan redux
 
 export const userStore: Writable<UserAuth | null> = writable<UserAuth | null>(null);
+export const customerStore: Writable<Customer[] | null> = writable<Customer[] | null>([]);
+
+export const loadingCust: Writable<boolean> = writable(false);
+
 export const loadingUser: Writable<boolean> = writable(false);
 export const messageHandleUser: Writable<MessageState | null> = writable<MessageState | null>(null);
+export let query: QueryCustomer = {
+	search: '',
+	sort: ''
+};
 
 /**
  * Function Handle Store Login User
@@ -44,7 +54,7 @@ export const messageHandleUser: Writable<MessageState | null> = writable<Message
  * }
  */
 
-export async function login(data: LoginDTO) {
+async function login(data: LoginDTO) {
 	loadingUser.set(true);
 	messageHandleUser.set(null);
 	try {
@@ -167,4 +177,32 @@ export async function logout() {
 	}
 	userStore.set(null);
 	window.location.href = '/';
+}
+
+export async function getUserData(query: QueryCustomer) {
+	console.log('fn getUserData() -> masuk');
+	console.log('fn getUserData() -> isi query', query);
+
+	let url = '/user';
+	const params: string[] = [];
+  if (query.search) params.push(`search=${encodeURIComponent(query.search)}`);
+	if (query.sort) params.push(`sort=${encodeURIComponent(query.sort)}`);
+	if (params.length > 0) url += `?${params.join('&')}`;
+
+  console.log("url final : ",url);
+
+
+	loadingCust.set(false);
+
+	try {
+		loadingCust.set(true);
+		const res = await api.get<ApiResponse<Customer[]>>(url);
+		customerStore.set(res.data.result);
+	} catch (err: unknown) {
+		console.log(err);
+		customerStore.set([]);
+	} finally {
+		loadingCust.set(false);
+	}
+
 }
