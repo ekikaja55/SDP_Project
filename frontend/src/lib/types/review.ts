@@ -14,7 +14,14 @@ export interface ReviewCustomer {
 }
 
 export interface ReviewDTO {
-  produk_nama:string
-  review_rating: number;
+	produk_nama: string;
+	review_rating: number;
 	review_isi: string;
+}
+
+export interface laporanReview {
+	produk_nama: string;
+	produk_gambar: string;
+	produk_avg_rating: number;
+	produk_review: Review[];
 }

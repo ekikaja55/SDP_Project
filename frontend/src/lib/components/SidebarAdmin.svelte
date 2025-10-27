@@ -9,20 +9,29 @@
 	<div>
 		<div class="border-b border-gray-700 px-6 py-4 text-2xl font-bold">Admin Panel</div>
 		<nav class="mt-4 flex flex-col space-y-2 px-4">
-			<a href="/dashboard/admin" class="rounded-lg px-3 py-2 transition hover:bg-gray-800">
-				Home
-			</a>
 			<a href="/dashboard/admin/products" class="rounded-lg px-3 py-2 transition hover:bg-gray-800">
 				Manage Products
 			</a>
 			<a href="/dashboard/admin/todolist" class="rounded-lg px-3 py-2 transition hover:bg-gray-800">
 				Manage Todolist
 			</a>
-			<a href="/dashboard/admin/transaction" class="rounded-lg px-3 py-2 transition hover:bg-gray-800">
+			<a
+				href="/dashboard/admin/transaction"
+				class="rounded-lg px-3 py-2 transition hover:bg-gray-800"
+			>
 				Manage Transaction
 			</a>
-      <a href="/dashboard/admin/manage_customer" class="rounded-lg px-3 py-2 transition hover:bg-gray-800">
+			<a
+				href="/dashboard/admin/manage_customer"
+				class="rounded-lg px-3 py-2 transition hover:bg-gray-800"
+			>
 				Customer Data
+			</a>
+			<a
+				href="/dashboard/admin/laporan_review"
+				class="rounded-lg px-3 py-2 transition hover:bg-gray-800"
+			>
+				Review Produk Data
 			</a>
 		</nav>
 	</div>

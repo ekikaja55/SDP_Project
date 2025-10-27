@@ -1,5 +1,7 @@
 <!-- src/routes/cart/+page.svelte -->
+ <!-- untuk handling transaksi dari cart -->
 <script lang="ts">
+  export let data;
 	import { goto } from '$app/navigation';
 	import {
 		addTransaksi,
@@ -11,21 +13,28 @@
 		type TransaksiDetail
 	} from '$lib';
 	import { onMount } from 'svelte';
-	import NotificationModal from '../../lib/components/NotificationModal.svelte';
+	import TransactionModal from '../../lib/components/TransactionModal.svelte';
+	import { page } from '$app/state';
 	const BASE_URL = import.meta.env.VITE_API_URL_UPLOADS;
 
 	let metodePembayaran = '';
 	let transaksiImg: File | null = null;
+	let loadingImage = false;
 
 	onMount(() => {
 		console.log('page cart fn OnMount() -> masuk');
 	});
 
-	function handleFileChange(e: Event) {
+	async function handleFileChange(e: Event) {
 		const target = e.target as HTMLInputElement;
 		if (target.files && target.files.length > 0) {
-			transaksiImg = target.files[0];
-			console.log('File transaksi_img dipilih:', transaksiImg.name);
+			loadingImage = true;
+			const file = target.files[0];
+			transaksiImg = file;
+			console.log('File transaksi_img dipilih:', file.name);
+
+			await new Promise((resolve) => setTimeout(resolve, 1000));
+			loadingImage = false;
 		}
 	}
 
@@ -60,24 +69,19 @@
 	}
 
 	function handleBack() {
-		console.log('Back button clicked');
 		goto('catalog');
 	}
 
 	function updateQty(id: string, qty: number) {
 		cartStore.setQty(id, qty);
 	}
-
-	// let open = false;
-	// function openModal() {
-	// 	open = true;
-	// }
 </script>
 
 <div class="min-h-screen bg-gray-100 p-6">
 	{#if $messageHandleTrans}
-		<NotificationModal
+		<TransactionModal
 			message={$messageHandleTrans.message}
+      user_nama={data.user?.user_nama}
 			type={$messageHandleTrans.type}
 			onClose={() => messageHandleTrans.set(null)}
 		/>
@@ -90,11 +94,13 @@
 				class="rounded-lg bg-gray-200 px-5 py-2 font-medium hover:bg-gray-300">← Kembali</button
 			>
 		</div>
+
 		<h1 class="mb-6 text-2xl font-semibold text-gray-800">Keranjang Belanja</h1>
 
 		{#if $cartStore.length === 0}
 			<p class="py-10 text-center text-gray-500">Keranjang kamu masih kosong.</p>
 		{:else}
+			<!-- daftar item -->
 			<div class="divide-y">
 				{#each $cartStore as item}
 					<div class="flex items-center justify-between py-4">
@@ -113,8 +119,7 @@
 						<div class="flex items-center gap-3">
 							<button
 								on:click={() => cartStore.remove(item.id)}
-								class="rounded-lg bg-gray-200 px-3 py-1 hover:bg-gray-300">-</button
-							>
+								class="rounded-lg bg-gray-200 px-3 py-1 hover:bg-gray-300">-</button>
 
 							<input
 								type="text"
@@ -126,8 +131,7 @@
 
 							<button
 								on:click={() => cartStore.add(item)}
-								class="rounded-lg bg-gray-200 px-3 py-1 hover:bg-gray-300">+</button
-							>
+								class="rounded-lg bg-gray-200 px-3 py-1 hover:bg-gray-300">+</button>
 
 							<span class="w-28 text-right font-semibold text-gray-700">
 								Rp {(item.produk_total ?? 0).toLocaleString()}
@@ -183,8 +187,14 @@
 					type="file"
 					accept="image/*"
 					on:change={handleFileChange}
-					class="w-full rounded-lg border p-2"
+					class="w-full rounded-lg border p-2 disabled:cursor-not-allowed disabled:bg-gray-100"
+					disabled={loadingImage}
 				/>
+				{#if loadingImage}
+					<p class="mt-2 text-sm text-blue-500 animate-pulse"> Sedang memuat gambar...</p>
+				{:else if transaksiImg}
+					<p class="mt-2 text-sm text-green-600"> {transaksiImg.name} berhasil dimuat.</p>
+				{/if}
 			</div>
 
 			<div class="mt-6 flex justify-between">
@@ -198,13 +208,14 @@
 				<button
 					on:click={handleCheckout}
 					disabled={$loadingTrans}
-					class="rounded-lg bg-blue-600 px-6 py-2 font-medium text-white hover:bg-blue-700"
-					>{#if $loadingTrans}
+					class="rounded-lg bg-blue-600 px-6 py-2 font-medium text-white hover:bg-blue-700 disabled:opacity-70"
+				>
+					{#if $loadingTrans}
 						<span>Memproses...</span>
 					{:else}
 						<span>Checkout</span>
-					{/if}</button
-				>
+					{/if}
+				</button>
 			</div>
 		{/if}
 	</div>

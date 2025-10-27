@@ -54,7 +54,7 @@ export let query: QueryCustomer = {
  * }
  */
 
-async function login(data: LoginDTO) {
+export async function login(data: LoginDTO) {
 	loadingUser.set(true);
 	messageHandleUser.set(null);
 	try {

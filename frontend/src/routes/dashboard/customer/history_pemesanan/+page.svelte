@@ -90,6 +90,20 @@
 				</div>
 
 				<p class="mb-4 text-gray-700">
+					<span class="font-medium">Tanggal Dibuat:</span>
+					<span class="ml-1 text-sm text-blue-600"
+						>{new Date(item.createdAt).toLocaleString('en-GB', {
+							year: 'numeric',
+							month: 'long',
+							day: 'numeric',
+							hour: '2-digit',
+							minute: '2-digit',
+							hour12: false
+						})}</span
+					>
+				</p>
+
+				<p class="mb-4 text-gray-700">
 					<span class="font-medium">Grand Total:</span>
 					<span class="ml-1 font-semibold text-blue-600">Rp {item.transaksi_grand_total}</span>
 				</p>

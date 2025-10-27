@@ -4,6 +4,7 @@ import {
 	api,
 	errorHandler,
 	type ApiResponse,
+	type laporanReview,
 	type MessageState,
 	type Review,
 	type ReviewCustomer,
@@ -11,7 +12,7 @@ import {
 } from '$lib';
 import { writable, type Writable } from 'svelte/store';
 
-export const reviewRatingStore: Writable<Review[]> = writable<Review[]>([]);
+export const reviewRatingStore: Writable<laporanReview[]> = writable<laporanReview[]>([]);
 export const reviewCustStore: Writable<ReviewCustomer[]> = writable<ReviewCustomer[]>([]);
 export const loadingReview: Writable<boolean> = writable<boolean>(false);
 export const messageHandleReview: Writable<MessageState | null> = writable<MessageState | null>(
@@ -46,6 +47,21 @@ export async function addReviewRatingCustomer(data: ReviewDTO) {
 		messageHandleReview.set({ type: 'success', message: res.data.message });
 	} catch (err: unknown) {
 		messageHandleReview.set({ type: 'error', message: errorHandler(err) });
+	} finally {
+		loadingReview.set(false);
+	}
+}
+
+// GET REVIEW RATING UNTUK ADMIN
+export async function getReviewRatingAdmin() {
+	loadingReview.set(false);
+	messageHandleReview.set(null);
+	try {
+		loadingReview.set(true);
+		const res = await api.get<ApiResponse<laporanReview[]>>('/review/laporan');
+		reviewRatingStore.set(res.data.result);
+	} catch (err: unknown) {
+		reviewRatingStore.set([]);
 	} finally {
 		loadingReview.set(false);
 	}

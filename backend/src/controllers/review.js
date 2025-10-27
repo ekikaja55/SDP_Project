@@ -93,6 +93,7 @@ const laporanReview = async (req, res) => {
             review_rating: true,
             review_isi: true,
             review_nama: true,
+            createdAt: true,
           },
         },
       },

@@ -16,7 +16,7 @@
 	import BuktiModal from '../../../../lib/components/BuktiModal.svelte';
 	import NotificationModal from '../../../../lib/components/NotificationModal.svelte';
 	const BASE_URL = import.meta.env.VITE_API_URL_UPLOADS;
-  let url:string = '';
+	let url: string = '';
 	let open: boolean = false;
 
 	$: console.log(open);
@@ -118,6 +118,19 @@
 							<span class="ml-1 font-semibold text-blue-600">{item.transaksi_id}</span>
 						</p>
 						<p class="text-sm text-gray-700">
+							<span class="font-medium">Tanggal Dibuat:</span>
+							<span class="ml-1 font-semibold text-blue-600"
+								>{new Date(item.createdAt).toLocaleString('en-GB', {
+									year: 'numeric',
+									month: 'long',
+									day: 'numeric',
+									hour: '2-digit',
+									minute: '2-digit',
+									hour12: false
+								})}
+							</span>
+						</p>
+						<p class="text-sm text-gray-700">
 							<span class="font-medium">Nama:</span>
 							<span class="ml-1 font-semibold text-blue-600">{item.user_nama}</span>
 						</p>
@@ -166,40 +179,37 @@
 					<button
 						class="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-yellow-600"
 						on:click={() => {
-              url =`${BASE_URL}/uploads/${item.transaksi_img}`
-              open = true
-            }}
+							url = `${BASE_URL}/uploads/${item.transaksi_img}`;
+							open = true;
+						}}
 					>
 						Bukti Pembayaran
 					</button>
 				</div>
 
-				<!-- Form Ubah Status -->
-				{#if item.transaksi_status !== 'Pesanan Selesai' && item.transaksi_status !== 'Pesanan Dibatalkan'}
-					<div class="mt-6 border-t border-gray-200 pt-4">
-						<form
-							on:submit|preventDefault={() => handleSubmit(item.transaksi_id)}
-							class="flex flex-wrap items-center gap-3"
+				<div class="mt-6 border-t border-gray-200 pt-4">
+					<form
+						on:submit|preventDefault={() => handleSubmit(item.transaksi_id)}
+						class="flex flex-wrap items-center gap-3"
+					>
+						<label class="text-sm font-medium text-gray-700">Ubah Status:</label>
+						<select
+							bind:value={dataUpdateTrans.transaksi_status}
+							class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
 						>
-							<label class="text-sm font-medium text-gray-700">Ubah Status:</label>
-							<select
-								bind:value={dataUpdateTrans.transaksi_status}
-								class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-							>
-								<option value="" disabled selected>Pilih Status Baru</option>
-								{#each statusOptions.filter((s) => s !== 'Belum Dikonfirmasi') as option}
-									<option value={option}>{option}</option>
-								{/each}
-							</select>
-							<button
-								type="submit"
-								class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
-							>
-								Update
-							</button>
-						</form>
-					</div>
-				{/if}
+							<option value="" disabled selected>Pilih Status Baru</option>
+							{#each statusOptions.filter((s) => s !== 'Belum Dikonfirmasi') as option}
+								<option value={option}>{option}</option>
+							{/each}
+						</select>
+						<button
+							type="submit"
+							class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
+						>
+							Update
+						</button>
+					</form>
+				</div>
 			</div>
 		{/each}
 	</div>

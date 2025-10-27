@@ -7,10 +7,10 @@
 
 	console.log(data);
 
-	function handleClose() {
-		visible = false;
-		onClose?.();
-	}
+    function handleClose() {
+      visible = false;
+      onClose?.();
+    }
 </script>
 
 <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">

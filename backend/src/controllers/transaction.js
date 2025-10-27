@@ -240,6 +240,8 @@ const getAllTransaction = async (req, res) => {
       }))
     );
 
+    listTransaksi.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
     if (filterStatus) {
       listTransaksi = listTransaksi.filter(
         (t) => t.transaksi_status === filterStatus
@@ -274,8 +276,6 @@ const getAllTransaction = async (req, res) => {
       )
     );
 
-    console.log(JSON.stringify(data, null, 2));
-
     return res
       .status(200)
       .json({ message: "Sukses ambil semua transaksi", result: data });
@@ -297,7 +297,6 @@ const ubahStatusTransaksi = async (req, res) => {
     console.log("trans id : ", transaksi_id);
     console.log("trans status : ", transaksi_status);
 
-    // return
     const user = await prisma.user.findFirst({
       where: { user_transaksi: { some: { transaksi_id } } },
       select: { id: true, user_transaksi: true },

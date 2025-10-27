@@ -146,9 +146,9 @@ export async function getTransAdmin(filterStatus?: string) {
 		// messageHandleTrans.set({ type: 'success', message: res.data.message });
 		transaksiAdminStore.set(res.data.result);
 	} catch (err: unknown) {
-		messageHandleTrans.set({ type: 'error', message: errorHandler(err) });
-		transaksiAdminStore.set([]);
-	} finally {
+    console.log(err);
+    
+  } finally {
 		loadingTrans.set(false);
 	}
 }
