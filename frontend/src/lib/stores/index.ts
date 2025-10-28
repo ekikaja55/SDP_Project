@@ -8,3 +8,4 @@ export * from './reviewRatingStore';
 export * from './todoListStore';
 export * from './transaksiStore';
 export * from './userStore';
+export * from './notifikasiAdminStore';

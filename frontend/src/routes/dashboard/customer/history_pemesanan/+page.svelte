@@ -1,8 +1,7 @@
-<!--src/routes/dashboard/customer/history_pemesanan/+page.svelte -->
-<!-- halaman untuk cek history pemesanan (customer)  -->
 <script lang="ts">
 	import { getHistoryTransaksi, loadingTrans, transaksiStore } from '$lib';
 	import { onMount } from 'svelte';
+	import { Clock, PackageCheck, Truck, Ban, CheckCircle2 , Icon} from 'lucide-svelte';
 	const BASE_URL = import.meta.env.VITE_API_URL_UPLOADS;
 
 	let selectedStatus = '';
@@ -24,38 +23,50 @@
 		await getHistoryTransaksi(selectedStatus);
 	}
 
-	function generateId(index: number) {
-		const temp = index.toString().padStart(3, '000');
-		return `T-${temp}`;
-	}
-
 	function getStatusColor(status: string) {
 		switch (status) {
 			case 'Belum Dikonfirmasi':
-				return 'bg-gray-100 text-gray-700 border border-gray-200';
+				return 'bg-zinc-100 text-zinc-700 border border-zinc-300';
 			case 'Pesanan Dibatalkan':
-				return 'bg-red-100 text-red-700 border border-red-200';
+				return 'bg-rose-100 text-rose-700 border border-rose-300';
 			case 'Pesanan Sedang Diproses':
-				return 'bg-yellow-100 text-yellow-700 border border-yellow-200';
+				return 'bg-amber-100 text-amber-700 border border-amber-300';
 			case 'Pesanan Sedang Dalam Pengiriman':
-				return 'bg-blue-100 text-blue-700 border border-blue-200';
+				return 'bg-emerald-100 text-emerald-700 border border-emerald-300';
 			case 'Pesanan Selesai':
-				return 'bg-green-100 text-green-700 border border-green-200';
+				return 'bg-lime-100 text-lime-700 border border-lime-300';
 			default:
-				return 'bg-gray-100 text-gray-700 border border-gray-200';
+				return 'bg-zinc-100 text-zinc-700 border border-zinc-300';
+		}
+	}
+
+	function getStatusIcon(status: string) {
+		switch (status) {
+			case 'Belum Dikonfirmasi':
+				return Clock;
+			case 'Pesanan Dibatalkan':
+				return Ban;
+			case 'Pesanan Sedang Diproses':
+				return PackageCheck;
+			case 'Pesanan Sedang Dalam Pengiriman':
+				return Truck;
+			case 'Pesanan Selesai':
+				return CheckCircle2;
+			default:
+				return Clock;
 		}
 	}
 </script>
 
-<h2 class="mb-4 text-2xl font-semibold text-gray-800">Status Pemesanan</h2>
+<h2 class="mb-6 text-3xl font-bold text-zinc-800">Status Pemesanan</h2>
 
-<!-- Filter Dropdown -->
-<div class="mb-6 flex items-center justify-between">
-	<label class="font-medium text-gray-700">Filter Status:</label>
+<!-- Filter -->
+<div class="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+	<label class="font-medium text-zinc-700">Filter Status:</label>
 	<select
 		bind:value={selectedStatus}
 		on:change={refreshTransaksi}
-		class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+		class="rounded-xl border border-zinc-300 bg-zinc-50 px-3 py-2 text-zinc-700 focus:outline-none focus:ring-2 focus:ring-zinc-300 focus:border-zinc-400 transition-all"
 	>
 		{#each statusOptions as option}
 			<option value={option}>
@@ -67,66 +78,72 @@
 
 {#if $loadingTrans}
 	<div class="flex justify-center py-10">
-		<div
-			class="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"
-		></div>
+		<div class="h-10 w-10 animate-spin rounded-full border-4 border-zinc-400 border-t-transparent"></div>
 	</div>
 {:else if $transaksiStore && $transaksiStore.length > 0}
-	<div class="flex flex-col gap-6">
+	<div class="flex flex-col gap-8">
 		{#each $transaksiStore as item, index}
 			<div
-				class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm transition hover:shadow-md"
+				class="rounded-2xl border border-zinc-200 bg-zinc-50 p-6 shadow-md transition-all hover:shadow-lg hover:border-zinc-300"
 			>
-				<div class="mb-3 flex items-center justify-between">
-					<p class="text-gray-700">
-						<span class="font-medium">Id Trans:</span>
-						<span class="ml-1 text-sm text-blue-600">{item.transaksi_id}</span>
+				<div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+					<p class="text-zinc-700">
+						<span class="font-medium">ID Transaksi:</span>
+						<span class="ml-1 font-semibold text-zinc-800">{item.transaksi_id}</span>
 					</p>
+
 					<span
-						class={`rounded-full px-3 py-1 text-sm font-medium ${getStatusColor(item.transaksi_status)}`}
+						class={`flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium ${getStatusColor(
+							item.transaksi_status
+						)}`}
 					>
+						<Icon size="16" class="text-current" />
 						{item.transaksi_status}
 					</span>
 				</div>
 
-				<p class="mb-4 text-gray-700">
-					<span class="font-medium">Tanggal Dibuat:</span>
-					<span class="ml-1 text-sm text-blue-600"
-						>{new Date(item.createdAt).toLocaleString('en-GB', {
-							year: 'numeric',
-							month: 'long',
-							day: 'numeric',
-							hour: '2-digit',
-							minute: '2-digit',
-							hour12: false
-						})}</span
-					>
-				</p>
+				<div class="mb-5 grid grid-cols-1 gap-2 sm:grid-cols-3 text-sm text-zinc-700">
+					<p>
+						<span class="font-medium">Tanggal Dibuat:</span>
+						<span class="ml-1 text-zinc-600">
+							{new Date(item.createdAt).toLocaleString('id-ID', {
+								year: 'numeric',
+								month: 'long',
+								day: 'numeric',
+								hour: '2-digit',
+								minute: '2-digit',
+								hour12: false
+							})}
+						</span>
+					</p>
+					<p>
+						<span class="font-medium">Grand Total:</span>
+						<span class="ml-1 font-semibold text-zinc-800">
+							Rp {item.transaksi_grand_total}
+						</span>
+					</p>
+				</div>
 
-				<p class="mb-4 text-gray-700">
-					<span class="font-medium">Grand Total:</span>
-					<span class="ml-1 font-semibold text-blue-600">Rp {item.transaksi_grand_total}</span>
-				</p>
-
-				<div class="space-y-3">
-					<p class="font-semibold text-gray-800">Detail Pesanan:</p>
-					<div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+				<!-- Detail Pesanan -->
+				<div class="space-y-4">
+					<p class="font-semibold text-zinc-800">Detail Pesanan:</p>
+					<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 						{#each item.transaksi_detail as produk}
 							<div
-								class="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 p-3 transition hover:bg-gray-100"
+								class="flex items-center gap-4 rounded-xl border border-zinc-200 bg-zinc-100 p-4 transition hover:bg-zinc-200"
 							>
 								<img
 									src={`${BASE_URL}/uploads/${produk.produk_gambar}`}
 									alt={produk.detail_nama}
-									class="h-16 w-16 rounded-lg border object-cover"
+									class="h-16 w-16 rounded-lg border border-zinc-300 object-cover shadow-sm"
 								/>
-								<div class="flex flex-col text-sm text-gray-700">
-									<span class="font-medium text-gray-900">{produk.detail_nama}</span>
+								<div class="flex flex-col text-sm text-zinc-700">
+									<span class="font-medium text-zinc-900">{produk.detail_nama}</span>
 									<span>Harga: Rp {produk.produk_harga}</span>
 									<span>Qty: {produk.detail_stok}</span>
-									<span class="font-semibold text-blue-600"
-										>Subtotal: Rp {produk.detail_sub_total}</span
-									>
+									<span class="font-semibold text-zinc-800">
+										Subtotal: Rp {produk.detail_sub_total}
+									</span>
 								</div>
 							</div>
 						{/each}
@@ -136,5 +153,5 @@
 		{/each}
 	</div>
 {:else}
-	<p class="mt-10 text-center text-gray-500">Tidak ada produk ditemukan.</p>
+	<p class="mt-10 text-center text-zinc-500">Tidak ada produk ditemukan.</p>
 {/if}

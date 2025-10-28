@@ -1,75 +1,180 @@
-<!-- src/routes/+pages.svelte -->
-<!-- untuk LANDING PAGE -->
-<script lang="ts">
-	let products = [
-		{
-			name: 'SR12 Herbal Habbatussauda',
-			desc: 'Minyak Habbatussuada murni, membantu memelihara daya tahan tubuh ',
-			price: 'Rp 92.000',
-			image: '/images/produk1.png'
-		},
-		{
-			name: 'SR12 Milky Rice Soap',
-			desc: 'Bar soap dengan kandungan Ekstrak Pati Beras, Susu dan Minyak kelapa dapat membantu membersihkan kulit dari kotoran dan minyak, melembapkan, menghaluskan dan menyejukan. Kulit menjadi lebih bersih, segar dan tetap sehat.',
-			price: 'Rp 23.000',
-			image: '/images/produk2.jpg'
-		},
-		{
-			name: 'SR12 Go Milku Original',
-			desc: 'SR12 GoMilku merupakan susu kambing etawa dilengkapi nutrisi khusus seperti ikan gabus, daun kelor dan Madu yang bergizi tinggi serta mengandung banyak manfaat untuk kesehatan tubuh.',
-			price: 'Rp 131.500',
-			image: '/images/produk3.jpg'
-		}
-	];
+<!-- src/routes/+page.svelte -->
+<script>
+	import { messageHandleUser } from '$lib';
+	import NotificationModal from '$lib/components/NotificationModal.svelte';
+	import { onMount } from 'svelte';
+
+	onMount(() => {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						entry.target.classList.add('animate-show');
+						entry.target.classList.remove('opacity-0'); // hilangkan invisibility
+					}
+				});
+			},
+			{ threshold: 0.2 }
+		);
+
+		document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+	});
 </script>
 
-<section class="bg-green-50 text-gray-800">
-	<!-- Hero Section -->
-	<div class="flex flex-col items-center justify-center px-6 py-20 text-center md:px-16">
-		<h1 class="text-4xl font-bold text-green-700 md:text-5xl">Kanti’s Store</h1>
-		<p class="mt-4 max-w-2xl text-lg text-gray-600">
-			Pusat produk herbal resmi <span class="font-semibold text-green-700">SR12</span> — alami, aman,
-			dan berkhasiat untuk kesehatan serta kecantikan Anda.
-		</p>
-		<a
-			href="/catalog"
-			class="mt-8 rounded-full bg-green-600 px-6 py-3 text-white shadow-lg transition hover:bg-green-700"
-		>
-			Belanja Sekarang
-		</a>
-	</div>
+<section class="flex min-h-screen flex-col bg-zinc-50 text-zinc-800">
+	<!-- HERO -->
+	<section id="home" class="reveal flex flex-1 items-center justify-between px-16 py-24 opacity-0">
+		<div class="max-w-lg">
+			<h2 class="mb-6 text-5xl font-bold leading-tight text-zinc-900">
+				Kecantikan Alami, <br />
+				<span class="text-zinc-700">Tanpa Sentuhan Kimia</span>
+			</h2>
+			<p class="mb-10 text-lg leading-relaxed text-zinc-500">
+				Temukan rangkaian produk herbal dan kecantikan alami dari bahan terbaik pilihan. Kanti’s
+				Store membantu Anda tampil percaya diri dengan sentuhan alami yang murni.
+			</p>
+			<a
+				href="#gallery"
+				class="inline-block rounded-full bg-zinc-900 px-8 py-3 font-semibold tracking-wide text-white transition hover:bg-zinc-800"
+				>Lihat Produk</a
+			>
+		</div>
 
-	<!-- Featured Products -->
-	<div class="bg-white py-16">
-		<h2 class="mb-10 text-center text-3xl font-bold text-green-700">Produk Unggulan</h2>
-		<div class="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-6 md:grid-cols-3">
-			{#each products as p}
+		<div class="relative w-[40%]">
+			<img
+				src="/images/intro.jpg"
+				alt="Produk Herbal"
+				class="h-[500px] w-full rounded-2xl object-cover shadow-2xl brightness-95 transition duration-500 hover:brightness-100"
+			/>
+			<div
+				class="absolute -bottom-6 -right-6 rounded-lg border border-zinc-200 bg-white/80 p-4 text-sm text-zinc-700 shadow-md"
+			>
+				<p>100% Bahan Alami Terpercaya</p>
+			</div>
+		</div>
+	</section>
+
+	<!-- ABOUT -->
+	<section id="about" class="reveal border-t border-zinc-100 bg-white px-16 py-24 opacity-0">
+		<div class="mx-auto max-w-4xl text-center">
+			<h3 class="mb-4 text-3xl font-semibold text-zinc-800">Tentang Kanti’s Store</h3>
+			<p class="leading-relaxed text-zinc-600">
+				Kanti’s Store berdiri dengan visi menghadirkan kecantikan alami yang berkelanjutan. Setiap
+				produk kami diformulasikan dari bahan herbal pilihan — seperti lidah buaya, minyak kelapa,
+				dan teh hijau — tanpa bahan kimia berbahaya. Perawatan terbaik adalah yang berasal dari
+				alam.
+			</p>
+		</div>
+	</section>
+
+	<!-- GALLERY -->
+	<section id="gallery" class="reveal bg-zinc-50 px-16 py-24 opacity-0">
+		<h3 class="mb-10 text-center text-3xl font-semibold text-zinc-800">Produk Unggulan Kami</h3>
+		<div class="mx-auto grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+			{#each Array(6) as _, i}
 				<div
-					class="rounded-2xl border border-green-100 bg-white shadow-sm transition hover:scale-105 hover:shadow-lg"
+					class="group relative overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-md"
 				>
-					<img src={p.image} alt={p.name} class="h-56 w-full rounded-t-2xl object-cover" />
-					<div class="p-6">
-						<h3 class="text-xl font-semibold text-green-700">{p.name}</h3>
-						<p class="mt-2 text-sm text-gray-600">{p.desc}</p>
-						<p class="mt-4 font-bold text-green-800">{p.price}</p>
-						<button
-							class="mt-4 w-full rounded-lg bg-green-600 py-2 text-white transition hover:bg-green-700"
-						>
-							Lihat Detail
-						</button>
+					<img
+						src={`/images/produk${i + 1}.jpg`}
+						alt="Produk {i + 1}"
+						class="h-80 w-full object-cover transition duration-500 group-hover:scale-105"
+					/>
+					<div
+						class="absolute inset-0 flex flex-col items-center justify-center bg-zinc-900/60 opacity-0 transition group-hover:opacity-100"
+					>
+						<span class="mb-2 text-lg font-semibold text-white">Produk Herbal {i + 1}</span>
 					</div>
 				</div>
 			{/each}
 		</div>
-	</div>
+	</section>
 
-	<!-- About Section -->
-	<div class="bg-green-100 py-16 text-center">
-		<h2 class="text-3xl font-bold text-green-700">Tentang SR12</h2>
-		<p class="mx-auto mt-4 max-w-3xl text-gray-700">
-			SR12 merupakan brand herbal terpercaya yang menghadirkan produk-produk alami berbasis bahan
-			tradisional Indonesia. Setiap produk kami diformulasikan oleh para ahli untuk memberikan
-			manfaat nyata bagi kesehatan dan kecantikan Anda.
+	<!-- BENEFITS -->
+	<section id="benefits" class="reveal border-t border-zinc-100 bg-white px-16 py-24 opacity-0">
+		<div class="mx-auto max-w-5xl text-center">
+			<h3 class="mb-10 text-3xl font-semibold text-zinc-800">Mengapa Memilih Kami?</h3>
+
+			<div class="grid grid-cols-1 gap-10 text-zinc-700 sm:grid-cols-3">
+				<div class="flex flex-col items-center">
+					<img src="/images/icon-leaf.svg" alt="Herbal" class="mb-4 h-16 opacity-80" />
+					<h4 class="mb-2 text-lg font-semibold">100% Herbal</h4>
+					<p class="text-sm text-zinc-500">
+						Diformulasikan dari bahan alami tanpa pengawet dan bahan kimia sintetis.
+					</p>
+				</div>
+				<div class="flex flex-col items-center">
+					<img src="/images/icon-bottle.svg" alt="Quality" class="mb-4 h-16 opacity-80" />
+					<h4 class="mb-2 text-lg font-semibold">Kualitas Premium</h4>
+					<p class="text-sm text-zinc-500">
+						Setiap produk melewati uji kualitas agar aman dan efektif untuk semua jenis kulit.
+					</p>
+				</div>
+				<div class="flex flex-col items-center">
+					<img src="/images/icon-heart.svg" alt="Natural Beauty" class="mb-4 h-16 opacity-80" />
+					<h4 class="mb-2 text-lg font-semibold">Cantik Alami</h4>
+					<p class="text-sm text-zinc-500">
+						Membantu menutrisi kulit dan rambut secara alami untuk kecantikan dari dalam.
+					</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- TESTIMONI -->
+	<section id="testimoni" class="reveal border-t border-zinc-100 bg-zinc-50 px-16 py-24 opacity-0">
+		<div class="mx-auto max-w-5xl text-center">
+			<h3 class="mb-10 text-3xl font-semibold text-zinc-800">Apa Kata Pelanggan Kami?</h3>
+
+			<div class="grid grid-cols-1 gap-8 sm:grid-cols-3">
+				{#each [{ name: 'Ayu Pratiwi', comment: 'Setelah pakai serum herbal dari Kanti, kulitku lebih lembab dan cerah alami!' }, { name: 'Dewi Santika', comment: 'Produk maskernya wangi banget dan hasilnya nyata dari pemakaian pertama.' }, { name: 'Sinta Lestari', comment: 'Suka banget sama konsep natural dan kemasan elegannya. Worth every penny!' }] as testi}
+					<div class="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+						<p class="mb-4 italic text-zinc-600">“{testi.comment}”</p>
+						<h4 class="font-semibold text-zinc-800">— {testi.name}</h4>
+					</div>
+				{/each}
+			</div>
+		</div>
+	</section>
+
+	<!-- CTA -->
+	<section
+		id="cta"
+		class="reveal border-t border-zinc-100 bg-white px-16 py-24 text-center opacity-0"
+	>
+		<h3 class="mb-6 text-3xl font-semibold text-zinc-800">Mulai Perawatan Alami Hari Ini</h3>
+		<p class="mx-auto mb-8 max-w-2xl text-zinc-600">
+			Kecantikan sejati dimulai dari pilihan yang bijak. Gunakan produk herbal alami dari Kanti’s
+			Store untuk menjaga kesehatan kulit dan rambutmu tanpa efek samping.
 		</p>
-	</div>
+		<a
+			href="/catalog"
+			class="inline-block rounded-full bg-zinc-900 px-8 py-3 font-semibold tracking-wide text-white transition hover:bg-zinc-800"
+			>Belanja Sekarang</a
+		>
+	</section>
 </section>
+
+<style>
+	@keyframes fadeSlide {
+		from {
+			opacity: 0;
+			transform: translateY(40px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.animate-show {
+		animation: fadeSlide 0.8s ease-out forwards;
+	}
+
+	/* Transisi lebih halus antar section */
+	section {
+		transition:
+			opacity 0.4s ease-out,
+			transform 0.4s ease-out;
+	}
+</style>

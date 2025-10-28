@@ -97,10 +97,9 @@ export async function getStatusTransaksi(filterStatus?: string) {
 		console.log('result:', res.data.result);
 
 		// messageHandleTrans.set({ type: 'success', message: res.data.message });
-		// transaksiStore.set(res.data.result);
+		transaksiStore.set(res.data.result);
 	} catch (err: unknown) {
 		messageHandleTrans.set({ type: 'error', message: errorHandler(err) });
-		transaksiStore.set([]);
 	} finally {
 		loadingTrans.set(false);
 	}
@@ -147,7 +146,7 @@ export async function getTransAdmin(filterStatus?: string) {
 		transaksiAdminStore.set(res.data.result);
 	} catch (err: unknown) {
     console.log(err);
-    
+
   } finally {
 		loadingTrans.set(false);
 	}

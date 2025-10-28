@@ -1,5 +1,4 @@
 <!-- src/routes/dashboard/admin/todolist/+page.svelte -->
-<!-- page handling master todo -->
 <script lang="ts">
 	import {
 		addTodo,
@@ -14,18 +13,22 @@
 		type TodoListDTO
 	} from '$lib';
 	import { onMount } from 'svelte';
-	let isEditMode: boolean = false;
+	import NotificationModal from '$lib/components/NotificationModal.svelte';
+
+	// Ikon lucide
+	import { ClipboardList, Pencil, Trash2, CheckSquare, PlusCircle, Filter } from "lucide-svelte";
+
+	let isEditMode = false;
+	let filterStatus = '';
 
 	const dataTodolist: TodoListDTO = {
 		id: '',
 		todolist_desc: '',
 		todolist_status: ''
 	};
-	let filterStatus: string = '';
 
 	onMount(async () => {
 		await getAllTodo();
-		console.log('============ data todolist ============', $todoListStore);
 	});
 
 	function clearForm() {
@@ -33,14 +36,12 @@
 		dataTodolist.todolist_desc = '';
 		dataTodolist.todolist_status = '';
 		isEditMode = false;
+		window.scrollTo({ top: 0, behavior: 'smooth' });
 	}
 
 	async function handleSubmit() {
-		if (isEditMode) {
-			await updateTodo(dataTodolist);
-		} else {
-			await addTodo(dataTodolist);
-		}
+		if (isEditMode) await updateTodo(dataTodolist);
+		else await addTodo(dataTodolist);
 		clearForm();
 	}
 
@@ -49,31 +50,36 @@
 		dataTodolist.id = todo.id;
 		dataTodolist.todolist_desc = todo.todolist_desc;
 		dataTodolist.todolist_status = todo.todolist_status;
+		window.scrollTo({ top: 0, behavior: 'smooth' });
 	}
 
 	async function handleStatusUpdate(todo: TodoListDTO) {
 		await updateTodoStatus(todo);
 	}
 
-  async function handleFilter() {
+	async function handleFilter() {
 		await getAllTodo(filterStatus);
 	}
 </script>
 
-<div class="space-y-8">
-	<h1 class="text-2xl font-bold mb-4">MANAGE TODOLIST</h1>
+<div class="space-y-10 text-zinc-800">
+	<!-- Header -->
+	<div class="flex items-center gap-3 ">
+		<h1 class="text-3xl font-bold tracking-tight text-zinc-800">Manage Todo List</h1>
+	</div>
 
+	<!-- FORM -->
 	<form
 		on:submit|preventDefault={handleSubmit}
-		class="mx-auto mt-5 w-full rounded-lg bg-white p-8 shadow-md"
+		class="mx-auto w-full rounded-2xl border border-zinc-200 bg-zinc-50 p-8 shadow-sm transition hover:shadow-md"
 	>
-		<div class="mb-4">
-			<label class="mb-2 block text-sm font-medium text-gray-700">Deskripsi Todolist</label>
+		<div class="mb-6">
+			<label class="mb-2 block text-sm font-semibold text-zinc-600">Deskripsi Todolist</label>
 			<input
 				type="text"
 				bind:value={dataTodolist.todolist_desc}
-				placeholder="Masukkan Rencana Todolist Kamu"
-				class="w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+				placeholder="Masukkan rencana todolist kamu..."
+				class="w-full rounded-lg border border-zinc-300 bg-white p-3 text-zinc-800 placeholder-zinc-400 focus:border-zinc-500 focus:ring-2 focus:ring-zinc-300 focus:outline-none transition"
 				required
 			/>
 		</div>
@@ -81,19 +87,21 @@
 		<button
 			type="submit"
 			disabled={$loadingTodo}
-			class="w-full rounded-md bg-blue-600 py-2 font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50"
+			class="w-full flex items-center justify-center gap-2 rounded-lg bg-zinc-800 py-2 font-semibold text-zinc-50 shadow-sm transition hover:bg-zinc-700 disabled:opacity-50"
 		>
 			{#if $loadingTodo}
 				<span>Memproses...</span>
+			{:else if isEditMode}
+				<Pencil class="w-4 h-4" /> Update Todolist
 			{:else}
-				<span>{isEditMode ? 'Update Todolist' : 'Tambah Todolist'}</span>
+				<PlusCircle class="w-4 h-4" /> Tambah Todolist
 			{/if}
 		</button>
 
 		{#if isEditMode}
 			<button
 				type="button"
-				class="mt-3 w-full rounded-md bg-gray-400 py-2 font-semibold text-white transition hover:bg-gray-500"
+				class="mt-3 w-full rounded-lg bg-zinc-200 py-2 font-semibold text-zinc-700 hover:bg-zinc-300 transition"
 				on:click={clearForm}
 			>
 				Batal Edit
@@ -101,78 +109,73 @@
 		{/if}
 
 		{#if $messageHandleTodo}
-			<p
-				class="mt-4 text-center text-sm font-medium
-				{$messageHandleTodo.type === 'error' ? 'text-red-600' : 'text-green-600'}"
-			>
-				{$messageHandleTodo.message}
-			</p>
+			<NotificationModal
+				message={$messageHandleTodo.message}
+				type={$messageHandleTodo.type}
+				onClose={() => messageHandleTodo.set(null)}
+			/>
 		{/if}
 	</form>
 
-	<!-- List Todo -->
-	<div class="mb-4 mt-10 flex items-center gap-3">
+	<!-- FILTER -->
+	<div class="flex items-center gap-3">
+		<Filter class="w-5 h-5 text-zinc-500" />
 		<select
 			bind:value={filterStatus}
 			on:change={handleFilter}
-			class="rounded border border-gray-300 p-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 w-50"
+			class="rounded-lg border border-zinc-300 bg-zinc-50 p-2 text-zinc-700 focus:border-zinc-500 focus:ring-2 focus:ring-zinc-300 transition"
 		>
 			<option value="">Semua</option>
 			<option value="Selesai">Selesai</option>
 			<option value="Belum Dikerjakan">Belum Dikerjakan</option>
 		</select>
-
-
 	</div>
 
-	<div class="mt-8">
+	<!-- LIST -->
+	<div>
 		{#if $loadingGlobal}
-			<div class="flex items-center justify-center py-6">
-				<div class="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
-				<p class="ml-3 text-gray-600">Memuat data todolist...</p>
+			<div class="flex items-center justify-center py-10 text-zinc-600">
+				<div class="h-6 w-6 animate-spin rounded-full border-2 border-zinc-700 border-t-transparent"></div>
+				<p class="ml-3">Memuat data todolist...</p>
 			</div>
 		{:else if ($todoListStore ?? []).length > 0}
-			<h2 class="mb-3 text-lg font-semibold">Daftar Todolist:</h2>
-			<ul class="space-y-2">
+			<h2 class="mb-4 text-xl font-semibold text-zinc-700">Daftar Todolist</h2>
+			<ul class="space-y-3">
 				{#each $todoListStore ?? [] as todo}
 					<li
-						class="flex items-center justify-between rounded-lg border border-gray-200 p-3 transition hover:shadow-sm"
+						class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm transition hover:shadow-md"
 					>
 						<div>
-              <p class="font-sm text-sm text-gray-500">{new Date(todo.createdAt).toLocaleString()}</p>
-							<p class="font-medium text-gray-800">{todo.todolist_desc}</p>
-							{#if todo.todolist_status !== 'Selesai'}
-								<p class="text-sm text-yellow-600">
-									Status: {todo.todolist_status}
-								</p>
-							{/if}
+							<p class="text-xs text-zinc-400">{new Date(todo.createdAt).toLocaleString()}</p>
+							<p class="text-base font-medium text-zinc-800">{todo.todolist_desc}</p>
+							<p
+								class={`text-sm font-medium ${todo.todolist_status === 'Selesai'
+									? 'text-green-600'
+									: 'text-amber-600'}`}
+							>
+								Status: {todo.todolist_status}
+							</p>
 						</div>
-						<div class="flex gap-2">
-							{#if todo.todolist_status === 'Selesai'}
-								<p
-									class="text-md font-bold
-								{todo.todolist_status === 'Selesai' ? 'text-green-600' : 'text-yellow-600'}"
-								>
-									Status: {todo.todolist_status}
-								</p>
-							{:else}
+
+						<div class="flex flex-wrap gap-2">
+							{#if todo.todolist_status !== 'Selesai'}
 								<button
-									class="rounded bg-blue-500 px-3 py-1 text-sm text-white hover:bg-blue-600"
+									class="flex items-center gap-1 rounded-lg border border-zinc-300 bg-zinc-100 px-3 py-1 text-sm font-medium text-zinc-700 hover:bg-zinc-200 transition"
 									on:click={() => handleEdit(todo)}
 								>
-									Edit
+									<Pencil class="w-4 h-4" /> Edit
 								</button>
 								<button
-									class="rounded bg-green-500 px-3 py-1 text-sm text-white hover:bg-green-600"
+									class="flex items-center gap-1 rounded-lg border border-zinc-300 bg-zinc-100 px-3 py-1 text-sm font-medium text-zinc-700 hover:bg-zinc-200 transition"
 									on:click={() => handleStatusUpdate(todo)}
 								>
-									Update Status
+									<CheckSquare class="w-4 h-4" /> Update Status
 								</button>
 								<button
-									class="rounded bg-red-500 px-3 py-1 text-sm text-white hover:bg-red-600"
+									class="flex items-center gap-1 rounded-lg bg-red-100 px-3 py-1 text-sm font-medium text-red-700 hover:bg-red-200 transition"
 									on:click={() => deleteTodo(todo.id)}
 								>
-									Delete
+									<Trash2 class="w-4 h-4" /> Delete
 								</button>
 							{/if}
 						</div>
@@ -180,9 +183,9 @@
 				{/each}
 			</ul>
 		{:else}
-			<div class="mt-8 text-center text-gray-500">
-				<p class="text-lg font-medium">Belum ada todolist yang kamu buat.</p>
-				<p class="mt-1 text-sm text-gray-400">Yuk tambahkan rencana harian pertamamu!</p>
+			<div class="mt-10 text-center text-zinc-500">
+				<p class="text-lg font-semibold">Belum ada todolist yang kamu buat.</p>
+				<p class="text-sm text-zinc-400 mt-1">Yuk tambahkan rencana harian pertamamu!</p>
 			</div>
 		{/if}
 	</div>

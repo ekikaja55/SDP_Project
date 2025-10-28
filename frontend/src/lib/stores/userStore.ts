@@ -5,6 +5,7 @@
  */
 
 // handling functiion axios
+import { goto } from '$app/navigation';
 import {
 	api,
 	errorHandler,
@@ -74,9 +75,10 @@ export async function login(data: LoginDTO) {
 		);
 		const dataUser: UserAuth = jwtDecode(res.data.result);
 		console.log('isi access token setelah di decode\n' + JSON.stringify(dataUser, null, 2));
-		// userStore.set(dataUser);
-		window.location.href = `/dashboard/${dataUser.user_role}`;
-		// goto(`/dashboard/${dataUser.user_role}`)
+
+    const temp: string = dataUser.user_role === 'admin' ? 'products' : 'status_pemesanan';
+    window.location.href = `/dashboard/${dataUser.user_role}/${temp}`;
+    
 	} catch (err: unknown) {
 		messageHandleUser.set({
 			type: 'error',
