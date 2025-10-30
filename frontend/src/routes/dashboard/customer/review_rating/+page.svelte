@@ -11,7 +11,7 @@
 	import ReviewModal from '$lib/components/ReviewModal.svelte';
 	import { onMount } from 'svelte';
 	import NotificationModal from '$lib/components/NotificationModal.svelte';
-	import { Star, MessageSquare } from 'lucide-svelte';
+	import { Star, MessageSquare } from '@lucide/svelte';
 
 	const BASE_URL = import.meta.env.VITE_API_URL_UPLOADS;
 	let showModal = false;

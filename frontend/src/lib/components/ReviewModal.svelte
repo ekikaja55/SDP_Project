@@ -2,7 +2,7 @@
 <script lang="ts">
 	import type { ReviewDTO } from '$lib';
 	import { fade, fly } from 'svelte/transition';
-	import { Star, X } from 'lucide-svelte';
+	import { Star, X } from '@lucide/svelte';
 
 	export let visible = false;
 	export let productName = '';

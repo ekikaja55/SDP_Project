@@ -1,7 +1,7 @@
 <!-- src/routes/dashboard/admin/manage_customer/+page.svelte -->
 <script lang="ts">
 	import { customerStore, getUserData, loadingCust, query } from '$lib';
-	import { RotateCcw, Search } from 'lucide-svelte';
+	import { RotateCcw, Search } from '@lucide/svelte';
 	import { onMount } from 'svelte';
 
 	onMount(() => {

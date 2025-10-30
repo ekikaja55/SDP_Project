@@ -11,7 +11,7 @@
 		type LaporanPenjualan
 	} from '$lib';
 	import DetailTransModal from '$lib/components/DetailTransModal.svelte';
-	import { ArrowLeft, RefreshCcw, BarChart3, Eye } from 'lucide-svelte';
+	import { ArrowLeft, RefreshCcw, BarChart3, Eye } from '@lucide/svelte';
 
 	let showModal: boolean = false;
 	let data: LaporanPenjualan | null = null;
@@ -71,7 +71,7 @@
 				Reset Filter
 			</button>
 
-			
+
 		</div>
 	</div>
 

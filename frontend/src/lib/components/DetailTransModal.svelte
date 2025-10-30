@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { X } from 'lucide-svelte';
+	import { X } from '@lucide/svelte';
 	import type { LaporanPenjualan } from '../types';
 
 	export let data: LaporanPenjualan;
@@ -71,6 +71,6 @@
 			<p class="text-center text-zinc-500 mt-6">Tidak ada transaksi ditemukan.</p>
 		{/if}
 
-		
+
 	</div>
 </div>

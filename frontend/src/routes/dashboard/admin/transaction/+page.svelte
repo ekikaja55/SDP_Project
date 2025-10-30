@@ -13,7 +13,7 @@
 	} from '$lib';
 	import BuktiModal from '$lib/components/BuktiModal.svelte';
 	import NotificationModal from '$lib/components/NotificationModal.svelte';
-	import { Eye, RefreshCcw, FileSpreadsheet, Upload, ArrowUpRight } from 'lucide-svelte';
+	import { Eye, RefreshCcw, FileSpreadsheet, Upload, ArrowUpRight } from '@lucide/svelte';
 
 	const BASE_URL = import.meta.env.VITE_API_URL_UPLOADS;
 	let url = '';

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { Eye } from 'lucide-svelte';
+	import { Eye } from '@lucide/svelte';
 	import { getReviewRatingAdmin, loadingReview, reviewRatingStore, type Review } from '$lib';
 	import ReviewDetail from '../../../../lib/components/ReviewDetail.svelte';
 

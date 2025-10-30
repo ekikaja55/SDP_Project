@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getStatusTransaksi, loadingTrans, transaksiStore } from '$lib';
 	import { onMount } from 'svelte';
-	import { Truck, PackageCheck, Clock } from 'lucide-svelte';
+	import { Truck, PackageCheck, Clock } from '@lucide/svelte';
 	const BASE_URL = import.meta.env.VITE_API_URL_UPLOADS;
 
 	let selectedStatus = '';

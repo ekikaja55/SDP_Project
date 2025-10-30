@@ -10,7 +10,7 @@
 		updateProduk,
 		type ProdukDTO
 	} from '$lib';
-	import { CheckCircle, Edit3, Filter, Search, Trash2 } from 'lucide-svelte';
+	import { CheckCircle, Edit3, Filter, Search, Trash2 } from '@lucide/svelte';
 	import { onMount } from 'svelte';
 	import NotificationModal from '../../../../lib/components/NotificationModal.svelte';
 

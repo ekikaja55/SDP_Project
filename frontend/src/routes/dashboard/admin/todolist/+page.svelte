@@ -16,7 +16,7 @@
 	import NotificationModal from '$lib/components/NotificationModal.svelte';
 
 	// Ikon lucide
-	import { ClipboardList, Pencil, Trash2, CheckSquare, PlusCircle, Filter } from "lucide-svelte";
+	import { ClipboardList, Pencil, Trash2, CheckSquare, PlusCircle, Filter } from "@lucide/svelte";
 
 	let isEditMode = false;
 	let filterStatus = '';

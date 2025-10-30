@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getHistoryTransaksi, loadingTrans, transaksiStore } from '$lib';
 	import { onMount } from 'svelte';
-	import { Clock, PackageCheck, Truck, Ban, CheckCircle2 , Icon} from 'lucide-svelte';
+	import { Clock, PackageCheck, Truck, Ban, CheckCircle2 , Icon} from '@lucide/svelte';
 	const BASE_URL = import.meta.env.VITE_API_URL_UPLOADS;
 
 	let selectedStatus = '';
