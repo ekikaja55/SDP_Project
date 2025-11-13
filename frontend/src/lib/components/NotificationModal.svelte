@@ -1,15 +1,21 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { fade, fly } from 'svelte/transition';
 
 	export let message: string = '';
 	export let type: 'success' | 'error';
 	export let onClose: () => void;
+	export let isLogin: boolean = false;
 
 	let visible = true;
 
 	function handleClose() {
 		visible = false;
 		onClose?.();
+	}
+
+	function redirect() {
+		goto('/login');
 	}
 
 	function cekColor(): string {
@@ -23,24 +29,34 @@
 		transition:fade={{ duration: 200 }}
 	>
 		<div
-			class="relative w-[90%] max-w-md rounded-2xl bg-zinc-50 shadow-2xl p-6 sm:p-8 border border-zinc-200 text-zinc-800"
+			class="relative w-[90%] max-w-md rounded-2xl border border-zinc-200 bg-zinc-50 p-6 text-zinc-800 shadow-2xl sm:p-8"
 			transition:fly={{ y: 10, duration: 200 }}
 		>
+			{#if isLogin}
+				<button
+					class="absolute right-4 top-4 text-zinc-400 transition hover:text-zinc-600"
+					on:click={redirect}
+					aria-label="Close"
+				>
+					✕
+				</button>
+			{:else}
+				<button
+					class="absolute right-4 top-4 text-zinc-400 transition hover:text-zinc-600"
+					on:click={handleClose}
+					aria-label="Close"
+				>
+					✕
+				</button>
+			{/if}
 			<!-- Tombol close -->
-			<button
-				class="absolute right-4 top-4 text-zinc-400 hover:text-zinc-600 transition"
-				on:click={handleClose}
-				aria-label="Close"
-			>
-				✕
-			</button>
 
-			<div class="flex items-center gap-3 mb-4">
+			<div class="mb-4 flex items-center gap-3">
 				<div
-					class={`h-10 w-10 flex items-center justify-center rounded-full border-2 ${
+					class={`flex h-10 w-10 items-center justify-center rounded-full border-2 ${
 						type === 'success'
-							? 'border-emerald-500 text-emerald-600 bg-emerald-50'
-							: 'border-rose-500 text-rose-600 bg-rose-50'
+							? 'border-emerald-500 bg-emerald-50 text-emerald-600'
+							: 'border-rose-500 bg-rose-50 text-rose-600'
 					}`}
 				>
 					{#if type === 'success'}
@@ -53,7 +69,7 @@
 			</div>
 
 			<!-- Pesan utama -->
-			<p class="text-zinc-700 text-base mb-5 leading-relaxed">{message}</p>
+			<p class="mb-5 text-base leading-relaxed text-zinc-700">{message}</p>
 		</div>
 	</div>
 {/if}

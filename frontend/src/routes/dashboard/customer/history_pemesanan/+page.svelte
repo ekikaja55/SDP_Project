@@ -58,7 +58,7 @@
 	}
 </script>
 
-<h2 class="mb-6 text-3xl font-bold text-zinc-800">Status Pemesanan</h2>
+<h2 class="mb-6 text-3xl font-bold text-zinc-800">Transaction History</h2>
 
 <!-- Filter -->
 <div class="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

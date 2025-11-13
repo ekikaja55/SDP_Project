@@ -38,7 +38,7 @@
 </script>
 
 <h2 class="mb-6 flex items-center gap-2 text-3xl font-bold text-zinc-800">
-	<span>Review & Rating Produk</span>
+	<span>Review & Rating</span>
 </h2>
 
 {#if $messageHandleReview}

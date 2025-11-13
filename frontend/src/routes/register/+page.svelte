@@ -9,6 +9,16 @@
 		user_password: '',
 		user_confirm_password: ''
 	};
+
+	function handleSubmit() {
+		register(dataRegister);
+		dataRegister = {
+			user_nama: '',
+			user_email: '',
+			user_password: '',
+			user_confirm_password: ''
+		};
+	}
 </script>
 
 <section class="z-50 flex min-h-screen items-center justify-center bg-zinc-50">
@@ -49,7 +59,7 @@
 				<p class="mt-1 text-sm text-zinc-500">Daftar dan rasakan pengalaman eksklusif</p>
 			</div>
 
-			<form on:submit|preventDefault={() => register(dataRegister)} class="space-y-5">
+			<form on:submit|preventDefault={handleSubmit} class="space-y-5">
 				<div>
 					<label class="mb-2 block text-sm font-medium text-zinc-700">Nama Lengkap</label>
 					<div class="relative">
@@ -171,11 +181,20 @@
 				</button>
 
 				{#if $messageHandleUser}
-					<NotificationModal
-						message={$messageHandleUser.message}
-						type={$messageHandleUser.type}
-						onClose={() => messageHandleUser.set(null)}
-					/>
+					{#if $messageHandleUser.type === 'success'}
+						<NotificationModal
+							message={$messageHandleUser.message}
+							type={$messageHandleUser.type}
+							onClose={() => messageHandleUser.set(null)}
+							isLogin={true}
+						/>
+					{:else}
+						<NotificationModal
+							message={$messageHandleUser.message}
+							type={$messageHandleUser.type}
+							onClose={() => messageHandleUser.set(null)}
+						/>
+					{/if}
 				{/if}
 			</form>
 

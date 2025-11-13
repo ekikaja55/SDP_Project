@@ -75,13 +75,12 @@
 	>
 		<div class="mb-6">
 			<label class="mb-2 block text-sm font-semibold text-zinc-600">Deskripsi Todolist</label>
-			<input
-				type="text"
+			<textarea
 				bind:value={dataTodolist.todolist_desc}
 				placeholder="Masukkan rencana todolist kamu..."
 				class="w-full rounded-lg border border-zinc-300 bg-white p-3 text-zinc-800 placeholder-zinc-400 focus:border-zinc-500 focus:ring-2 focus:ring-zinc-300 focus:outline-none transition"
 				required
-			/>
+			></textarea>
 		</div>
 
 		<button
