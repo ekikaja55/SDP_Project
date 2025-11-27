@@ -15,6 +15,8 @@ const {
   getProductKatalog,
 } = require("../controllers/product");
 const upload = require("../middlewares/upload");
+const cekLogin = require("../middlewares/cekLogin");
+const cekRole = require("../middlewares/cekRole");
 const router = express.Router();
 
 /**
