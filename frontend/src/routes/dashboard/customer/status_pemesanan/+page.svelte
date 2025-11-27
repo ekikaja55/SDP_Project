@@ -55,7 +55,7 @@
 	<select
 		bind:value={selectedStatus}
 		on:change={refreshTransaksi}
-		class="rounded-xl border border-zinc-300 bg-zinc-50 px-3 py-2 text-zinc-700 focus:outline-none focus:ring-2 focus:ring-zinc-300 focus:border-zinc-400 transition-all"
+		class="rounded-xl border border-zinc-300 bg-zinc-50 px-3 py-2 text-zinc-700 transition-all focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-300"
 	>
 		{#each statusOptions as option}
 			<option value={option}>
@@ -67,18 +67,20 @@
 
 {#if $loadingTrans}
 	<div class="flex justify-center py-10">
-		<div class="h-10 w-10 animate-spin rounded-full border-4 border-zinc-400 border-t-transparent"></div>
+		<div
+			class="h-10 w-10 animate-spin rounded-full border-4 border-zinc-400 border-t-transparent"
+		></div>
 	</div>
 {:else if $transaksiStore && $transaksiStore.length > 0}
 	<div class="flex flex-col gap-8">
 		{#each $transaksiStore as item}
 			<div
-				class="rounded-2xl border border-zinc-200 bg-zinc-50 p-6 shadow-md transition-all hover:shadow-lg hover:border-zinc-300"
+				class="rounded-2xl border border-zinc-200 bg-zinc-50 p-6 shadow-md transition-all hover:border-zinc-300 hover:shadow-lg"
 			>
 				<div class="flex flex-col md:flex-row md:gap-6">
 					<div class="w-full space-y-4 md:w-3/4">
 						<span
-							class="inline-block rounded-full bg-zinc-200 px-4 py-1.5 text-sm font-semibold text-zinc-800 tracking-wide"
+							class="inline-block rounded-full bg-zinc-200 px-4 py-1.5 text-sm font-semibold tracking-wide text-zinc-800"
 						>
 							ID Transaksi: {item.transaksi_id}
 						</span>
@@ -123,7 +125,7 @@
 							</span>
 						{/key}
 
-						<div class="text-right mt-4 md:mt-0">
+						<div class="mt-4 text-right md:mt-0">
 							<span class="text-sm text-zinc-500">Grand Total</span>
 							<p class="text-lg font-semibold text-zinc-800">
 								Rp {item.transaksi_grand_total}
