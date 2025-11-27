@@ -75,8 +75,10 @@ app.use(
   })
 );
 
-console.log("CWD:", process.cwd());
-console.log("Dirname:", __dirname);
+app.get("/", (req, res) => {
+  console.log("CWD:", process.cwd());
+  console.log("Dirname:", __dirname);
+});
 
 // Folder publik untuk file upload
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
