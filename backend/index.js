@@ -70,7 +70,7 @@ app.use(cookieParser());
 // Konfigurasi CORS
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5173", "https://sdp-project-black.vercel.app"],
     credentials: true,
   })
 );
