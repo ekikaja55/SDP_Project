@@ -22,26 +22,34 @@ const router = express.Router();
  * Menambahkan produk baru ke dalam database.
  * Mengharuskan upload gambar dengan field `produk_gambar`.
  */
-router.post("/", [upload.single("produk_gambar")], insertProduct);
+router.post(
+  "/",
+  [cekLogin, cekRole("admin"), upload.single("produk_gambar")],
+  insertProduct
+);
 
 /**
  * PUT /api/v1/product/:id
  * Memperbarui data produk berdasarkan ID.
  * Dapat menyertakan gambar baru untuk menggantikan yang lama.
  */
-router.put("/:id", [upload.single("produk_gambar")], updateProduct);
+router.put(
+  "/:id",
+  [cekLogin, cekRole("admin"), upload.single("produk_gambar")],
+  updateProduct
+);
 
 /**
  * DELETE /api/v1/product/:id
  * Menghapus produk berdasarkan ID.
  */
-router.delete("/:id", deleteProduct);
+router.delete("/:id", [cekLogin, cekRole("admin")], deleteProduct);
 
 /**
  * GET /api/v1/product
  * Mengambil seluruh data produk dari database.
  */
-router.get("/", getAllProducts);
+router.get("/", [cekLogin, cekRole("admin")], getAllProducts);
 
 /**
  * GET /api/v1/product/katalog

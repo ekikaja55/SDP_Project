@@ -4,17 +4,6 @@ const insertTransaction = async (req, res) => {
     const user = req.userLogin;
     let { transaksi_grand_total, transaksi_detail } = req.body;
     transaksi_detail = JSON.parse(transaksi_detail);
-    // console.log(user);
-
-    // console.log(typeof transaksi_detail);
-
-    // console.log(transaksi_detail);
-    // console.log(transaksi_detail.length);
-    // console.log(Array.isArray(transaksi_detail));
-    // console.log(transaksi_detail.length === 0);
-
-    // console.log(transaksi_grand_total);
-
     if (
       !transaksi_detail ||
       !Array.isArray(transaksi_detail) ||
@@ -27,9 +16,6 @@ const insertTransaction = async (req, res) => {
     }
 
     for (const item of transaksi_detail) {
-      console.log("masuk for");
-      console.log("item", item.detail_nama);
-
       const produk = await prisma.produk.findFirst({
         where: { produk_nama: item.detail_nama },
       });
@@ -53,27 +39,15 @@ const insertTransaction = async (req, res) => {
         },
       });
     }
-    console.log("masuk setelah if");
-
     const gambar = req.file.filename;
     transaksi_detail = transaksi_detail.map((d) => ({
       ...d,
       detail_stok: Number(d.detail_stok),
       detail_sub_total: Number(d.detail_sub_total),
     }));
-
-    console.log("hasil mapping transaksi detail : ", transaksi_detail);
-
-    console.log("value sebelum diubah", transaksi_grand_total);
-    console.log("type sebelum diubah", typeof transaksi_grand_total);
-
     transaksi_grand_total = Number(
       String(transaksi_grand_total).replace(/[^\d.-]/g, "")
     );
-
-    console.log("value setelah diubah", transaksi_grand_total);
-    console.log("type setelah diubah", typeof transaksi_grand_total);
-
     await prisma.user.update({
       where: { id: user.id },
       data: {
@@ -100,8 +74,6 @@ const insertTransaction = async (req, res) => {
       result: null,
     });
   } catch (error) {
-    console.log(error.message);
-
     return res
       .status(500)
       .json({ message: "Terjadi kesalahan pada server", result: null });
@@ -116,11 +88,7 @@ const getStatusCustomer = async (req, res) => {
         user_transaksi: true,
       },
     });
-    console.log(user);
-
     let listTransaksi = user.user_transaksi;
-    console.log("list transaksi : ", listTransaksi);
-
     if (filterStatus) {
       listTransaksi = listTransaksi.filter(
         (t) =>
@@ -135,8 +103,6 @@ const getStatusCustomer = async (req, res) => {
           t.transaksi_status !== "Pesanan Selesai"
       );
     }
-    console.log(listTransaksi);
-
     if (listTransaksi.length <= 0)
       return res.status(404).json({ message: "Tidak ada data", result: null });
     const semuaProduk = await prisma.produk.findMany({
@@ -162,13 +128,8 @@ const getStatusCustomer = async (req, res) => {
         typeof value === "bigint" ? value.toString() : value
       )
     );
-
-    console.log("data get status: ", JSON.stringify(data, null, 2));
-
     res.status(200).json({ message: "Sukses ambil data", result: data });
   } catch (error) {
-    console.log(error);
-
     return res
       .status(500)
       .json({ message: "Terjadi kesalahan pada server", result: null });
@@ -223,7 +184,6 @@ const getHistoriCustomer = async (req, res) => {
 const getAllTransaction = async (req, res) => {
   try {
     const { filterStatus } = req.query;
-
     const users = await prisma.user.findMany({
       select: {
         id: true,
@@ -231,7 +191,6 @@ const getAllTransaction = async (req, res) => {
         user_transaksi: true,
       },
     });
-
     let listTransaksi = users.flatMap((user) =>
       user.user_transaksi.map((t) => ({
         ...t,
@@ -239,26 +198,21 @@ const getAllTransaction = async (req, res) => {
         user_nama: user.user_nama,
       }))
     );
-
     listTransaksi.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
     if (filterStatus) {
       listTransaksi = listTransaksi.filter(
         (t) => t.transaksi_status === filterStatus
       );
     }
-
     if (listTransaksi.length <= 0) {
       return res.status(404).json({ message: "Tidak ada data", result: null });
     }
-
     const semuaProduk = await prisma.produk.findMany({
       select: {
         produk_nama: true,
         produk_gambar: true,
       },
     });
-
     const transaksiLengkap = listTransaksi.map((t) => ({
       ...t,
       transaksi_detail: t.transaksi_detail.map((d) => {
@@ -269,18 +223,15 @@ const getAllTransaction = async (req, res) => {
         };
       }),
     }));
-
     const data = JSON.parse(
       JSON.stringify(transaksiLengkap, (_, value) =>
         typeof value === "bigint" ? value.toString() : value
       )
     );
-
     return res
       .status(200)
       .json({ message: "Sukses ambil semua transaksi", result: data });
   } catch (error) {
-    console.error("Error getAllTransaction:", error);
     return res
       .status(500)
       .json({ message: "Terjadi kesalahan pada server", result: null });
@@ -288,23 +239,15 @@ const getAllTransaction = async (req, res) => {
 };
 
 const ubahStatusTransaksi = async (req, res) => {
-  console.log("fn ubahStatusTransaksi() -> ");
-
   try {
     const { transaksi_id } = req.params;
     const { transaksi_status } = req.body;
-
-    console.log("trans id : ", transaksi_id);
-    console.log("trans status : ", transaksi_status);
-
     const user = await prisma.user.findFirst({
       where: { user_transaksi: { some: { transaksi_id } } },
       select: { id: true, user_transaksi: true },
     });
-
     if (!user) return res.status(404).json({ message: "User tidak ditemukan" });
     const transaksiBaru = user.user_transaksi.map((t) => {
-      console.log("Perbandingan:", t.transaksi_id, transaksi_id);
       return t.transaksi_id === transaksi_id
         ? { ...t, transaksi_status: transaksi_status }
         : t;
@@ -317,8 +260,6 @@ const ubahStatusTransaksi = async (req, res) => {
       .status(200)
       .json({ message: "Status transaksi berhasil diubah", result: null });
   } catch (error) {
-    console.log(error.message);
-
     return res
       .status(500)
       .json({ message: "Terjadi kesalahan pada server", result: null });
@@ -329,7 +270,6 @@ const ubahStatusTransaksi = async (req, res) => {
 const getLaporanPenjualanAdmin = async (req, res) => {
   try {
     const { filterbulan, filtertahun } = req.query;
-
     const semuaUser = await prisma.user.findMany({
       select: {
         id: true,
@@ -337,14 +277,11 @@ const getLaporanPenjualanAdmin = async (req, res) => {
         user_transaksi: true,
       },
     });
-
     const hasil = semuaUser.map((user) => {
       let transaksiUser = user.user_transaksi || [];
-
       transaksiUser = transaksiUser.filter(
         (t) => t.transaksi_status === "Pesanan Selesai"
       );
-
       if (filterbulan || filtertahun) {
         transaksiUser = transaksiUser.filter((t) => {
           const createdAt = new Date(t.createdAt);
@@ -355,22 +292,17 @@ const getLaporanPenjualanAdmin = async (req, res) => {
           return cocokBulan && cocokTahun;
         });
       }
-
       if (transaksiUser.length === 0) return null;
-
       const transaksi_total = transaksiUser.reduce(
         (sum, t) => sum + Number(t.transaksi_grand_total),
         0
       );
-
       const transaksi_count = transaksiUser.length;
-
       const transaksi_largest = transaksiUser.reduce((max, t) =>
         Number(t.transaksi_grand_total) > Number(max.transaksi_grand_total)
           ? t
           : max
       );
-
       return {
         id: user.id,
         nama_user: user.user_nama,
@@ -390,16 +322,13 @@ const getLaporanPenjualanAdmin = async (req, res) => {
         },
       };
     });
-
     const hasilAkhir = hasil.filter(Boolean);
-
     if (hasilAkhir.length === 0) {
       return res.status(404).json({
         message: "Tidak ada data transaksi dengan status 'Pesanan Selesai'",
         result: [],
       });
     }
-
     res.status(200).json({
       message: "Sukses ambil laporan penjualan (Pesanan Selesai)",
       result: hasilAkhir,

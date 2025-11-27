@@ -27,11 +27,9 @@ const getAllUser = async (req, res) => {
         createdAt: orderBy,
       },
     });
-
     if (users.length === 0) {
       return res.status(404).json({ message: "Tidak ada data", result: [] });
     }
-
     const hasil = users.map((u) => ({
       id: u.id,
       user_nama: u.user_nama,
@@ -40,7 +38,6 @@ const getAllUser = async (req, res) => {
       createdAt: u.createdAt,
       total_transaksi: u.user_transaksi ? u.user_transaksi.length : 0,
     }));
-
     return res.status(200).json({
       message: "Success",
       result: hasil,
