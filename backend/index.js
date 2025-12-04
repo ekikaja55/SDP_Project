@@ -70,7 +70,21 @@ app.use(cookieParser());
 // Konfigurasi CORS
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://sdp-project-black.vercel.app"],
+    origin: (origin, cb) => {
+      const allowed = [
+        "http://localhost:5173",
+        "https://sdp-project-black.vercel.app",
+      ];
+      if (
+        !origin ||
+        allowed.includes(origin) ||
+        origin.endsWith(".vercel.app")
+      ) {
+        cb(null, true);
+      } else {
+        cb(new Error("Blocked by CORS"));
+      }
+    },
     credentials: true,
   })
 );
