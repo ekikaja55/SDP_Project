@@ -10,4 +10,18 @@ const api = axios.create({
 });
 
 
+api.interceptors.request.use((config) => {
+	const token = localStorage.getItem('token');
+
+	if (token) {
+		console.log('AXIOS INTERCEPTOR → TOKEN TERKIRIM');
+		config.headers.Authorization = `Bearer ${token}`;
+	} else {
+		console.warn('AXIOS INTERCEPTOR → TOKEN KOSONG');
+	}
+
+	return config;
+});
+
+
 export default api;
