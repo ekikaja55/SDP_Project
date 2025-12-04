@@ -126,14 +126,14 @@ const login = async (req, res) => {
     console.log("isi user : ", user);
 
     if (!user)
-      return res.status(400).json({ message: "Email belum terdaftar" });
+      return res.status(400).json({ message: "Email atau password salah" });
 
     const validPassword = await bcryptjs.compare(
       user_password,
       user.user_password
     );
     if (!validPassword)
-      return res.status(400).json({ message: "Password salah" });
+      return res.status(400).json({ message: "Email atau password salah" });
 
     const userJwt = await prisma.user.findFirst({
       where: { user_email: user_email },
