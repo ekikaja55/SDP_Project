@@ -86,8 +86,8 @@ export async function login(data: LoginDTO) {
 
 		const temp: string = dataUser.user_role === 'admin' ? 'products' : 'status_pemesanan';
 
-    // goto(`/dashboard/${dataUser.user_role}/${temp}`);
-		window.location.href = `/dashboard/${dataUser.user_role}/${temp}`;
+    goto(`/dashboard/${dataUser.user_role}/${temp}`);
+		// window.location.href = `/dashboard/${dataUser.user_role}/${temp}`;
 	} catch (err: unknown) {
 		messageHandleUser.set({
 			type: 'error',
@@ -174,10 +174,11 @@ export async function logout() {
 	loadingUser.set(true);
 	messageHandleUser.set(null);
 	try {
-		const res = await api.get<ApiResponse<User>>('/auth/logout');
-		messageHandleUser.set({
+		// const res = await api.get<ApiResponse<User>>('/auth/logout');
+		localStorage.removeItem("token")
+    messageHandleUser.set({
 			type: 'success',
-			message: res.data.message
+			message: "berhasil logout"
 		});
 	} catch (err: unknown) {
 		messageHandleUser.set({

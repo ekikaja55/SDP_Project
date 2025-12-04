@@ -1,33 +1,53 @@
 <!-- src/routes/+layout.svelte -->
 <script lang="ts">
+	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
+	import { jwtDecode } from 'jwt-decode';
 	import { page } from '$app/state';
-	import { getAllNotif, notifikasiStore } from '$lib';
-	import { onMount } from 'svelte';
 	import '../app.css';
-	import MessageModal from '../lib/components/MessageModal.svelte';
 
-	export let data;
+	import MessageModal from '$lib/components/MessageModal.svelte';
+	import { getAllNotif, notifikasiStore, type UserAuth } from '$lib';
+	import { onMount } from 'svelte';
+
+	let isOpen = false;
+	let user:UserAuth|null = null;
 
 	$: isDashboard = page.url.pathname.startsWith('/dashboard');
-	$: console.log('sekarang di path + ' + page.url.pathname);
 
-	let isOpen: boolean = false;
+	if (browser) {
+		const token = localStorage.getItem('token');
+
+		if (token) {
+			try {
+				user = jwtDecode(token);
+			} catch {
+				localStorage.removeItem('token');
+				user = null;
+			}
+		}
+	}
 
 	function goHome() {
-		window.location.href = '/';
+		goto('/');
 	}
+
 	function goDashboard() {
-		window.location.href = `/dashboard/${data.user?.user_role}/${data.user?.user_role === 'admin' ? 'products' : 'status_pemesanan'}`;
+		if (!user) return goto('/login');
+
+		const temp = user.user_role === 'admin' ? 'products' : 'status_pemesanan';
+		goto(`/dashboard/${user.user_role}/${temp}`);
 	}
+
 	function goCatalog() {
-		window.location.href = `/catalog`;
+		goto('/catalog');
 	}
+
 	async function getNotif() {
 		await getAllNotif();
 	}
-	onMount(() => {
-		getNotif();
-	});
+
+	onMount(() => getNotif());
 </script>
 
 {#if isOpen}
@@ -80,7 +100,7 @@
 				Home
 			</button>
 
-			{#if data.user?.user_role === 'customer' || !data.user}
+			{#if user?.user_role === 'customer' || !user}
 				<button
 					on:click={goCatalog}
 					class="flex items-center gap-1 text-zinc-700 transition hover:text-zinc-950"
@@ -103,7 +123,7 @@
 				</button>
 			{/if}
 
-			{#if data.user}
+			{#if user}
 				<button
 					on:click={goDashboard}
 					class="flex items-center gap-1 text-zinc-700 transition hover:text-zinc-950"
@@ -125,7 +145,7 @@
 					Dashboard
 				</button>
 
-				{#if data.user.user_role === 'admin'}
+				{#if user.user_role === 'admin'}
 					<!-- Tombol Notifikasi -->
 					<button
 						on:click={() => (isOpen = !isOpen)}

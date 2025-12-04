@@ -5,11 +5,16 @@
 	import SidebarAdmin from '$lib/components/SidebarAdmin.svelte';
 	import SidebarCustomer from '$lib/components/SidebarCustomer.svelte';
 	import { goto } from '$app/navigation';
+	import { logout } from '$lib';
 
 	let user = null;
 
 	if (browser) {
+    console.log("masuk auth log layout dsahboard");
+
 		const token = localStorage.getItem("token");
+
+    console.log("isi token",token);
 
 		if (!token) {
 			goto('/login');
@@ -25,9 +30,9 @@
 
 <div class="flex min-h-screen m-0 p-0">
 	{#if user?.user_role === 'admin'}
-		<SidebarAdmin data={user} />
+		<SidebarAdmin data={user} onLogout={logout} />
 	{:else if user}
-		<SidebarCustomer data={user} />
+		<SidebarCustomer data={user} onLogout={logout}/>
 	{/if}
 
 	<main class="flex-1 p-6">
