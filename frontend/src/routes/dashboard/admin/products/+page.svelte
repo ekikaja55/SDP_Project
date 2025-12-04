@@ -208,7 +208,7 @@
 					>
 						{#if p.produk_gambar}
 							<img
-								src={`${BASE_URL}${p.produk_gambar}`}
+								src={`${BASE_URL}/uploads/${p.produk_gambar}`}
 								alt="gambar produk"
 								class="h-40 w-40 rounded-xl border border-zinc-200 object-cover"
 							/>

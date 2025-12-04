@@ -14,6 +14,7 @@
 	import BuktiModal from '$lib/components/BuktiModal.svelte';
 	import NotificationModal from '$lib/components/NotificationModal.svelte';
 	import { Eye, RefreshCcw, FileSpreadsheet, Upload, ArrowUpRight } from '@lucide/svelte';
+  import {produkStore} from "$lib"
 
 	const BASE_URL = import.meta.env.VITE_API_URL_UPLOADS;
 	let url = '';
@@ -28,9 +29,14 @@
 		'Pesanan Selesai'
 	];
 
+  $:console.log($transaksiAdminStore);
+  
+
 	onMount(() => {
 		refreshTransaksi();
-	});
+    // console.log("ISI PRODUK STORE",$transaksiAdminStore);
+
+  });
 
 	async function refreshTransaksi() {
 		await getTransAdmin(selectedStatus);

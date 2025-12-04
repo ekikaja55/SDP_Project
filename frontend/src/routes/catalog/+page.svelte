@@ -8,12 +8,22 @@
 		loadingGlobal,
 		msgCart,
 		produkCatalogStore,
-		type CartProduk
+		type CartProduk,
+
+		type UserAuth
+
 	} from '$lib';
 	import { onMount } from 'svelte';
 	import NotificationModal from '../../lib/components/NotificationModal.svelte';
-	export let data;
+	import { browser } from '$app/environment';
 	const BASE_URL = import.meta.env.VITE_API_URL_UPLOADS;
+	let user:string|null;
+
+  if (browser) {
+    user = localStorage.getItem("token")
+  }
+
+
 
 	let searchNama: string = '';
 	let filterHarga: string = '';
@@ -37,7 +47,7 @@
 	}
 
 	function openCart() {
-		if (!data.user) {
+    if (!user) {
 			goto('login');
 			return;
 		}
@@ -46,7 +56,7 @@
 	}
 
 	function addCart(produk: CartProduk) {
-		if (!data.user) {
+		if (!user) {
 			goto('login');
 			return;
 		}
@@ -164,7 +174,7 @@
 					class="group transform overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-zinc-200 transition hover:-translate-y-1 hover:shadow-md"
 				>
 					<img
-						src={`${BASE_URL}/uploads/${produk.produk_gambar}`}
+						src={`${BASE_URL}${produk.produk_gambar}`}
 						alt={produk.produk_nama}
 						class="h-40 w-full bg-zinc-100 object-cover transition group-hover:scale-105"
 					/>
