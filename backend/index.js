@@ -91,7 +91,10 @@ app.use(
 
 // Folder publik untuk file upload
 // app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
-app.use("/uploads", express.static(path.resolve(process.cwd(), "uploads")));
+app.use(
+  "/uploads",
+  express.static(path.resolve(process.cwd(), "..", "uploads"))
+);
 
 // Routing utama
 app.use("/api/v1/auth", authRouter);
