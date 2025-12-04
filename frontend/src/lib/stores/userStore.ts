@@ -86,7 +86,8 @@ export async function login(data: LoginDTO) {
 
 		const temp: string = dataUser.user_role === 'admin' ? 'products' : 'status_pemesanan';
 
-		window.location.href = `/dashboard/${dataUser.user_role}/${temp}`;
+    goto(`/dashboard/${dataUser.user_role}/${temp}`);
+		// window.location.href = `/dashboard/${dataUser.user_role}/${temp}`;
 	} catch (err: unknown) {
 		messageHandleUser.set({
 			type: 'error',
