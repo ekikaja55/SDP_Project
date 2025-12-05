@@ -78,7 +78,7 @@
 </script>
 
 <section class="min-h-screen bg-zinc-100 p-8 flex items-start justify-center">
-	{#if $messageHandleTrans}
+	{#if $messageHandleTrans && $messageHandleTrans.type === "success"}
 		<TransactionModal
 			message={$messageHandleTrans.message}
 			type={$messageHandleTrans.type}

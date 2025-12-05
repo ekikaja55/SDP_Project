@@ -174,7 +174,7 @@
 					class="group transform overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-zinc-200 transition hover:-translate-y-1 hover:shadow-md"
 				>
 					<img
-						src={`${BASE_URL}${produk.produk_gambar}`}
+						src={`${BASE_URL}/uploads/${produk.produk_gambar}`}
 						alt={produk.produk_nama}
 						class="h-40 w-full bg-zinc-100 object-cover transition group-hover:scale-105"
 					/>
