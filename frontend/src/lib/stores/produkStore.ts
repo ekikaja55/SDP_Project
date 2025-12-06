@@ -99,6 +99,7 @@ export async function updateProduk(data: ProdukDTO) {
 		messageHandleProduk.set({ type: 'success', message: res.data.message });
 		await getAllProduk();
 		await getKatalogProduk();
+
 	} catch (err: unknown) {
 		messageHandleProduk.set({ type: 'error', message: errorHandler(err) });
 		produkCatalogStore.set([]);
@@ -109,7 +110,7 @@ export async function updateProduk(data: ProdukDTO) {
 }
 
 // DELETE PRODUK
-export async function deleteProduk(id: string) {
+export async function deleteProduk(id: string,nama:string) {
 	loadingProduk.set(true);
 	messageHandleProduk.set(null);
 	try {
@@ -117,6 +118,7 @@ export async function deleteProduk(id: string) {
 		messageHandleProduk.set({ type: 'success', message: res.data.message });
 		await getAllProduk();
 		await getKatalogProduk();
+
 	} catch (err: unknown) {
 		messageHandleProduk.set({ type: 'error', message: errorHandler(err) });
 		produkCatalogStore.set([]);

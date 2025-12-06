@@ -117,9 +117,31 @@
 				</svg>
 				<span>Review Produk Data</span>
 			</a>
-      <button
+
+			<a
+				href="/dashboard/admin/logs"
+				class="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors duration-200 hover:bg-zinc-800 hover:text-zinc-100"
+			>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="24"
+					height="24"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="lucide lucide-history-icon lucide-history"
+					><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /><path
+						d="M12 7v5l4 2"
+					/></svg
+				>
+				<span>Logs</span>
+			</a>
+			<button
 				on:click={onLogout}
-				class="flex w-full gap-2 rounded-lg bg-white px-3 py-2 font-medium text-zinc-800 transition hover:bg-zinc-900 hover:text-white mt-5"
+				class="mt-5 flex w-full gap-2 rounded-lg bg-white px-3 py-2 font-medium text-zinc-800 transition hover:bg-zinc-900 hover:text-white"
 			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"

@@ -7,7 +7,7 @@
 	import '../app.css';
 
 	import MessageModal from '$lib/components/MessageModal.svelte';
-	import { getAllNotif, notifikasiStore, type UserAuth } from '$lib';
+	import { getAllNotif, notifikasiStore,totalNotifStore, type UserAuth } from '$lib';
 	import { onMount } from 'svelte';
 
 	let isOpen = false;
@@ -167,11 +167,11 @@
 						</svg>
 						<span>Notifikasi</span>
 
-						{#if $notifikasiStore && $notifikasiStore.length > 0}
+						{#if $notifikasiStore && $notifikasiStore.length > 0 && $totalNotifStore > 0}
 							<span
 								class="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white shadow"
 							>
-								{$notifikasiStore.length}
+								{$totalNotifStore}
 							</span>
 						{/if}
 					</button>

@@ -6,13 +6,24 @@ export const loadingNotif: Writable<boolean> = writable<boolean>(false);
 export const messageHandleNotif: Writable<MessageState | null> = writable<MessageState | null>(
 	null
 );
+export const totalNotifStore:Writable<number> = writable<number>(0)
+
+
 
 export async function getAllNotif() {
 	loadingNotif.set(true);
 	try {
 		const res = await api.get<ApiResponse<Notifikasi[]>>('/notifikasi');
 		notifikasiStore.set(res.data.result);
-	} catch (err: unknown) {
+
+    const totalCount = res.data.result.filter(obj =>{
+      return obj.notifikasi_isread === "False"
+    })
+
+    console.log("isi notif abis di filter: ",totalCount);
+
+    totalNotifStore.set(totalCount.length)
+  } catch (err: unknown) {
 		console.log(errorHandler(err));
 	} finally {
 		loadingNotif.set(false);

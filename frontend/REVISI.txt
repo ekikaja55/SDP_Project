@@ -1,0 +1,12 @@
+Revisi :
+
+A. Customer :
+    1. cart page untuk inputan qty bisa diketik (selesai)
+    2. cart page untuk harga harusnya ada pemisah ribuan (selesai)
+    3. notifikasi jika ada update transaksi diklik ngarahin ke detail transaksi pastiin kalo dibaca count berubah
+
+B. Admin :
+    1. notifikasi kalo diklik ngarah ke transaksi nya pastiin kalo dibaca count berubah (count berubah selesai)
+    2. laporan penjualan isinya seluruh isi detail transaksi para user pastikan filtering bulan tahun tanggalnya bisa
+    3. halamanm log activity untuk Produk Todolist dan Transaksi (selesai)
+    4. data user kalo diklik ngarah ke detail info user nya

@@ -75,12 +75,10 @@ export async function login(data: LoginDTO) {
 			'fn login userStore -> isi token hasil fetch\n' + JSON.stringify(res.data.result, null, 2)
 		);
 
-		// ✅ SIMPAN TOKEN
 		localStorage.setItem('token', res.data.result);
 
 		console.log('TOKEN DISIMPAN KE LOCAL STORAGE:', localStorage.getItem('token'));
 
-		// decode (optional, buat role redirect)
 		const dataUser: UserAuth = jwtDecode(res.data.result);
 		console.log('isi access token setelah di decode\n' + JSON.stringify(dataUser, null, 2));
 

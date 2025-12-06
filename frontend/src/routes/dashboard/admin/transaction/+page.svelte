@@ -30,7 +30,7 @@
 	];
 
   $:console.log($transaksiAdminStore);
-  
+
 
 	onMount(() => {
 		refreshTransaksi();
@@ -42,9 +42,9 @@
 		await getTransAdmin(selectedStatus);
 	}
 
-	async function handleSubmit(transaksi_id: string) {
+	async function handleSubmit(transaksi_id: string,nama:string) {
 		dataUpdateTrans.transaksi_id = transaksi_id;
-		await updateTransaksi(dataUpdateTrans);
+		await updateTransaksi(dataUpdateTrans,nama);
 	}
 </script>
 
@@ -191,7 +191,7 @@
 				<!-- Update Status -->
 				<div class="mt-6 border-t border-zinc-200 pt-4">
 					<form
-						on:submit|preventDefault={() => handleSubmit(item.transaksi_id)}
+						on:submit|preventDefault={() => handleSubmit(item.transaksi_id,item.user_nama)}
 						class="flex flex-wrap items-center gap-3"
 					>
 						<label class="text-sm font-medium text-zinc-700">Ubah Status:</label>

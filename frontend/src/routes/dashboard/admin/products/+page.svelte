@@ -55,7 +55,7 @@
 
 	async function handleDelete(id: string) {
 		if (confirm('Yakin hapus produk ini?')) {
-			await deleteProduk(id);
+			await deleteProduk(id,produk.produk_nama || "");
 		}
 	}
 
@@ -65,7 +65,6 @@
 </script>
 
 <div class="space-y-8">
-	<!-- Header -->
 	<div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 		<h1 class="text-3xl font-bold tracking-tight text-zinc-800">Manage Products</h1>
 	</div>
@@ -78,7 +77,6 @@
 		/>
 	{/if}
 
-	<!-- Form Produk -->
 	<section class="space-y-4 rounded-2xl border border-zinc-200 bg-zinc-50 p-6 shadow-md">
 		<h2
 			class="flex items-center gap-2 border-b border-zinc-200 pb-2 text-lg font-semibold text-zinc-800"

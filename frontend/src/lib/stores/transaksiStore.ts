@@ -144,6 +144,7 @@ export async function getTransAdmin(filterStatus?: string) {
 
 		// messageHandleTrans.set({ type: 'success', message: res.data.message });
 		transaksiAdminStore.set(res.data.result);
+
 	} catch (err: unknown) {
     console.log(err);
 
@@ -175,7 +176,7 @@ export async function getLaporanAdmin(query: string) {
 }
 
 // UPDATE STATUS TRANSAKSI
-export async function updateTransaksi(data: TransaksiUpdateDTO) {
+export async function updateTransaksi(data: TransaksiUpdateDTO,nama:string) {
 	console.log('masuk updateProduk()');
 	console.log('data : ', data);
 	if (!data.transaksi_status) {
@@ -190,6 +191,7 @@ export async function updateTransaksi(data: TransaksiUpdateDTO) {
 		});
 		getTransAdmin();
 		messageHandleTrans.set({ type: 'success', message: res.data.message });
+
 	} catch (err: unknown) {
 		messageHandleTrans.set({ type: 'error', message: errorHandler(err) });
 	} finally {
