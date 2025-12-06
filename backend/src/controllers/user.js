@@ -51,4 +51,69 @@ const getAllUser = async (req, res) => {
   }
 };
 
-module.exports = { getAllUser };
+const getAllLog = async (req, res) => {
+  try {
+    const {
+      actor,
+      type,
+      action,
+      search,
+      startDate,
+      endDate,
+    } = req.query;
+
+    const filters = {};
+
+    if (actor) {
+      filters.log_actor = actor;
+    }
+
+    if (type) {
+      filters.log_type = type;
+    }
+
+    if (action) {
+      filters.log_action = action;
+    }
+
+    if (search) {
+      filters.log_title = {
+        contains: search,
+        mode: "insensitive",
+      };
+    }
+
+    if (startDate || endDate) {
+      filters.createdAt = {};
+
+      if (startDate) {
+        filters.createdAt.gte = new Date(startDate);
+      }
+
+      if (endDate) {
+        filters.createdAt.lte = new Date(endDate);
+      }
+    }
+
+    const dataLog = await prisma.log.findMany({
+      where: filters,
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return res.status(200).json({
+      message: "Berhasil ambil data log",
+      result: dataLog,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Terjadi kesalahan server",
+      result: null,
+    });
+  }
+};
+
+module.exports = { getAllUser, getAllLog };

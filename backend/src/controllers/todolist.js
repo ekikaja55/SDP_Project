@@ -5,7 +5,7 @@
  */
 
 const prisma = require("../../prisma/prisma");
-
+const { createLog } = require("../utils/logHelper");
 /**
  * @typedef {Object} TodolistDTO
  * @property {string} todolist_desc - Deskripsi tugas.
@@ -40,14 +40,33 @@ const prisma = require("../../prisma/prisma");
  */
 const insertTodolist = async (req, res) => {
   try {
+    console.log("masuk insert todo");
+
     const { todolist_desc } = req.body;
-    await prisma.todolist.create({
+    const data = await prisma.todolist.create({
       data: { todolist_desc, todolist_status: "Belum Dikerjakan" },
     });
+
+    console.log("masuk insert todo 2");
+    await createLog({
+      actor: req.userLogin.user_nama,
+      type: "TODOLIST",
+      action: "INSERT",
+      title: "Berhasil menambahkan Todolist baru",
+      desc: {
+        before: null,
+        after: { ...data },
+      },
+    });
+
+    console.log("masuk insert todo 3");
+
     return res
       .status(201)
-      .json({ message: "Sukses insert todolist", result: null });
+      .json({ message: "Berhasil insert Todolist", result: null });
   } catch (error) {
+    console.error(error.message);
+
     return res
       .status(500)
       .json({ message: "Terjadi kesalahan pada server", result: null });
@@ -89,22 +108,33 @@ const updateStatusTodolist = async (req, res) => {
   try {
     const { id } = req.params;
     const todolist = await prisma.todolist.findUnique({ where: { id } });
-
+    let newTodoList;
     if (!todolist)
       return res
         .status(404)
         .json({ message: "Todolist tidak ditemukan", result: null });
 
     if (todolist.todolist_status === "Belum Dikerjakan")
-      await prisma.todolist.update({
+      newTodoList = await prisma.todolist.update({
         where: { id },
         data: { todolist_status: "Sedang Dikerjakan" },
       });
     else if (todolist.todolist_status === "Sedang Dikerjakan")
-      await prisma.todolist.update({
+      newTodoList = await prisma.todolist.update({
         where: { id },
         data: { todolist_status: "Selesai", deletedAt: new Date() },
       });
+
+    await createLog({
+      actor: req.userLogin.user_nama,
+      type: "TODOLIST",
+      action: "UPDATE",
+      title: `Berhasil update status Todolist `,
+      desc: {
+        before: { ...todolist },
+        after: { ...newTodoList },
+      },
+    });
 
     return res
       .status(200)
@@ -152,15 +182,28 @@ const updateTodolist = async (req, res) => {
     const { id } = req.params;
     const { todolist_desc } = req.body;
     const existing = await prisma.todolist.findUnique({ where: { id } });
+    let newTodoList;
     if (!existing)
       return res
         .status(404)
         .json({ message: "Todolist tidak ditemukan", result: null });
 
-    await prisma.todolist.update({
+    newTodoList = await prisma.todolist.update({
       where: { id },
       data: { todolist_desc },
     });
+
+    await createLog({
+      actor: req.userLogin.user_nama,
+      type: "TODOLIST",
+      action: "UPDATE",
+      title: `Berhasil update Todolist  `,
+      desc: {
+        before: { ...existing },
+        after: { ...newTodoList },
+      },
+    });
+
     return res
       .status(200)
       .json({ message: "Sukses update todolist", result: null });
@@ -210,6 +253,17 @@ const deleteTodolist = async (req, res) => {
         .json({ message: "Todolist tidak ditemukan", result: null });
 
     await prisma.todolist.delete({ where: { id } });
+
+    await createLog({
+      actor: req.userLogin.user_nama,
+      type: "TODOLIST",
+      action: "DELETE",
+      title: `Berhasil delete Todolist`,
+      desc: {
+        before:null,
+        after: { ...existing},
+      },
+    });
     return res
       .status(200)
       .json({ message: "Sukses delete todolist", result: null });

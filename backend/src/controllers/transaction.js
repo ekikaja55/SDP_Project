@@ -1,4 +1,5 @@
 const prisma = require("../../prisma/prisma");
+const { createLog } = require('../utils/logHelper');
 const insertTransaction = async (req, res) => {
   try {
     const user = req.userLogin;
@@ -242,30 +243,70 @@ const ubahStatusTransaksi = async (req, res) => {
   try {
     const { transaksi_id } = req.params;
     const { transaksi_status } = req.body;
+
     const user = await prisma.user.findFirst({
       where: { user_transaksi: { some: { transaksi_id } } },
-      select: { id: true, user_transaksi: true },
+      select: { id: true, user_transaksi: true, user_nama: true },
     });
+
     if (!user) return res.status(404).json({ message: "User tidak ditemukan" });
-    const transaksiBaru = user.user_transaksi.map((t) => {
+
+    const transaksiLama = user.user_transaksi.find(
+      (t) => t.transaksi_id === transaksi_id
+    );
+
+    const listTransaksiBaru = user.user_transaksi.map((t) => {
       return t.transaksi_id === transaksi_id
         ? { ...t, transaksi_status: transaksi_status }
         : t;
     });
+
     await prisma.user.update({
       where: { id: user.id },
-      data: { user_transaksi: transaksiBaru },
+      data: { user_transaksi: listTransaksiBaru },
     });
+
+
+    const cleanLog = (obj) =>
+      JSON.parse(
+        JSON.stringify(obj, (key, value) =>
+          typeof value === "bigint" ? value.toString() : value
+        )
+      );
+
+    const simpleLogBefore = {
+      transaksi_id: transaksiLama.transaksi_id,
+      transaksi_status: transaksiLama.transaksi_status,
+      transaksi_grand_total: transaksiLama.transaksi_grand_total,
+    };
+
+    const simpleLogAfter = {
+      ...simpleLogBefore,
+      transaksi_status: transaksi_status,
+    };
+
+    await createLog({
+      actor: req.userLogin.user_nama,
+      type: "TRANSACTION",
+      action: "UPDATE",
+      title: `Berhasil update status Transaksi Cust: ${user.user_nama}`,
+      desc: {
+        before: cleanLog(simpleLogBefore),
+        after: cleanLog(simpleLogAfter),
+      },
+    });
+
     res
       .status(200)
       .json({ message: "Status transaksi berhasil diubah", result: null });
   } catch (error) {
+    console.log("ERRORRRR", error);
+
     return res
       .status(500)
       .json({ message: "Terjadi kesalahan pada server", result: null });
   }
 };
-
 // laporan penjualan admin
 const getLaporanPenjualanAdmin = async (req, res) => {
   try {

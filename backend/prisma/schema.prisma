@@ -83,3 +83,13 @@ model MetodeBayar {
   updatedAt    DateTime  @updatedAt
   deletedAt    DateTime?
 }
+
+model Log {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  log_actor  String
+  log_type   String
+  log_action String
+  log_title  String
+  log_desc   Json
+  createdAt  DateTime @default(now())
+}

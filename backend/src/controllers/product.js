@@ -6,6 +6,7 @@
 
 /** @type {import('@prisma/client').PrismaClient} */
 const prisma = require("../../prisma/prisma");
+const { createLog } = require('../utils/logHelper');
 
 /**
  * @typedef {Object} ProductDTO
@@ -69,6 +70,7 @@ const getAllProducts = async (req, res) => {
       )
     );
 
+
     return res.status(200).json({
       message: "Sukses ambil produk",
       result: products,
@@ -115,7 +117,7 @@ const insertProduct = async (req, res) => {
     const { produk_nama, produk_stok, produk_harga } = req.body;
     const gambar = req.file ? req.file.filename : null;
 
-    await prisma.produk.create({
+    const data = await prisma.produk.create({
       data: {
         produk_nama,
         produk_stok: parseInt(produk_stok),
@@ -126,10 +128,28 @@ const insertProduct = async (req, res) => {
       },
     });
 
+    const products = JSON.parse(
+      JSON.stringify(data, (_, value) =>
+        typeof value === "bigint" ? value.toString() : value
+      )
+    );
+    await createLog({
+      actor: req.userLogin.user_nama,
+      type: "PRODUCT",
+      action: "INSERT",
+      title: `Berhasil insert Produk ${products.produk_nama} `,
+      desc: {
+        before: null,
+        after: { ...products },
+      },
+    });
+
     return res
       .status(201)
       .json({ message: "Sukses insert produk", result: null });
   } catch (error) {
+    console.log("ERORRRR",error.message);
+
     return res
       .status(500)
       .json({ message: "Terjadi kesalahan pada server", result: null });
@@ -185,7 +205,7 @@ const updateProduct = async (req, res) => {
     let stok = dataProdukLama.produk_stok;
     if (produk_stok && produk_stok !== undefined) stok += parseInt(produk_stok);
 
-    await prisma.produk.update({
+    const data = await prisma.produk.update({
       where: { id },
       data: {
         produk_nama: produk_nama || dataProdukLama.produk_nama,
@@ -197,6 +217,22 @@ const updateProduct = async (req, res) => {
         produk_gambar: gambar ?? dataProdukLama.produk_gambar,
       },
     });
+
+      const products = JSON.parse(
+        JSON.stringify(data, (_, value) =>
+          typeof value === "bigint" ? value.toString() : value
+        )
+      );
+      await createLog({
+        actor: req.userLogin.user_nama,
+        type: "PRODUCT",
+        action: "UPDATE",
+        title: `Berhasil update Produk ${products.produk_nama} `,
+        desc: {
+          before: {...dataProdukLama},
+          after: { ...products},
+        },
+      });
 
     return res
       .status(200)
@@ -233,15 +269,35 @@ const updateProduct = async (req, res) => {
  */
 const deleteProduct = async (req, res) => {
   try {
-    const { id } = req.params;
-    await prisma.produk.update({
+   const { id } = req.params;
+   const data =  await prisma.produk.update({
       where: { id },
       data: { deletedAt: new Date() },
     });
+
+    const products = JSON.parse(
+     JSON.stringify(data, (_, value) =>
+     typeof value === "bigint" ? value.toString() : value
+     ));
+     console.log("product ",{...products});
+
+      await createLog({
+        actor: req.userLogin.user_nama,
+        type: "PRODUCT",
+        action: "DELETE",
+        title: `Berhasil delete Produk ${products.produk_nama}`,
+        desc: {
+          before: null,
+          after: { ...products },
+        },
+      });
+
     return res
       .status(200)
       .json({ message: "Sukses delete produk", result: null });
   } catch (error) {
+    console.log("ERRRORRR",error.message);
+
     return res
       .status(500)
       .json({ message: "Terjadi kesalahan pada server", result: null });
