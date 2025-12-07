@@ -1,5 +1,14 @@
 Revisi :
 
+Icon svg landing (penting) (selesai)
+Bagusin catalog (opsional) (selesai)
+Ikon WA ? (penting) (selesai)
+Bagusin Cart page (selesai)
+Bagusin Halaman produk admin (penting) (selesai)
+Bagusin laporan review admin (penting)
+Bagusin halaman review cust (penting)
+
+
 A. Customer :
     1. cart page untuk inputan qty bisa diketik (selesai)
     2. cart page untuk harga harusnya ada pemisah ribuan (selesai)
@@ -10,3 +19,195 @@ B. Admin :
     2. laporan penjualan isinya seluruh isi detail transaksi para user pastikan filtering bulan tahun tanggalnya bisa
     3. halamanm log activity untuk Produk Todolist dan Transaksi (selesai)
     4. data user kalo diklik ngarah ke detail info user nya
+
+
+<script lang="ts">
+  import { page } from '$app/stores';
+  import { onMount } from 'svelte';
+  import { goto } from '$app/navigation';
+  import {
+    getTransAdmin, // Atau function getDetailTrans(id) jika ada
+    transaksiAdminStore,
+    updateTransaksi,
+    dataUpdateTrans,
+    messageHandleTrans,
+    getStatusColorTrans
+  } from '$lib';
+  import BuktiModal from '$lib/components/BuktiModal.svelte';
+  import NotificationModal from '$lib/components/NotificationModal.svelte';
+  import { ArrowLeft, Eye, Save, Calendar, User, CreditCard } from '@lucide/svelte';
+
+  const BASE_URL = import.meta.env.VITE_API_URL_UPLOADS;
+  const transId = $page.params.id;
+
+  let transaction: any = null;
+  let openModal = false;
+  let buktiUrl = '';
+  let isLoading = true;
+
+  const statusOptions = [
+    'Belum Dikonfirmasi',
+    'Pesanan Dibatalkan',
+    'Pesanan Sedang Diproses',
+    'Pesanan Sedang Dalam Pengiriman',
+    'Pesanan Selesai'
+  ];
+
+  onMount(async () => {
+    // Logic fetch data. Jika store kosong, fetch ulang.
+    if ($transaksiAdminStore.length === 0) {
+      await getTransAdmin('');
+    }
+    // Cari data berdasarkan ID
+    transaction = $transaksiAdminStore.find((t) => t.transaksi_id === transId);
+
+    if(transaction) {
+      dataUpdateTrans.transaksi_status = transaction.transaksi_status;
+    }
+    isLoading = false;
+  });
+
+  async function handleUpdateStatus() {
+    if(!transaction) return;
+    dataUpdateTrans.transaksi_id = transaction.transaksi_id;
+    await updateTransaksi(dataUpdateTrans, transaction.user_nama);
+    // Refresh local data view
+    transaction.transaksi_status = dataUpdateTrans.transaksi_status;
+  }
+</script>
+
+{#if openModal}
+  <BuktiModal onClose={() => (openModal = false)} img={buktiUrl} />
+{/if}
+
+{#if $messageHandleTrans}
+  <NotificationModal
+    message={$messageHandleTrans.message}
+    type={$messageHandleTrans.type}
+    onClose={() => messageHandleTrans.set(null)}
+  />
+{/if}
+
+<div class="space-y-6">
+  <div class="flex items-center gap-4">
+    <button
+      on:click={() => goto('/dashboard/admin/transaction')}
+      class="rounded-full bg-white p-2 text-zinc-600 shadow-sm ring-1 ring-zinc-200 hover:bg-zinc-50 hover:text-zinc-900"
+    >
+      <ArrowLeft class="h-5 w-5" />
+    </button>
+    <h1 class="text-2xl font-bold text-zinc-800">Detail Transaksi</h1>
+  </div>
+
+  {#if isLoading}
+    <div class="text-center py-10">Loading...</div>
+  {:else if transaction}
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+
+      <div class="lg:col-span-2 space-y-6">
+        <div class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <p class="text-sm text-zinc-500 mb-1 flex items-center gap-2"><CreditCard class="h-4 w-4"/> ID Transaksi</p>
+                <p class="font-mono font-medium text-zinc-900">{transaction.transaksi_id}</p>
+              </div>
+              <div>
+                <p class="text-sm text-zinc-500 mb-1 flex items-center gap-2"><Calendar class="h-4 w-4"/> Tanggal</p>
+                <p class="font-medium text-zinc-900">{new Date(transaction.createdAt).toLocaleString('id-ID')}</p>
+              </div>
+              <div>
+                <p class="text-sm text-zinc-500 mb-1 flex items-center gap-2"><User class="h-4 w-4"/> Pelanggan</p>
+                <p class="font-medium text-zinc-900">{transaction.user_nama}</p>
+              </div>
+              <div>
+                <p class="text-sm text-zinc-500 mb-1">Status Saat Ini</p>
+                 <span class={`rounded-full px-3 py-1 text-sm font-medium ${getStatusColorTrans(transaction.transaksi_status)}`}>
+                  {transaction.transaksi_status}
+                </span>
+              </div>
+           </div>
+        </div>
+
+        <div class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+          <h3 class="mb-4 text-lg font-semibold text-zinc-800">Item Pesanan</h3>
+          <div class="divide-y divide-zinc-100">
+            {#each transaction.transaksi_detail as item}
+              <div class="flex items-center gap-4 py-4">
+                <img
+                  src={`${BASE_URL}/uploads/${item.produk_gambar}`}
+                  alt={item.detail_nama}
+                  class="h-16 w-16 rounded-xl border border-zinc-100 object-cover bg-zinc-50"
+                />
+                <div class="flex-1">
+                  <h4 class="font-medium text-zinc-900">{item.detail_nama}</h4>
+                  <p class="text-sm text-zinc-500">{item.detail_stok} x Rp {item.produk_harga.toLocaleString()}</p>
+                </div>
+                <div class="text-right font-semibold text-zinc-800">
+                  Rp {item.detail_sub_total.toLocaleString()}
+                </div>
+              </div>
+            {/each}
+          </div>
+          <div class="mt-4 border-t border-zinc-100 pt-4 flex justify-between items-center">
+            <span class="text-zinc-500 font-medium">Grand Total</span>
+            <span class="text-xl font-bold text-emerald-600">Rp {transaction.transaksi_grand_total}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-6">
+        <div class="sticky top-6 space-y-6">
+
+          <div class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+            <h3 class="mb-4 text-sm font-semibold uppercase tracking-wider text-zinc-500">Bukti Pembayaran</h3>
+            <div class="aspect-video w-full overflow-hidden rounded-xl bg-zinc-100 border border-zinc-200 relative mb-4">
+               <img
+                src={`${BASE_URL}/uploads/${transaction.transaksi_img}`}
+                alt="Bukti"
+                class="w-full h-full object-cover opacity-80"
+               />
+               <div class="absolute inset-0 flex items-center justify-center">
+                  <button
+                    on:click={() => {
+                      buktiUrl = `${BASE_URL}/uploads/${transaction.transaksi_img}`;
+                      openModal = true;
+                    }}
+                    class="rounded-full bg-zinc-900/80 p-3 text-white hover:bg-zinc-900 hover:scale-110 transition"
+                  >
+                    <Eye class="h-5 w-5"/>
+                  </button>
+               </div>
+            </div>
+            <p class="text-xs text-zinc-500 text-center">Klik ikon mata untuk memperbesar</p>
+          </div>
+
+          <div class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+            <h3 class="mb-4 text-sm font-semibold uppercase tracking-wider text-zinc-500">Update Status</h3>
+            <form on:submit|preventDefault={handleUpdateStatus} class="space-y-4">
+              <select
+                bind:value={dataUpdateTrans.transaksi_status}
+                class="w-full rounded-xl border border-zinc-300 bg-zinc-50 px-4 py-3 text-zinc-800 focus:border-zinc-800 focus:outline-none focus:ring-1 focus:ring-zinc-800"
+              >
+                 {#each statusOptions as option}
+                  <option value={option}>{option}</option>
+                {/each}
+              </select>
+
+              <button
+                type="submit"
+                class="flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 py-3 font-semibold text-white transition hover:bg-zinc-800 active:scale-95"
+              >
+                <Save class="h-4 w-4" />
+                Simpan Perubahan
+              </button>
+            </form>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  {:else}
+    <div class="text-center py-10 text-zinc-500">Transaksi tidak ditemukan.</div>
+  {/if}
+</div>

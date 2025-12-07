@@ -4,8 +4,6 @@ import { api, errorHandler, type AnyLog, type ApiResponse, type LogFilter } from
 export const logStore: Writable<AnyLog[] | null> = writable(null);
 export const loadingLog: Writable<boolean> = writable(false);
 
-
-
 export async function getAllLog(filters: LogFilter = {}) {
 	loadingLog.set(true);
 
@@ -15,8 +13,8 @@ export async function getAllLog(filters: LogFilter = {}) {
 		});
 
 		logStore.set(res.data.result);
-	} catch (error) {
-		console.error(errorHandler(error));
+	} catch (error:unknown) {
+		throw new Error(errorHandler(error));
 		logStore.set(null);
 	} finally {
 		loadingLog.set(false);

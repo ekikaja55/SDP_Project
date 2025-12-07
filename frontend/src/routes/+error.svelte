@@ -1,15 +1,10 @@
 <!-- src/routes/+error.svelte -->
-<!-- handling error page global -->
 <script lang="ts">
 	import { fade } from 'svelte/transition';
 
-	// SvelteKit otomatis inject props ini:
 	export let error:App.Error;
 	export let status: number;
-  console.log("masuk");
 
-	console.log(error);
-	console.log(status);
 </script>
 
 <svelte:head>

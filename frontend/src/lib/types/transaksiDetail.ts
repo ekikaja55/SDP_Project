@@ -1,6 +1,4 @@
 // src/lib/types/transaksiDetail.ts
-// setup type  transaksi handling
-
 export interface TransaksiDetail {
 	detail_nama: string;
 	detail_stok: string;

@@ -7,14 +7,12 @@ export const msgCart: Writable<boolean> = writable<boolean>(false);
 function createCartStore() {
 	let initial: CartProduk[] = [];
 
-	// hanya jalan di browser
 	if (browser) {
 		const stored = localStorage.getItem('cartList');
 		initial = stored ? JSON.parse(stored) : [];
 	}
 
 	const store = writable<CartProduk[]>(initial);
-	// persist otomatis
 	store.subscribe((value) => {
 		if (browser) {
 			localStorage.setItem('cartList', JSON.stringify(value));
@@ -26,7 +24,6 @@ function createCartStore() {
 
 		init() {
 			if (browser) {
-				console.log('init cart...');
 				const stored = localStorage.getItem('cartList');
 				if (!stored) {
 					localStorage.setItem('cartList', JSON.stringify([]));
@@ -36,15 +33,12 @@ function createCartStore() {
 		},
 
 		add(produk: CartProduk) {
-			console.log('add cart:', produk);
-			// msgCart.set(false);
 			const current = get(store);
 			const exist = current.find((item) => item.id === produk.id);
 
 			let updated: CartProduk[];
 
 			if (exist) {
-				// Tambahkan qty jika produk sudah ada
 				updated = current.map((item) =>
 					item.id === produk.id
 						? {
@@ -54,11 +48,9 @@ function createCartStore() {
 							}
 						: item
 				);
-				console.log('produk sudah ada, qty ditambah');
 				msgCart.set(true);
 
 			} else {
-				// Tambahkan produk baru ke cart
 				const newItem: CartProduk = {
 					id: produk.id,
 					produk_nama: produk.produk_nama,
@@ -68,12 +60,10 @@ function createCartStore() {
 					produk_total: produk.produk_harga
 				};
 				updated = [...current, newItem];
-				console.log('produk baru ditambahkan');
 				msgCart.set(true);
 			}
 
 			store.set(updated);
-			console.log('cart updated:', updated);
 		},
 
 		remove(id: string) {
@@ -84,7 +74,6 @@ function createCartStore() {
 			let updated: CartProduk[];
 
 			if (exist.qty && exist.qty > 1) {
-				// Kurangi qty jika lebih dari 1
 				updated = current.map((item) =>
 					item.id === id
 						? {
@@ -94,19 +83,15 @@ function createCartStore() {
 							}
 						: item
 				);
-				console.log('qty dikurangi');
 			} else {
-				// Hapus produk jika qty tinggal 1
 				updated = current.filter((item) => item.id !== id);
-				console.log('produk dihapus dari cart');
 			}
 
 			store.set(updated);
-			console.log('cart updated:', updated);
 		},
 
 		setQty(id: string, qtyBaru: number) {
-			if (qtyBaru < 1) return; // biar ga 0 / negatif
+			if (qtyBaru < 1) return;
 
 			const current = get(store);
 			const exist = current.find((item) => item.id === id);
@@ -123,13 +108,11 @@ function createCartStore() {
 			);
 
 			store.set(updated);
-			console.log(`qty produk ${id} diubah ke ${qtyBaru}`);
 		},
 
 		clear() {
 			store.set([]);
 			if (browser) localStorage.setItem('cartList', JSON.stringify([]));
-			console.log('cart cleared');
 		}
 	};
 }

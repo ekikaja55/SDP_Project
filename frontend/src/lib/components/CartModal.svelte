@@ -6,10 +6,6 @@
 	export let onClose: () => void;
 	let visible = true;
 
-	// let totalStore = () => cartStore.getGrandTotal();
-	// $: console.log('Grand Total Isi: ', totalStore);
-	// $: console.log('Grand Total Type: ', typeof totalStore);
-
 	function close() {
 		visible = false;
 		onClose?.();

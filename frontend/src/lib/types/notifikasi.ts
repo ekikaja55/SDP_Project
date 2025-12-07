@@ -1,6 +1,4 @@
 // src/lib/types/notifikasi.ts
-// untuk types handling notifikasi
-
 export interface Notifikasi {
 	id: string;
 	notifikasi_nama: string;

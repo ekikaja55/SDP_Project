@@ -28,7 +28,6 @@
 		<div
 			class="relative w-[90%] max-w-md rounded-2xl bg-white shadow-2xl p-6 sm:p-8 border border-gray-100"
 		>
-			<!-- Tombol close -->
 			<button
 				class="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition"
 				on:click={handleClose}
@@ -37,7 +36,6 @@
 				✕
 			</button>
 
-			<!-- Status -->
 			<div class="flex items-center gap-3 mb-4">
 				<div
 					class={`h-10 w-10 flex items-center justify-center rounded-full border-2 ${type === 'success'
@@ -52,8 +50,6 @@
 				</div>
 				<h2 class={`text-xl font-semibold capitalize ${cekColor()}`}>{type}</h2>
 			</div>
-
-			<!-- Pesan utama -->
 			<p class="text-gray-800 text-base mb-5 leading-relaxed">{message}</p>
 
 			{#if type === 'success'}

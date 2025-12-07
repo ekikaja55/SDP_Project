@@ -1,7 +1,6 @@
 // src/lib/stores/produkStore.ts
 // ini handling  function dan reactive state untuk crud  produk
 
-// src/lib/stores/produkStore.ts
 
 import {
 	api,
@@ -20,7 +19,7 @@ export const produkCatalogStore:Writable<Produk[]> = writable<Produk[]>([]);
 export const loadingProduk:Writable<boolean>   = writable(false);
 export const messageHandleProduk: Writable<MessageState | null> = writable<MessageState | null>(null);
 
-// GET ALL PRODUK
+
 export async function getAllProduk(searchNama?: string, filterStok?: string) {
 	loadingProduk.set(true);
 	try {
@@ -29,8 +28,6 @@ export async function getAllProduk(searchNama?: string, filterStok?: string) {
 		if (searchNama) params.push(`nama=${encodeURIComponent(searchNama)}`);
 		if (filterStok) params.push(`filterstok=${encodeURIComponent(filterStok)}`);
 		if (params.length > 0) url += `?${params.join('&')}`;
-
-		console.log('url final', url);
 
 		const res = await api.get<ApiResponse<Produk[]>>(url);
 		produkStore.set(res.data.result ?? []);
@@ -41,7 +38,6 @@ export async function getAllProduk(searchNama?: string, filterStok?: string) {
 	}
 }
 
-// ADD PRODUK
 export async function addProduk(data: ProdukDTO) {
 	loadingProduk.set(true);
 	messageHandleProduk.set(null);
@@ -71,7 +67,6 @@ export async function addProduk(data: ProdukDTO) {
 	}
 }
 
-// UPDATE PRODUK
 export async function updateProduk(data: ProdukDTO) {
 	if (!data.id) {
 		messageHandleProduk.set({ type: 'error', message: 'ID produk tidak ditemukan.' });
@@ -87,7 +82,6 @@ export async function updateProduk(data: ProdukDTO) {
 		if (data.produk_stok !== undefined) formData.append('produk_stok', String(data.produk_stok));
 		if (data.produk_harga !== undefined) formData.append('produk_harga', String(data.produk_harga));
 
-		// hanya upload file baru jika ada
 		if (data.produk_gambar instanceof File) {
 			formData.append('produk_gambar', data.produk_gambar);
 		}
@@ -109,7 +103,6 @@ export async function updateProduk(data: ProdukDTO) {
 	}
 }
 
-// DELETE PRODUK
 export async function deleteProduk(id: string,nama:string) {
 	loadingProduk.set(true);
 	messageHandleProduk.set(null);
@@ -118,7 +111,6 @@ export async function deleteProduk(id: string,nama:string) {
 		messageHandleProduk.set({ type: 'success', message: res.data.message });
 		await getAllProduk();
 		await getKatalogProduk();
-
 	} catch (err: unknown) {
 		messageHandleProduk.set({ type: 'error', message: errorHandler(err) });
 		produkCatalogStore.set([]);
@@ -127,7 +119,6 @@ export async function deleteProduk(id: string,nama:string) {
 	}
 }
 
-// GET KATALOG PRODUK
 export async function getKatalogProduk(
 	searchNama?: string,
 	filterHarga?: string,
@@ -146,7 +137,6 @@ export async function getKatalogProduk(
 
 		if (params.length > 0) url += `?${params.join('&')}`;
 
-		console.log('URL final katalog:', url);
 
 		const res = await api.get<ApiResponse<Produk[]>>(url);
 		produkCatalogStore.set(res.data.result ?? []);

@@ -16,7 +16,6 @@
 	<div
 		class="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl bg-zinc-50 p-6 shadow-2xl border border-zinc-200"
 	>
-		<!-- HEADER -->
 		<div class="flex items-center justify-between mb-4">
 			<h2 class="text-2xl font-semibold text-zinc-800">
 				Detail Transaksi – {data.nama_user}
@@ -31,7 +30,6 @@
 			</button>
 		</div>
 
-		<!-- INFO TRANSAKSI -->
 		<div class="mb-6 text-sm text-zinc-600 space-y-1">
 			<p><span class="font-medium text-zinc-700">ID Transaksi:</span> {data.transaksi_largest.transaksi_id}</p>
 			<p><span class="font-medium text-zinc-700">Tanggal:</span> {new Date(data.transaksi_largest.createdAt).toLocaleString('id-ID')}</p>
@@ -43,7 +41,6 @@
 			</p>
 		</div>
 
-		<!-- DETAIL BARANG -->
 		{#if data.transaksi_largest.detail.length > 0}
 			<div class="overflow-hidden rounded-xl border border-zinc-200 shadow-sm bg-white">
 				<table class="w-full text-sm">

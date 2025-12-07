@@ -1,9 +1,7 @@
 // src/lib/types/produk.ts
-// setup type produk handling
 
 import type { Review } from './review';
 
-// type untuk produk
 export interface Produk {
 	id: string;
 	produk_nama: string;
@@ -25,7 +23,7 @@ export interface Produk {
 export interface ProdukDTO {
 	id?: string | null;
 	produk_nama?: string;
-	produk_gambar?: string | File; // bisa string (URL) atau File (upload baru)
+	produk_gambar?: string | File;
 	produk_stok?: number;
 	produk_harga?: number;
 	produk_avg_rating?: number;
@@ -36,7 +34,6 @@ export interface ProdukDTO {
 // optional: interface untuk update kenapa partial? biar semua fieldnya bisa opsional
 // export interface ProdukUpdateDTO extends Partial<ProdukCreateDTO> {}
 
-// interface khusus handling cart
 export interface CartProduk {
 	id: string;
 	produk_nama: string;

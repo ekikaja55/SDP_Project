@@ -20,9 +20,7 @@ export const todoListStore: Writable<Todolist[] | null> = writable<Todolist[] | 
 export const loadingTodo:Writable<boolean> = writable(false);
 export const messageHandleTodo: Writable<MessageState | null> = writable<MessageState | null>(null);
 
-// handling get all todo
 export async function getAllTodo(status?: string) {
-	console.log('status Get all todo , isi status:' + status);
 
 	loadingGlobal.set(true);
 	messageHandleGlobal.set(null);
@@ -43,7 +41,7 @@ export async function getAllTodo(status?: string) {
 		loadingGlobal.set(false);
 	}
 }
-// handling add todo
+
 export async function addTodo(data: TodoListDTO) {
 	loadingTodo.set(true);
 	messageHandleTodo.set(null);
@@ -64,7 +62,6 @@ export async function addTodo(data: TodoListDTO) {
 	}
 }
 
-// handling update todo
 export async function updateTodo(data: TodoListDTO) {
 	loadingTodo.set(true);
 	messageHandleTodo.set(null);
@@ -85,9 +82,7 @@ export async function updateTodo(data: TodoListDTO) {
 	}
 }
 
-// handling update status todo
 export async function updateTodoStatus(data: TodoListDTO) {
-	console.log('isi data todolist update status : \n', JSON.stringify(data, null, 2));
 	loadingTodo.set(true);
 	messageHandleTodo.set(null);
 	try {
@@ -106,12 +101,10 @@ export async function updateTodoStatus(data: TodoListDTO) {
 		loadingTodo.set(false);
 	}
 }
-// handling delete todo
 export async function deleteTodo(id: string) {
 	loadingTodo.set(true);
 	messageHandleTodo.set(null);
 	try {
-		console.log('masuk try update todo, id :', id);
 
 		const res = await api.delete<ApiResponse<string>>(`/todolist/${id}`);
 		messageHandleTodo.set({

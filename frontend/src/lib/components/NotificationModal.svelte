@@ -49,8 +49,6 @@
 					✕
 				</button>
 			{/if}
-			<!-- Tombol close -->
-
 			<div class="mb-4 flex items-center gap-3">
 				<div
 					class={`flex h-10 w-10 items-center justify-center rounded-full border-2 ${
@@ -67,8 +65,6 @@
 				</div>
 				<h2 class={`text-xl font-semibold capitalize ${cekColor()}`}>{type}</h2>
 			</div>
-
-			<!-- Pesan utama -->
 			<p class="mb-5 text-base leading-relaxed text-zinc-700">{message}</p>
 		</div>
 	</div>

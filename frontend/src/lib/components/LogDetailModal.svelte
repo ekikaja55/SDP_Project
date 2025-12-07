@@ -1,6 +1,6 @@
 <script lang="ts">
   import { fade, fly } from "svelte/transition";
-  import type { AnyLog } from "$lib"; // Sesuaikan path type kamu
+  import type { AnyLog } from "$lib";
   import { createEventDispatcher } from "svelte";
 
   export let show = false;
@@ -12,8 +12,6 @@
     dispatch("close");
   }
 
-  // Helper untuk memformat key object agar lebih rapi (opsional)
-  // misal: "product_name" -> "Product Name"
   function formatKey(key: string) {
     return key
       .replace(/_/g, " ")
@@ -21,11 +19,9 @@
       .replace(/^./, (str) => str.toUpperCase());
   }
 
-  // Helper untuk memformat value (Date, null, dll)
   function formatValue(val: any) {
     if (val === null || val === undefined) return "-";
     if (typeof val === "boolean") return val ? "Ya" : "Tidak";
-    // Cek jika string adalah format tanggal ISO
     if (typeof val === "string" && /^\d{4}-\d{2}-\d{2}T/.test(val)) {
         return new Date(val).toLocaleString("id-ID", { dateStyle: 'medium', timeStyle: 'short'});
     }

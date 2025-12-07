@@ -6,7 +6,6 @@ import {
 	type ApiResponse,
 	type laporanReview,
 	type MessageState,
-	type Review,
 	type ReviewCustomer,
 	type ReviewDTO
 } from '$lib';
@@ -19,7 +18,6 @@ export const messageHandleReview: Writable<MessageState | null> = writable<Messa
 	null
 );
 
-// GET REVIEW & RATING UNTUK CUSTOMER
 export async function getReviewRatingCustomer() {
 	loadingReview.set(false);
 	messageHandleReview.set(null);
@@ -28,17 +26,13 @@ export async function getReviewRatingCustomer() {
 		const res = await api.get<ApiResponse<ReviewCustomer[]>>('/review');
 		reviewCustStore.set(res.data.result);
 	} catch (err: unknown) {
-		reviewCustStore.set([]);
+		throw new Error(errorHandler(err));
 	} finally {
 		loadingReview.set(false);
 	}
 }
 
-// ADD REVIEW & RATING UNTUK CUSTOMER
 export async function addReviewRatingCustomer(data: ReviewDTO) {
-	console.log('masuk');
-	console.log('data : ', data);
-	// return
 	loadingReview.set(false);
 	messageHandleReview.set(null);
 	try {
@@ -52,7 +46,6 @@ export async function addReviewRatingCustomer(data: ReviewDTO) {
 	}
 }
 
-// GET REVIEW RATING UNTUK ADMIN
 export async function getReviewRatingAdmin() {
 	loadingReview.set(false);
 	messageHandleReview.set(null);
@@ -61,7 +54,7 @@ export async function getReviewRatingAdmin() {
 		const res = await api.get<ApiResponse<laporanReview[]>>('/review/laporan');
 		reviewRatingStore.set(res.data.result);
 	} catch (err: unknown) {
-		reviewRatingStore.set([]);
+		throw new Error(errorHandler(err));
 	} finally {
 		loadingReview.set(false);
 	}

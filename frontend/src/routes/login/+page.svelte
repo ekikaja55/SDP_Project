@@ -1,14 +1,15 @@
 <!-- src/routes/login/+page.svelte-->
-<!-- page untuk login -->
 <script lang="ts">
 	import { loadingUser, login, messageHandleUser, type LoginDTO } from '$lib';
 	import NotificationModal from '../../lib/components/NotificationModal.svelte';
+	import Whatsapp from '../../lib/components/Whatsapp.svelte';
 	let dataLogin: LoginDTO = { user_email: '', user_password: '' };
 </script>
 
 <section class="z-50 flex min-h-screen items-center justify-center bg-zinc-50">
+  <Whatsapp/>
+
 	<div class="flex w-full max-w-5xl overflow-hidden rounded-2xl bg-white shadow-lg">
-		<!-- KIRI: GAMBAR -->
 		<div
 			class="relative hidden w-1/2 bg-cover bg-center md:block"
 			style="background-image: url('/images/login_art.jpg');"
@@ -18,42 +19,28 @@
 			></div>
 			<div class="absolute bottom-10 left-10 text-white">
 				<h2 class="text-3xl font-bold">Selamat Datang Kembali</h2>
-				<p class="mt-2 max-w-xs text-sm text-zinc-300">
+				<p class="text-md mt-2 max-w-sm leading-relaxed font-bold text-zinc-100">
 					Nikmati kemewahan pengalaman berbelanja digital di Kanti’s Store.
 				</p>
 			</div>
 		</div>
 
-		<!-- KANAN: FORM LOGIN -->
 		<div class="w-full p-10 md:w-1/2">
-			<!-- Logo / Branding -->
 			<div class="mb-8 flex flex-col items-center">
 				<div
-					class="flex h-12 w-12 items-center justify-center rounded-full bg-zinc-900 text-white shadow-sm"
+					class="flex h-15 w-15 items-center justify-center rounded-full bg-zinc-800  text-white shadow-lg"
 				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke-width="1.5"
-						stroke="currentColor"
-						class="h-6 w-6"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							d="M3 3h18l-1 18H4L3 3zm5 3h8m-4 0v12"
-						/>
-					</svg>
+					<img src="/icons/icon-logo-white.svg" alt="logo" class="h-8 w-8" />
 				</div>
-				<h1 class="mt-4 text-2xl font-semibold text-zinc-800">Kanti’s Store</h1>
-				<p class="mt-1 text-sm text-zinc-500">Masuk untuk melanjutkan pengalaman belanjamu</p>
+				<h1 class="mt-4 text-3xl font-semibold text-zinc-800">Kanti’s Store</h1>
+				<p class="text-md mt-1 font-semibold text-zinc-600">
+					Masuk untuk melanjutkan pengalaman belanjamu
+				</p>
 			</div>
 
-			<!-- Form -->
 			<form on:submit|preventDefault={() => login(dataLogin)} class="space-y-5">
 				<div>
-					<label class="mb-2 block text-sm font-medium text-zinc-700">Email</label>
+					<label class="text-md mb-2 block font-semibold text-zinc-700">Email</label>
 					<div class="relative">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -61,7 +48,7 @@
 							viewBox="0 0 24 24"
 							stroke-width="1.5"
 							stroke="currentColor"
-							class="absolute left-3 top-2.5 h-5 w-5 text-zinc-400"
+							class="absolute top-2.5 left-3 h-5 w-5 text-zinc-600"
 						>
 							<path
 								stroke-linecap="round"
@@ -74,13 +61,13 @@
 							bind:value={dataLogin.user_email}
 							placeholder="name@example.com"
 							required
-							class="w-full rounded-xl border border-zinc-300 bg-zinc-50 px-10 py-2.5 text-sm text-zinc-700 shadow-sm placeholder:text-zinc-400 focus:border-zinc-800 focus:outline-none focus:ring-1 focus:ring-zinc-800"
+							class="w-full rounded-xl border border-zinc-300 bg-zinc-50 px-10 py-2.5 text-sm text-zinc-700 shadow-sm placeholder:text-zinc-400 focus:border-zinc-800 focus:ring-1 focus:ring-zinc-800 focus:outline-none"
 						/>
 					</div>
 				</div>
 
 				<div>
-					<label class="mb-2 block text-sm font-medium text-zinc-700">Password</label>
+					<label class="text-md mb-2 block font-semibold text-zinc-700">Password</label>
 					<div class="relative">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -88,7 +75,7 @@
 							viewBox="0 0 24 24"
 							stroke-width="1.5"
 							stroke="currentColor"
-							class="absolute left-3 top-2.5 h-5 w-5 text-zinc-400"
+							class="absolute top-2.5 left-3 h-5 w-5 text-zinc-600"
 						>
 							<path
 								stroke-linecap="round"
@@ -99,9 +86,9 @@
 						<input
 							type="password"
 							bind:value={dataLogin.user_password}
-							placeholder="••••••••"
+							placeholder="••••••"
 							required
-							class="w-full rounded-xl border border-zinc-300 bg-zinc-50 px-10 py-2.5 text-sm text-zinc-700 shadow-sm placeholder:text-zinc-400 focus:border-zinc-800 focus:outline-none focus:ring-1 focus:ring-zinc-800"
+							class="w-full rounded-xl border border-zinc-300 bg-zinc-50 px-10 py-2.5 text-sm text-zinc-700 shadow-sm placeholder:text-zinc-400 focus:border-zinc-800 focus:ring-1 focus:ring-zinc-800 focus:outline-none"
 						/>
 					</div>
 				</div>
@@ -127,13 +114,12 @@
 				{/if}
 			</form>
 
-			<!-- Footer -->
-			<div class="mt-8 text-center text-sm text-zinc-500">
+			<div class="mt-8 text-center text-sm font-semibold text-zinc-700">
 				<p>
 					Belum punya akun?
 					<a
 						href="/register"
-						class="font-medium text-zinc-800 underline underline-offset-2 hover:text-zinc-950"
+						class="font-bold text-zinc-900 underline underline-offset-2 hover:text-zinc-950"
 					>
 						Daftar Sekarang
 					</a>

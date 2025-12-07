@@ -1,8 +1,7 @@
 <!-- src/routes/+page.svelte -->
 <script>
-	import { messageHandleUser } from '$lib';
-	import NotificationModal from '$lib/components/NotificationModal.svelte';
-	import { onMount } from 'svelte';
+	import Whatsapp from '$lib/components/Whatsapp.svelte';
+import { onMount } from 'svelte';
 
 	onMount(() => {
 		const observer = new IntersectionObserver(
@@ -10,7 +9,7 @@
 				entries.forEach((entry) => {
 					if (entry.isIntersecting) {
 						entry.target.classList.add('animate-show');
-						entry.target.classList.remove('opacity-0'); // hilangkan invisibility
+						entry.target.classList.remove('opacity-0');
 					}
 				});
 			},
@@ -22,10 +21,10 @@
 </script>
 
 <section class="flex min-h-screen flex-col bg-zinc-50 text-zinc-800">
-	<!-- HERO -->
+  <Whatsapp/>
 	<section id="home" class="reveal flex flex-1 items-center justify-between px-16 py-24 opacity-0">
 		<div class="max-w-lg">
-			<h2 class="mb-6 text-5xl font-bold leading-tight text-zinc-900">
+			<h2 class="mb-6 text-5xl leading-tight font-bold text-zinc-900">
 				Kecantikan Alami, <br />
 				<span class="text-zinc-700">Tanpa Sentuhan Kimia</span>
 			</h2>
@@ -47,14 +46,13 @@
 				class="h-[500px] w-full rounded-2xl object-cover shadow-2xl brightness-95 transition duration-500 hover:brightness-100"
 			/>
 			<div
-				class="absolute -bottom-6 -right-6 rounded-lg border border-zinc-200 bg-white/80 p-4 text-sm text-zinc-700 shadow-md"
+				class="absolute -right-6 -bottom-6 rounded-lg border border-zinc-200 bg-white/80 p-4 text-sm text-zinc-700 shadow-md"
 			>
 				<p>100% Bahan Alami Terpercaya</p>
 			</div>
 		</div>
 	</section>
 
-	<!-- ABOUT -->
 	<section id="about" class="reveal border-t border-zinc-100 bg-white px-16 py-24 opacity-0">
 		<div class="mx-auto max-w-4xl text-center">
 			<h3 class="mb-4 text-3xl font-semibold text-zinc-800">Tentang Kanti’s Store</h3>
@@ -67,7 +65,6 @@
 		</div>
 	</section>
 
-	<!-- GALLERY -->
 	<section id="gallery" class="reveal bg-zinc-50 px-16 py-24 opacity-0">
 		<h3 class="mb-10 text-center text-3xl font-semibold text-zinc-800">Produk Unggulan Kami</h3>
 		<div class="mx-auto grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -90,38 +87,36 @@
 		</div>
 	</section>
 
-	<!-- BENEFITS -->
 	<section id="benefits" class="reveal border-t border-zinc-100 bg-white px-16 py-24 opacity-0">
 		<div class="mx-auto max-w-5xl text-center">
 			<h3 class="mb-10 text-3xl font-semibold text-zinc-800">Mengapa Memilih Kami?</h3>
 
 			<div class="grid grid-cols-1 gap-10 text-zinc-700 sm:grid-cols-3">
 				<div class="flex flex-col items-center">
-					<img src="/images/icon-leaf.svg" alt="Herbal" class="mb-4 h-16 opacity-80" />
+					<img src="/icons/icon-leaf.svg" alt="Herbal" class="mb-4 h-16 opacity-80" />
 					<h4 class="mb-2 text-lg font-semibold">100% Herbal</h4>
 					<p class="text-sm text-zinc-500">
 						Diformulasikan dari bahan alami tanpa pengawet dan bahan kimia sintetis.
 					</p>
 				</div>
 				<div class="flex flex-col items-center">
-					<img src="/images/icon-bottle.svg" alt="Quality" class="mb-4 h-16 opacity-80" />
+					<img src="/icons/icon-premium.svg" alt="Quality" class="mb-4 h-16 opacity-80" />
 					<h4 class="mb-2 text-lg font-semibold">Kualitas Premium</h4>
 					<p class="text-sm text-zinc-500">
 						Setiap produk melewati uji kualitas agar aman dan efektif untuk semua jenis kulit.
 					</p>
 				</div>
 				<div class="flex flex-col items-center">
-					<img src="/images/icon-heart.svg" alt="Natural Beauty" class="mb-4 h-16 opacity-80" />
-					<h4 class="mb-2 text-lg font-semibold">Cantik Alami</h4>
+					<img src="/icons/icon-price.svg" alt="Natural Beauty" class="mb-4 h-16 opacity-80" />
+					<h4 class="mb-2 text-lg font-semibold">Harga Kompetitif</h4>
 					<p class="text-sm text-zinc-500">
-						Membantu menutrisi kulit dan rambut secara alami untuk kecantikan dari dalam.
+						Kualitas terbaik dengan harga yang bersaing untuk semua kebutuhan.
 					</p>
 				</div>
 			</div>
 		</div>
 	</section>
 
-	<!-- TESTIMONI -->
 	<section id="testimoni" class="reveal border-t border-zinc-100 bg-zinc-50 px-16 py-24 opacity-0">
 		<div class="mx-auto max-w-5xl text-center">
 			<h3 class="mb-10 text-3xl font-semibold text-zinc-800">Apa Kata Pelanggan Kami?</h3>
@@ -129,7 +124,7 @@
 			<div class="grid grid-cols-1 gap-8 sm:grid-cols-3">
 				{#each [{ name: 'Ayu Pratiwi', comment: 'Setelah pakai serum herbal dari Kanti, kulitku lebih lembab dan cerah alami!' }, { name: 'Dewi Santika', comment: 'Produk maskernya wangi banget dan hasilnya nyata dari pemakaian pertama.' }, { name: 'Sinta Lestari', comment: 'Suka banget sama konsep natural dan kemasan elegannya. Worth every penny!' }] as testi}
 					<div class="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-						<p class="mb-4 italic text-zinc-600">“{testi.comment}”</p>
+						<p class="mb-4 text-zinc-600 italic">“{testi.comment}”</p>
 						<h4 class="font-semibold text-zinc-800">— {testi.name}</h4>
 					</div>
 				{/each}
@@ -137,7 +132,6 @@
 		</div>
 	</section>
 
-	<!-- CTA -->
 	<section
 		id="cta"
 		class="reveal border-t border-zinc-100 bg-white px-16 py-24 text-center opacity-0"

@@ -1,157 +1,195 @@
 <script lang="ts">
-	import { getHistoryTransaksi, loadingTrans, transaksiStore } from '$lib';
-	import { onMount } from 'svelte';
-	import { Clock, PackageCheck, Truck, Ban, CheckCircle2 , Icon} from '@lucide/svelte';
-	const BASE_URL = import.meta.env.VITE_API_URL_UPLOADS;
+  import { getHistoryTransaksi, loadingTrans, transaksiStore } from '$lib';
+  import { onMount } from 'svelte';
+  import { goto } from '$app/navigation';
+  import {
+    Clock,
+    PackageCheck,
+    Truck,
+    Ban,
+    CheckCircle2,
+    ChevronRight,
+    Receipt,
+    Calendar,
+    Filter
+  } from '@lucide/svelte';
+  import Whatsapp from '../../../../lib/components/Whatsapp.svelte';
 
-	let selectedStatus = '';
 
-	const statusOptions = [
-		'',
-		'Belum Dikonfirmasi',
-		'Pesanan Dibatalkan',
-		'Pesanan Sedang Diproses',
-		'Pesanan Sedang Dalam Pengiriman',
-		'Pesanan Selesai'
-	];
+  let selectedStatus = '';
 
-	onMount(() => {
-		refreshTransaksi();
-	});
+  const statusOptions = [
+    '',
+    'Belum Dikonfirmasi',
+    'Pesanan Dibatalkan',
+    'Pesanan Sedang Diproses',
+    'Pesanan Sedang Dalam Pengiriman',
+    'Pesanan Selesai'
+  ];
 
-	async function refreshTransaksi() {
-		await getHistoryTransaksi(selectedStatus);
-	}
+  onMount(() => {
+    refreshTransaksi();
+  });
 
-	function getStatusColor(status: string) {
-		switch (status) {
-			case 'Belum Dikonfirmasi':
-				return 'bg-zinc-100 text-zinc-700 border border-zinc-300';
-			case 'Pesanan Dibatalkan':
-				return 'bg-rose-100 text-rose-700 border border-rose-300';
-			case 'Pesanan Sedang Diproses':
-				return 'bg-amber-100 text-amber-700 border border-amber-300';
-			case 'Pesanan Sedang Dalam Pengiriman':
-				return 'bg-emerald-100 text-emerald-700 border border-emerald-300';
-			case 'Pesanan Selesai':
-				return 'bg-lime-100 text-lime-700 border border-lime-300';
-			default:
-				return 'bg-zinc-100 text-zinc-700 border border-zinc-300';
-		}
-	}
+  async function refreshTransaksi() {
+    await getHistoryTransaksi(selectedStatus);
+  }
 
-	function getStatusIcon(status: string) {
-		switch (status) {
-			case 'Belum Dikonfirmasi':
-				return Clock;
-			case 'Pesanan Dibatalkan':
-				return Ban;
-			case 'Pesanan Sedang Diproses':
-				return PackageCheck;
-			case 'Pesanan Sedang Dalam Pengiriman':
-				return Truck;
-			case 'Pesanan Selesai':
-				return CheckCircle2;
-			default:
-				return Clock;
-		}
-	}
+  function getStatusColor(status: string) {
+    switch (status) {
+      case 'Belum Dikonfirmasi': return 'bg-zinc-100 text-zinc-600 border-zinc-200';
+      case 'Pesanan Dibatalkan': return 'bg-rose-50 text-rose-600 border-rose-200';
+      case 'Pesanan Sedang Diproses': return 'bg-blue-50 text-blue-600 border-blue-200';
+      case 'Pesanan Sedang Dalam Pengiriman': return 'bg-amber-50 text-amber-600 border-amber-200';
+      case 'Pesanan Selesai': return 'bg-emerald-50 text-emerald-600 border-emerald-200';
+      default: return 'bg-zinc-100 text-zinc-600 border-zinc-200';
+    }
+  }
+
+  function getStatusIcon(status: string) {
+    switch (status) {
+      case 'Belum Dikonfirmasi': return Clock;
+      case 'Pesanan Dibatalkan': return Ban;
+      case 'Pesanan Sedang Diproses': return PackageCheck;
+      case 'Pesanan Sedang Dalam Pengiriman': return Truck;
+      case 'Pesanan Selesai': return CheckCircle2;
+      default: return Clock;
+    }
+  }
+
+  const formatRupiah = (number: number) => {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    }).format(number);
+  };
 </script>
 
-<h2 class="mb-6 text-3xl font-bold text-zinc-800">Transaction History</h2>
+<div class="space-y-6 min-h-screen pb-20">
 
-<!-- Filter -->
-<div class="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-	<label class="font-medium text-zinc-700">Filter Status:</label>
-	<select
-		bind:value={selectedStatus}
-		on:change={refreshTransaksi}
-		class="rounded-xl border border-zinc-300 bg-zinc-50 px-3 py-2 text-zinc-700 focus:outline-none focus:ring-2 focus:ring-zinc-300 focus:border-zinc-400 transition-all"
-	>
-		{#each statusOptions as option}
-			<option value={option}>
-				{option === '' ? 'Semua Status' : option}
-			</option>
-		{/each}
-	</select>
+  <div class="flex flex-col gap-4 border-b border-zinc-200 pb-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold tracking-tight text-zinc-800">History Transaction</h1>
+        <p class="mt-1 text-sm text-zinc-500">Daftar riwayat belanja Anda.</p>
+      </div>
+      <div class="hidden sm:block">
+        <Whatsapp/>
+      </div>
+    </div>
+    <div class="sm:hidden">
+        <Whatsapp/>
+    </div>
+  </div>
+
+  <div class="relative max-h-[75vh] overflow-y-auto custom-scroll rounded-2xl border border-zinc-200 bg-white shadow-sm">
+
+    <div class="sticky top-0 z-20 flex items-center justify-between border-b border-zinc-100 bg-white/95 px-5 py-4 backdrop-blur-sm">
+      <div class="flex items-center gap-2 text-zinc-600">
+        <Filter class="h-4 w-4" />
+        <span class="text-sm font-semibold">Filter Status</span>
+      </div>
+
+      <select
+        bind:value={selectedStatus}
+        on:change={refreshTransaksi}
+        class="rounded-lg border-zinc-200 bg-zinc-50 py-1.5 pl-3 pr-8 text-sm font-medium text-zinc-700 focus:border-zinc-400 focus:ring-0 cursor-pointer transition hover:bg-zinc-100"
+      >
+        <option value="">Semua Riwayat</option>
+        {#each statusOptions.slice(1) as option}
+          <option value={option}>{option}</option>
+        {/each}
+      </select>
+    </div>
+
+    <div class="p-2">
+      {#if $loadingTrans}
+        <div class="flex flex-col items-center justify-center py-20">
+          <div class="h-8 w-8 animate-spin rounded-full border-4 border-zinc-200 border-t-zinc-800"></div>
+          <p class="mt-4 text-sm text-zinc-500">Memuat riwayat...</p>
+        </div>
+      {:else if $transaksiStore && $transaksiStore.length > 0}
+        <div class="flex flex-col gap-2">
+          {#each $transaksiStore as item}
+            <div
+              class="group relative flex flex-col gap-4 rounded-xl border border-zinc-100 bg-white p-5 transition-all hover:border-zinc-300 hover:shadow-md sm:flex-row sm:items-center sm:justify-between"
+            >
+
+              <div class="flex items-start gap-4">
+                <div class={`mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border ${getStatusColor(item.transaksi_status)}`}>
+                  <svelte:component this={getStatusIcon(item.transaksi_status)} class="h-5 w-5" />
+                </div>
+
+                <div>
+                  <div class="flex items-center gap-2 mb-1">
+                     <span class="font-bold text-zinc-800 text-base">{item.transaksi_id}</span>
+                     <span class={`inline-flex sm:hidden items-center rounded-full px-2 py-0.5 text-[10px] font-bold border ${getStatusColor(item.transaksi_status)}`}>
+                        {item.transaksi_status}
+                     </span>
+                  </div>
+
+                  <div class="flex items-center gap-4 text-sm text-zinc-500">
+                     <div class="flex items-center gap-1.5">
+                        <Calendar class="h-3.5 w-3.5" />
+                        {new Date(item.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                     </div>
+                     <div class="h-1 w-1 rounded-full bg-zinc-300"></div>
+                     <div class="font-medium text-zinc-900">
+                        {formatRupiah(item.transaksi_grand_total)}
+                     </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between sm:justify-end sm:gap-6 mt-2 sm:mt-0 pt-3 sm:pt-0 border-t border-zinc-100 sm:border-t-0">
+
+                 <div class="hidden sm:block text-right">
+                    <span class={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold ${getStatusColor(item.transaksi_status)}`}>
+                        {item.transaksi_status}
+                    </span>
+                 </div>
+
+                 <button
+                    on:click={() => goto(`/dashboard/customer/history_pemesanan/${item.transaksi_id}`)}
+                    class="flex items-center gap-1 text-sm font-semibold text-indigo-600 transition hover:text-indigo-700 hover:underline decoration-2 underline-offset-4"
+                  >
+                    Lihat Detail <ChevronRight class="h-4 w-4" />
+                 </button>
+              </div>
+
+            </div>
+          {/each}
+        </div>
+      {:else}
+        <div class="flex flex-col items-center justify-center py-24 text-center">
+          <div class="mb-4 rounded-full bg-zinc-50 p-6 ring-1 ring-zinc-100">
+            <Receipt class="h-10 w-10 text-zinc-300" />
+          </div>
+          <h3 class="text-lg font-bold text-zinc-800">Belum ada pesanan</h3>
+          <p class="mt-1 max-w-xs text-sm text-zinc-500">Mulai belanja sekarang dan riwayat pesananmu akan muncul di sini.</p>
+          <a href="/" class="mt-6 rounded-xl bg-zinc-900 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-zinc-800">
+            Mulai Belanja
+          </a>
+        </div>
+      {/if}
+    </div>
+  </div>
 </div>
 
-{#if $loadingTrans}
-	<div class="flex justify-center py-10">
-		<div class="h-10 w-10 animate-spin rounded-full border-4 border-zinc-400 border-t-transparent"></div>
-	</div>
-{:else if $transaksiStore && $transaksiStore.length > 0}
-	<div class="flex flex-col gap-8">
-		{#each $transaksiStore as item, index}
-			<div
-				class="rounded-2xl border border-zinc-200 bg-zinc-50 p-6 shadow-md transition-all hover:shadow-lg hover:border-zinc-300"
-			>
-				<div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-					<p class="text-zinc-700">
-						<span class="font-medium">ID Transaksi:</span>
-						<span class="ml-1 font-semibold text-zinc-800">{item.transaksi_id}</span>
-					</p>
-
-					<span
-						class={`flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium ${getStatusColor(
-							item.transaksi_status
-						)}`}
-					>
-						<Icon size="16" class="text-current" />
-						{item.transaksi_status}
-					</span>
-				</div>
-
-				<div class="mb-5 grid grid-cols-1 gap-2 sm:grid-cols-3 text-sm text-zinc-700">
-					<p>
-						<span class="font-medium">Tanggal Dibuat:</span>
-						<span class="ml-1 text-zinc-600">
-							{new Date(item.createdAt).toLocaleString('id-ID', {
-								year: 'numeric',
-								month: 'long',
-								day: 'numeric',
-								hour: '2-digit',
-								minute: '2-digit',
-								hour12: false
-							})}
-						</span>
-					</p>
-					<p>
-						<span class="font-medium">Grand Total:</span>
-						<span class="ml-1 font-semibold text-zinc-800">
-							Rp {item.transaksi_grand_total}
-						</span>
-					</p>
-				</div>
-
-				<!-- Detail Pesanan -->
-				<div class="space-y-4">
-					<p class="font-semibold text-zinc-800">Detail Pesanan:</p>
-					<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-						{#each item.transaksi_detail as produk}
-							<div
-								class="flex items-center gap-4 rounded-xl border border-zinc-200 bg-zinc-100 p-4 transition hover:bg-zinc-200"
-							>
-								<img
-									src={`${BASE_URL}/uploads/${produk.produk_gambar}`}
-									alt={produk.detail_nama}
-									class="h-16 w-16 rounded-lg border border-zinc-300 object-cover shadow-sm"
-								/>
-								<div class="flex flex-col text-sm text-zinc-700">
-									<span class="font-medium text-zinc-900">{produk.detail_nama}</span>
-									<span>Harga: Rp {produk.produk_harga}</span>
-									<span>Qty: {produk.detail_stok}</span>
-									<span class="font-semibold text-zinc-800">
-										Subtotal: Rp {produk.detail_sub_total}
-									</span>
-								</div>
-							</div>
-						{/each}
-					</div>
-				</div>
-			</div>
-		{/each}
-	</div>
-{:else}
-	<p class="mt-10 text-center text-zinc-500">Tidak ada produk ditemukan.</p>
-{/if}
+<style>
+  /* Custom Scrollbar */
+  .custom-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scroll::-webkit-scrollbar-thumb {
+    background-color: #d4d4d8;
+    border-radius: 20px;
+  }
+  .custom-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: #a1a1aa;
+  }
+</style>

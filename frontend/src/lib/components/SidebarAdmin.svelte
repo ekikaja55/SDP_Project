@@ -1,164 +1,86 @@
-<!--src/lib/components/SidebarAdmin.svelte -->
-<!-- component untuk sidebar admin -->
 <script lang="ts">
-	import { type UserAuth } from '$lib';
-	export let onLogout: () => void;
-	export let data: UserAuth;
+  import { type UserAuth } from '$lib';
+  import {
+    Package,
+    ClipboardList,
+    Receipt,
+    Users,
+    History,
+    LogOut,
+  } from '@lucide/svelte';
+
+  export let onLogout: () => void;
+  export let data: UserAuth;
+
+  const getInitials = (name: string) => name ? name.substring(0, 2).toUpperCase() : 'AD';
 </script>
 
-<aside
-	class="sticky top-0 flex h-screen w-64 flex-col justify-between border-r border-zinc-800 bg-zinc-950 text-zinc-200 shadow-xl
-"
->
-	<div>
-		<div class="border-b border-zinc-800 px-6 py-5">
-			<h1 class="text-xl font-semibold text-zinc-100">Admin Panel</h1>
-			<p class="mt-1 text-sm text-zinc-400">Nama: {data.user_nama}</p>
-		</div>
+<aside class="sticky top-0 flex h-screen w-64 flex-col border-r border-zinc-800 bg-zinc-900 text-zinc-300 shadow-xl transition-all">
 
-		<nav class="mt-5 flex flex-col space-y-1 px-3">
-			<a
-				href="/dashboard/admin/products"
-				class="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors duration-200 hover:bg-zinc-800 hover:text-zinc-100"
-			>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					class="h-5 w-5 text-zinc-400"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke="currentColor"
-					stroke-width="1.5"
-				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						d="M20 13V6a2 2 0 0 0-2-2h-3M4 13V6a2 2 0 0 1 2-2h3m0 16v-5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v5m-8 0h8"
-					/>
-				</svg>
-				<span>Manage Products</span>
-			</a>
+  <div class="flex items-center justify-between border-b border-zinc-800 px-5 py-6">
+    <div class="flex items-center gap-3 overflow-hidden">
+      <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-600 font-bold text-white shadow-lg shadow-indigo-900/20">
+        {getInitials(data.user_nama)}
+      </div>
+      <div class="overflow-hidden">
+        <h1 class="truncate text-sm font-bold text-white">Admin Panel</h1>
+        <p class="truncate text-xs text-zinc-500" title={data.user_nama}>{data.user_nama}</p>
+      </div>
+    </div>
 
-			<a
-				href="/dashboard/admin/todolist"
-				class="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors duration-200 hover:bg-zinc-800 hover:text-zinc-100"
-			>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					class="h-5 w-5 text-zinc-400"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke="currentColor"
-					stroke-width="1.5"
-				>
-					<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-				</svg>
-				<span>Manage Todolist</span>
-			</a>
+    <button
+      on:click={onLogout}
+      class="rounded-lg p-2 text-zinc-500 transition-colors hover:bg-rose-500/10 hover:text-rose-500"
+      title="Keluar / Logout"
+    >
+      <LogOut class="h-5 w-5" />
+    </button>
+  </div>
 
-			<a
-				href="/dashboard/admin/transaction"
-				class="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors duration-200 hover:bg-zinc-800 hover:text-zinc-100"
-			>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					class="h-5 w-5 text-zinc-400"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke="currentColor"
-					stroke-width="1.5"
-				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						d="M3 10h18M3 6h18M3 14h18M3 18h18"
-					/>
-				</svg>
-				<span>Manage Transaction</span>
-			</a>
+  <nav class="flex-1 mt-6 flex flex-col gap-1 px-4 overflow-y-auto custom-scroll">
+    <p class="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-zinc-600">Main Menu</p>
 
-			<a
-				href="/dashboard/admin/manage_customer"
-				class="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors duration-200 hover:bg-zinc-800 hover:text-zinc-100"
-			>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					class="h-5 w-5 text-zinc-400"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke="currentColor"
-					stroke-width="1.5"
-				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						d="M17 20h5v-2a4 4 0 0 0-5-4M9 20H4v-2a4 4 0 0 1 5-4m4-2a4 4 0 1 0-4-4 4 4 0 0 0 4 4z"
-					/>
-				</svg>
-				<span>Customer Data</span>
-			</a>
+    <a
+      href="/dashboard/admin/products"
+      class="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all hover:bg-zinc-800 hover:text-white"
+    >
+      <Package class="h-5 w-5 text-zinc-500 transition group-hover:text-indigo-400" />
+      <span>Products</span>
+    </a>
 
-			<a
-				href="/dashboard/admin/laporan_review"
-				class="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors duration-200 hover:bg-zinc-800 hover:text-zinc-100"
-			>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					class="h-5 w-5 text-zinc-400"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke="currentColor"
-					stroke-width="1.5"
-				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						d="M11 5h10M11 9h7M11 13h10M4 5h.01M4 9h.01M4 13h.01M4 17h.01M11 17h10"
-					/>
-				</svg>
-				<span>Review Produk Data</span>
-			</a>
+    <a
+      href="/dashboard/admin/transaction"
+      class="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all hover:bg-zinc-800 hover:text-white"
+    >
+      <Receipt class="h-5 w-5 text-zinc-500 transition group-hover:text-emerald-400" />
+      <span>Transactions</span>
+    </a>
 
-			<a
-				href="/dashboard/admin/logs"
-				class="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors duration-200 hover:bg-zinc-800 hover:text-zinc-100"
-			>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="24"
-					height="24"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="1.5"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					class="lucide lucide-history-icon lucide-history"
-					><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /><path
-						d="M12 7v5l4 2"
-					/></svg
-				>
-				<span>Logs</span>
-			</a>
-			<button
-				on:click={onLogout}
-				class="mt-5 flex w-full gap-2 rounded-lg bg-white px-3 py-2 font-medium text-zinc-800 transition hover:bg-zinc-900 hover:text-white"
-			>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					class="h-5 w-5"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke="currentColor"
-					stroke-width="1.5"
-				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1"
-					/>
-				</svg>
-				Logout
-			</button>
-		</nav>
-	</div>
+    <a
+      href="/dashboard/admin/manage_customer"
+      class="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all hover:bg-zinc-800 hover:text-white"
+    >
+      <Users class="h-5 w-5 text-zinc-500 transition group-hover:text-blue-400" />
+      <span>Customers</span>
+    </a>
+
+    <p class="mb-2 mt-4 px-2 text-xs font-semibold uppercase tracking-wider text-zinc-600">Internal</p>
+
+    <a
+      href="/dashboard/admin/todolist"
+      class="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all hover:bg-zinc-800 hover:text-white"
+    >
+      <ClipboardList class="h-5 w-5 text-zinc-500 transition group-hover:text-amber-400" />
+      <span>Daily Task</span>
+    </a>
+
+    <a
+      href="/dashboard/admin/logs"
+      class="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all hover:bg-zinc-800 hover:text-white"
+    >
+      <History class="h-5 w-5 text-zinc-500 transition group-hover:text-purple-400" />
+      <span>Activity Log</span>
+    </a>
+  </nav>
+
 </aside>

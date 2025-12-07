@@ -1,4 +1,5 @@
-//type untuk log
+//src/lib/types/log.ts
+
 import type { Produk, Todolist, Transaksi } from '$lib';
 
 type LogTypeMap = {

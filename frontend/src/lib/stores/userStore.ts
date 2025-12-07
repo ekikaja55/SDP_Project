@@ -4,7 +4,7 @@
  * ini handling  function dan reactive state untuk user ( login, register, logout)
  */
 
-// handling functiion axios
+
 import { goto } from '$app/navigation';
 import {
 	api,
@@ -21,7 +21,6 @@ import {
 import { jwtDecode } from 'jwt-decode';
 import { writable, type Writable } from 'svelte/store';
 
-// inisiasi state modelan redux
 
 export const userStore: Writable<UserAuth | null> = writable<UserAuth | null>(null);
 export const customerStore: Writable<Customer[] | null> = writable<Customer[] | null>([]);
@@ -60,32 +59,22 @@ export async function login(data: LoginDTO) {
 	messageHandleUser.set(null);
 
 	try {
-		console.log('============================================');
-		console.log('fn login userStore -> masuk 1');
 
 		const res = await api.post<ApiResponse<string>>('/auth/login', data);
-		console.log('fn login userStore -> masuk after fetch');
 
 		messageHandleUser.set({
 			type: 'success',
 			message: res.data.message
 		});
 
-		console.log(
-			'fn login userStore -> isi token hasil fetch\n' + JSON.stringify(res.data.result, null, 2)
-		);
 
 		localStorage.setItem('token', res.data.result);
 
-		console.log('TOKEN DISIMPAN KE LOCAL STORAGE:', localStorage.getItem('token'));
-
 		const dataUser: UserAuth = jwtDecode(res.data.result);
-		console.log('isi access token setelah di decode\n' + JSON.stringify(dataUser, null, 2));
 
 		const temp: string = dataUser.user_role === 'admin' ? 'products' : 'status_pemesanan';
 
-    // goto(`/dashboard/${dataUser.user_role}/${temp}`);
-		window.location.href = `/dashboard/${dataUser.user_role}/${temp}`;
+    window.location.href = `/dashboard/${dataUser.user_role}/${temp}`;
 	} catch (err: unknown) {
 		messageHandleUser.set({
 			type: 'error',
@@ -191,17 +180,12 @@ export async function logout() {
 }
 
 export async function getUserData(query: QueryCustomer) {
-	console.log('fn getUserData() -> masuk');
-	console.log('fn getUserData() -> isi query', query);
 
 	let url = '/user';
 	const params: string[] = [];
   if (query.search) params.push(`search=${encodeURIComponent(query.search)}`);
 	if (query.sort) params.push(`sort=${encodeURIComponent(query.sort)}`);
 	if (params.length > 0) url += `?${params.join('&')}`;
-
-  console.log("url final : ",url);
-
 
 	loadingCust.set(false);
 
@@ -210,8 +194,7 @@ export async function getUserData(query: QueryCustomer) {
 		const res = await api.get<ApiResponse<Customer[]>>(url);
 		customerStore.set(res.data.result);
 	} catch (err: unknown) {
-		console.log(err);
-		customerStore.set([]);
+    throw new Error(errorHandler(err));
 	} finally {
 		loadingCust.set(false);
 	}

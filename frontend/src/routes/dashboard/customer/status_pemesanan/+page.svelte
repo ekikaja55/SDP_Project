@@ -1,141 +1,203 @@
 <script lang="ts">
-	import { getStatusTransaksi, loadingTrans, transaksiStore } from '$lib';
-	import { onMount } from 'svelte';
-	import { Truck, PackageCheck, Clock } from '@lucide/svelte';
-	const BASE_URL = import.meta.env.VITE_API_URL_UPLOADS;
+  import { getStatusTransaksi, loadingTrans, transaksiStore } from '$lib';
+  import { onMount } from 'svelte';
+  import { goto } from '$app/navigation';
+  import {
+    Truck,
+    PackageCheck,
+    Clock,
+    ChevronRight,
+    Loader2,
+    MapPin,
+    Filter
+  } from '@lucide/svelte';
+  import Whatsapp from '../../../../lib/components/Whatsapp.svelte';
 
-	let selectedStatus = '';
+  let selectedStatus = '';
 
-	const statusOptions = [
-		'',
-		'Belum Dikonfirmasi',
-		'Pesanan Sedang Diproses',
-		'Pesanan Sedang Dalam Pengiriman'
-	];
+  const statusOptions = [
+    '',
+    'Belum Dikonfirmasi',
+    'Pesanan Sedang Diproses',
+    'Pesanan Sedang Dalam Pengiriman'
+  ];
 
-	onMount(() => {
-		refreshTransaksi();
-	});
+  onMount(() => {
+    refreshTransaksi();
+  });
 
-	async function refreshTransaksi() {
-		await getStatusTransaksi(selectedStatus);
-	}
+  async function refreshTransaksi() {
+    await getStatusTransaksi(selectedStatus);
+  }
 
-	function getStatusColor(status: string) {
-		switch (status) {
-			case 'Belum Dikonfirmasi':
-				return 'bg-zinc-100 text-zinc-700 border border-zinc-300';
-			case 'Pesanan Sedang Diproses':
-				return 'bg-amber-100 text-amber-700 border border-amber-300';
-			case 'Pesanan Sedang Dalam Pengiriman':
-				return 'bg-emerald-100 text-emerald-700 border border-emerald-300';
-			default:
-				return 'bg-zinc-100 text-zinc-700 border border-zinc-300';
-		}
-	}
+  function getStatusStyles(status: string) {
+    switch (status) {
+      case 'Belum Dikonfirmasi':
+        return {
+          border: 'border-l-zinc-400',
+          badge: 'bg-zinc-100 text-zinc-700 border-zinc-200',
+          iconColor: 'text-zinc-500'
+        };
+      case 'Pesanan Sedang Diproses':
+        return {
+          border: 'border-l-amber-500',
+          badge: 'bg-amber-50 text-amber-700 border-amber-200',
+          iconColor: 'text-amber-600'
+        };
+      case 'Pesanan Sedang Dalam Pengiriman':
+        return {
+          border: 'border-l-indigo-500',
+          badge: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+          iconColor: 'text-indigo-600'
+        };
+      default:
+        return {
+          border: 'border-l-zinc-300',
+          badge: 'bg-zinc-50 text-zinc-600',
+          iconColor: 'text-zinc-400'
+        };
+    }
+  }
 
-	function getStatusIcon(status: string) {
-		switch (status) {
-			case 'Belum Dikonfirmasi':
-				return Clock;
-			case 'Pesanan Sedang Diproses':
-				return PackageCheck;
-			case 'Pesanan Sedang Dalam Pengiriman':
-				return Truck;
-			default:
-				return Clock;
-		}
-	}
+  function getStatusIcon(status: string) {
+    switch (status) {
+      case 'Belum Dikonfirmasi': return Clock;
+      case 'Pesanan Sedang Diproses': return Loader2; // Ikon loading
+      case 'Pesanan Sedang Dalam Pengiriman': return Truck;
+      default: return Clock;
+    }
+  }
+
+  const formatRupiah = (number: number) => {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    }).format(number);
+  };
 </script>
 
-<h2 class="mb-6 text-3xl font-bold text-zinc-800">Transaction Status</h2>
+<div class="space-y-6 min-h-screen pb-20">
 
-<div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-	<label class="font-medium text-zinc-700">Filter Status:</label>
-	<select
-		bind:value={selectedStatus}
-		on:change={refreshTransaksi}
-		class="rounded-xl border border-zinc-300 bg-zinc-50 px-3 py-2 text-zinc-700 transition-all focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-300"
-	>
-		{#each statusOptions as option}
-			<option value={option}>
-				{option === '' ? 'Semua Status' : option}
-			</option>
-		{/each}
-	</select>
+  <div class="flex flex-col gap-4 border-b border-zinc-200 pb-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold tracking-tight text-zinc-800">Ordering Status</h1>
+        <p class="mt-1 text-sm text-zinc-500">Lacak proses pesanan yang sedang berjalan.</p>
+      </div>
+      <div class="hidden sm:block">
+        <Whatsapp/>
+      </div>
+    </div>
+    <div class="sm:hidden">
+        <Whatsapp/>
+    </div>
+  </div>
+
+  <div class="relative max-h-[75vh] overflow-y-auto custom-scroll rounded-2xl border border-zinc-200 bg-zinc-50/50 shadow-inner">
+
+    <div class="sticky top-0 z-20 flex items-center justify-between border-b border-zinc-200 bg-white/95 px-5 py-4 backdrop-blur-sm shadow-sm">
+      <div class="flex items-center gap-2 text-zinc-600">
+        <Filter class="h-4 w-4" />
+        <span class="text-sm font-semibold">Filter Status</span>
+      </div>
+
+      <select
+        bind:value={selectedStatus}
+        on:change={refreshTransaksi}
+        class="rounded-lg border-zinc-200 bg-zinc-50 py-1.5 pl-3 pr-8 text-sm font-medium text-zinc-700 focus:border-zinc-400 focus:ring-0 cursor-pointer transition hover:bg-zinc-100"
+      >
+        <option value="">Semua Proses</option>
+        {#each statusOptions.slice(1) as option}
+          <option value={option}>{option}</option>
+        {/each}
+      </select>
+    </div>
+
+    <div class="p-4 space-y-4">
+      {#if $loadingTrans}
+        <div class="flex flex-col items-center justify-center py-20">
+          <div class="h-8 w-8 animate-spin rounded-full border-4 border-zinc-300 border-t-indigo-600"></div>
+          <p class="mt-4 text-sm font-medium text-zinc-500">Memuat status pesanan...</p>
+        </div>
+      {:else if $transaksiStore && $transaksiStore.length > 0}
+        {#each $transaksiStore as item}
+          {@const styles = getStatusStyles(item.transaksi_status)}
+
+          <div
+            class={`group relative flex flex-col gap-4 rounded-xl border-y border-r border-zinc-200 bg-white p-5 shadow-sm transition-all hover:shadow-md ${styles.border} border-l-4`}
+          >
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+               <div class="flex items-center gap-3">
+                  <div class={`p-2 rounded-full bg-zinc-50 ${styles.iconColor}`}>
+                    <svelte:component
+                      this={getStatusIcon(item.transaksi_status)}
+                      class={`h-5 w-5 ${item.transaksi_status === 'Pesanan Sedang Diproses' ? 'animate-spin' : ''}`}
+                    />
+                  </div>
+                  <div>
+                    <h3 class="text-base font-bold text-zinc-800">{item.transaksi_id}</h3>
+                    <p class="text-xs text-zinc-500 mt-0.5">
+                       Dibuat: {new Date(item.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', hour: '2-digit', minute:'2-digit' })}
+                    </p>
+                  </div>
+               </div>
+
+               <span class={`self-start sm:self-center inline-flex items-center rounded-full px-3 py-1 text-xs font-bold border ${styles.badge}`}>
+                  {item.transaksi_status}
+               </span>
+            </div>
+
+            <div class="border-t border-zinc-100"></div>
+
+            <div class="flex items-center justify-between">
+               <div>
+                  <p class="text-xs text-zinc-500 mb-1">Total Pembayaran</p>
+                  <p class="text-lg font-bold text-zinc-900 font-mono">
+                    {formatRupiah(item.transaksi_grand_total)}
+                  </p>
+               </div>
+
+               <button
+                  on:click={() => goto(`/dashboard/customer/history_pemesanan/${item.transaksi_id}`)}
+                  class="flex items-center gap-2 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-800 active:scale-95"
+               >
+                  Lihat Detail
+                  <ChevronRight class="h-4 w-4" />
+               </button>
+            </div>
+
+          </div>
+        {/each}
+      {:else}
+        <div class="flex flex-col items-center justify-center py-20 text-center">
+          <div class="mb-4 rounded-full bg-zinc-100 p-6">
+            <PackageCheck class="h-12 w-12 text-zinc-300" />
+          </div>
+          <h3 class="text-lg font-bold text-zinc-800">Tidak ada pesanan aktif</h3>
+          <p class="mt-1 max-w-xs text-sm text-zinc-500">Semua pesanan Anda mungkin sudah selesai atau belum ada pesanan baru.</p>
+          <a href="/" class="mt-6 font-medium text-indigo-600 hover:text-indigo-700 hover:underline">
+             Cari Produk Baru &rarr;
+          </a>
+        </div>
+      {/if}
+    </div>
+  </div>
 </div>
 
-{#if $loadingTrans}
-	<div class="flex justify-center py-10">
-		<div
-			class="h-10 w-10 animate-spin rounded-full border-4 border-zinc-400 border-t-transparent"
-		></div>
-	</div>
-{:else if $transaksiStore && $transaksiStore.length > 0}
-	<div class="flex flex-col gap-8">
-		{#each $transaksiStore as item}
-			<div
-				class="rounded-2xl border border-zinc-200 bg-zinc-50 p-6 shadow-md transition-all hover:border-zinc-300 hover:shadow-lg"
-			>
-				<div class="flex flex-col md:flex-row md:gap-6">
-					<div class="w-full space-y-4 md:w-3/4">
-						<span
-							class="inline-block rounded-full bg-zinc-200 px-4 py-1.5 text-sm font-semibold tracking-wide text-zinc-800"
-						>
-							ID Transaksi: {item.transaksi_id}
-						</span>
-
-						{#each item.transaksi_detail as produk}
-							<div
-								class="flex items-center gap-4 rounded-xl border border-zinc-200 bg-zinc-100 p-4 transition hover:bg-zinc-200"
-							>
-								<img
-									src={`${BASE_URL}/uploads/${produk.produk_gambar}`}
-									alt={produk.detail_nama}
-									class="h-16 w-16 flex-shrink-0 rounded-lg border border-zinc-300 object-cover shadow-sm"
-								/>
-								<div class="flex-grow">
-									<span class="block font-medium text-zinc-800">{produk.detail_nama}</span>
-									<div class="flex gap-6 text-sm text-zinc-600">
-										<span>Qty: {produk.detail_stok}</span>
-										<span>Harga: Rp {produk.produk_harga}</span>
-									</div>
-								</div>
-								<div class="flex-shrink-0 text-right">
-									<span class="text-sm text-zinc-500">Subtotal</span>
-									<p class="font-semibold text-zinc-800">Rp {produk.detail_sub_total}</p>
-								</div>
-							</div>
-						{/each}
-					</div>
-
-					<!-- Status & Total -->
-					<div
-						class="mt-6 flex w-full flex-row items-center justify-between border-t border-zinc-200 pt-4 md:mt-0 md:w-1/4 md:flex-col md:items-end md:justify-between md:border-none md:pt-0"
-					>
-						{#key item.transaksi_status}
-							{@const Icon = getStatusIcon(item.transaksi_status)}
-							<span
-								class={`flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium ${getStatusColor(
-									item.transaksi_status
-								)}`}
-							>
-								<Icon size="16" class="text-current" />
-								{item.transaksi_status}
-							</span>
-						{/key}
-
-						<div class="mt-4 text-right md:mt-0">
-							<span class="text-sm text-zinc-500">Grand Total</span>
-							<p class="text-lg font-semibold text-zinc-800">
-								Rp {item.transaksi_grand_total}
-							</p>
-						</div>
-					</div>
-				</div>
-			</div>
-		{/each}
-	</div>
-{:else}
-	<p class="mt-10 text-center text-zinc-500">Tidak ada produk ditemukan.</p>
-{/if}
+<style>
+  /* Custom Scrollbar */
+  .custom-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scroll::-webkit-scrollbar-thumb {
+    background-color: #d4d4d8;
+    border-radius: 20px;
+  }
+  .custom-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: #a1a1aa;
+  }
+</style>

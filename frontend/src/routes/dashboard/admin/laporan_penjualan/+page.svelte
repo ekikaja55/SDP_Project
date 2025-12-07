@@ -33,7 +33,6 @@
 <h2 class="mb-6 text-3xl font-bold text-zinc-800">Business Recap</h2>
 
 <div class="flex flex-col gap-6">
-	<!-- Tombol Kembali -->
 	<button
 		on:click={() => goto('transaction')}
 		class="flex w-fit items-center gap-2 rounded-lg bg-zinc-800 px-4 py-2 text-sm font-medium text-zinc-50 transition hover:bg-zinc-700"
@@ -42,7 +41,6 @@
 		Kembali
 	</button>
 
-	<!-- FILTER -->
 	<div
 		class="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-zinc-200 bg-zinc-50 p-4 shadow-sm"
 	>
@@ -75,14 +73,12 @@
 		</div>
 	</div>
 
-	<!-- LOADING -->
 	{#if $loadingTrans}
 		<div class="flex justify-center py-10">
 			<div class="h-8 w-8 animate-spin rounded-full border-4 border-zinc-600 border-t-transparent"></div>
 		</div>
 	{/if}
 
-	<!-- DATA -->
 	{#if !$loadingTrans && $laporanPenjualanStore && $laporanPenjualanStore.length > 0}
 		<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
 			{#each $laporanPenjualanStore as laporan}
@@ -130,7 +126,6 @@
 			{/each}
 		</div>
 
-		<!-- Modal -->
 		{#if showModal && data}
 			<DetailTransModal data={data} onClose={() => (showModal = false)} />
 		{/if}

@@ -10,12 +10,7 @@
 	let user = null;
 
 	if (browser) {
-    console.log("masuk auth log layout dsahboard");
-
 		const token = localStorage.getItem("token");
-
-    console.log("isi token",token);
-
 		if (!token) {
 			goto('/login');
 		} else {

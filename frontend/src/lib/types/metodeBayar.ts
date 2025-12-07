@@ -1,5 +1,4 @@
 // src/lib/types/metodeBayar.ts
-// setup type  metode pembayaran  handling
 
 export interface MetodeBayar {
 	id: string;

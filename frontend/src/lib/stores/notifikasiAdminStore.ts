@@ -20,11 +20,9 @@ export async function getAllNotif() {
       return obj.notifikasi_isread === "False"
     })
 
-    console.log("isi notif abis di filter: ",totalCount);
-
     totalNotifStore.set(totalCount.length)
   } catch (err: unknown) {
-		console.log(errorHandler(err));
+    throw new Error(errorHandler(err));
 	} finally {
 		loadingNotif.set(false);
 	}
@@ -38,7 +36,7 @@ export async function updateNotifById(id: string) {
     await getAllNotif()
 
 	} catch (err: unknown) {
-		console.log(errorHandler(err));
+    throw new Error(errorHandler(err));
 	}finally{
 		loadingNotif.set(false);
 
@@ -51,8 +49,8 @@ export async function updateAllNotif() {
 		console.log(res.data.message);
     await getAllNotif();
 	} catch (err: unknown) {
-		console.log(errorHandler(err));
-	} finally {
+    throw new Error(errorHandler(err));
+  } finally {
 		loadingNotif.set(false);
 	}
 }

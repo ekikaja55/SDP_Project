@@ -27,10 +27,8 @@
 			on:click|stopPropagation
 			class="relative w-full max-w-2xl rounded-2xl border border-zinc-200 bg-zinc-50 p-6 shadow-2xl transition-all duration-300"
 		>
-			<!-- Tombol Close -->
 
 
-			<!-- Konten -->
 			<div class="flex flex-col items-center">
 				<img
 					src={img}

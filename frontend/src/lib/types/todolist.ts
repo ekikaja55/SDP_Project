@@ -1,7 +1,5 @@
 // src/lib/types/todolist.ts
-// setup type  todolist handling
 
-// type untuk todolist
 export interface Todolist {
 	id: string;
 	todolist_desc: string;
@@ -21,6 +19,7 @@ export interface TodoListDTO {
 	todolist_desc?: string;
 	todolist_status?: string;
 }
+
 // optional: interface untuk update kenapa partial? biar semua fieldnya bisa opsional
 // export interface TodoListUpdateDTO extends Partial<TodoListCreateDTO> {
 // 	id: string; // ID wajib biar tahu todo mana yang diupdate

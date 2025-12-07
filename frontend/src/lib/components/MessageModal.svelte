@@ -39,16 +39,12 @@
 </script>
 
 {#if visible}
-	<!-- Overlay lembut -->
 	<div class="fixed inset-0 z-40 bg-black/20 backdrop-blur-[1px]" on:click={handleClose}></div>
-
-	<!-- Popup -->
 	<div
 		in:fly={{ y: -20, duration: 200 }}
 		out:fade={{ duration: 200 }}
-		class="fixed right-6 top-20 z-50 w-96 rounded-2xl border border-zinc-200 bg-zinc-50/95 shadow-2xl ring-1 ring-zinc-100/60 overflow-hidden backdrop-blur-sm"
+		class="fixed right-0 top-25 z-50 w-96 rounded-2xl border border-zinc-200 bg-zinc-50/95 shadow-2xl ring-1 ring-zinc-100/60 overflow-hidden backdrop-blur-sm"
 	>
-		<!-- Header -->
 		<div class="flex items-center justify-between border-b border-zinc-200 px-5 py-4 bg-gradient-to-r from-zinc-50 to-white">
 			<div class="flex items-center gap-2">
 				<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-zinc-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -75,8 +71,6 @@
 				</button>
 			</div>
 		</div>
-
-		<!-- Body -->
 		<div class="max-h-96 overflow-y-auto px-5 py-4 space-y-3 scrollbar-thin scrollbar-thumb-zinc-300 scrollbar-track-transparent">
 			{#if $loadingNotif}
 				<div class="flex justify-center py-6">
