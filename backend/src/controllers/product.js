@@ -137,7 +137,7 @@ const insertProduct = async (req, res) => {
       actor: req.userLogin.user_nama,
       type: "PRODUCT",
       action: "INSERT",
-      title: `Berhasil insert Produk ${products.produk_nama} `,
+      title: `Berhasil menambahkan Produk ${products.produk_nama} `,
       desc: {
         before: null,
         after: { ...products },
@@ -146,7 +146,7 @@ const insertProduct = async (req, res) => {
 
     return res
       .status(201)
-      .json({ message: "Sukses insert produk", result: null });
+      .json({ message: "Berhasil menambahkan Produk", result: null });
   } catch (error) {
     console.log("ERORRRR",error.message);
 
@@ -236,7 +236,7 @@ const updateProduct = async (req, res) => {
 
     return res
       .status(200)
-      .json({ message: "Sukses update produk", result: null });
+      .json({ message: "Berhasil update Produk", result: null });
   } catch (error) {
     return res
       .status(500)
@@ -285,7 +285,7 @@ const deleteProduct = async (req, res) => {
         actor: req.userLogin.user_nama,
         type: "PRODUCT",
         action: "DELETE",
-        title: `Berhasil delete Produk ${products.produk_nama}`,
+        title: `Berhasil menghapus Produk ${products.produk_nama}`,
         desc: {
           before: null,
           after: { ...products },
@@ -294,7 +294,7 @@ const deleteProduct = async (req, res) => {
 
     return res
       .status(200)
-      .json({ message: "Sukses delete produk", result: null });
+      .json({ message: "Berhasil menghapus Produk", result: null });
   } catch (error) {
     console.log("ERRRORRR",error.message);
 

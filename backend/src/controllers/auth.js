@@ -146,7 +146,7 @@ const login = async (req, res) => {
     });
 
     const accessToken = jwt.sign(userJwt, process.env.ACCESS_TOKEN_SECRET, {
-      expiresIn: "1d",
+      expiresIn: "7d",
     });
     const refreshToken = jwt.sign(userJwt, process.env.REFRESH_TOKEN_SECRET, {
       expiresIn: "7d",
@@ -161,14 +161,14 @@ const login = async (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: "none",
-      maxAge: 24 * 60 * 60 * 1000, // 1 hari
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: "none",
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     return res

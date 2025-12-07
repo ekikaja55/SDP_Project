@@ -52,7 +52,7 @@ const insertTodolist = async (req, res) => {
       actor: req.userLogin.user_nama,
       type: "TODOLIST",
       action: "INSERT",
-      title: "Berhasil menambahkan Todolist baru",
+      title: "Berhasil menambahkan Daily Task baru",
       desc: {
         before: null,
         after: { ...data },
@@ -63,7 +63,7 @@ const insertTodolist = async (req, res) => {
 
     return res
       .status(201)
-      .json({ message: "Berhasil insert Todolist", result: null });
+      .json({ message: "Berhasil insert Daily Task", result: null });
   } catch (error) {
     console.error(error.message);
 
@@ -129,7 +129,7 @@ const updateStatusTodolist = async (req, res) => {
       actor: req.userLogin.user_nama,
       type: "TODOLIST",
       action: "UPDATE",
-      title: `Berhasil update status Todolist `,
+      title: `Berhasil update status Daily Task `,
       desc: {
         before: { ...todolist },
         after: { ...newTodoList },
@@ -138,7 +138,7 @@ const updateStatusTodolist = async (req, res) => {
 
     return res
       .status(200)
-      .json({ message: "Sukses update status", result: null });
+      .json({ message: "Berhasil update status Daily Task", result: null });
   } catch (error) {
     return res
       .status(500)
@@ -197,7 +197,7 @@ const updateTodolist = async (req, res) => {
       actor: req.userLogin.user_nama,
       type: "TODOLIST",
       action: "UPDATE",
-      title: `Berhasil update Todolist  `,
+      title: `Berhasil update Daily Task `,
       desc: {
         before: { ...existing },
         after: { ...newTodoList },
@@ -206,7 +206,7 @@ const updateTodolist = async (req, res) => {
 
     return res
       .status(200)
-      .json({ message: "Sukses update todolist", result: null });
+      .json({ message: "Berhasil update Daily Task ", result: null });
   } catch (error) {
     return res
       .status(500)
@@ -258,7 +258,7 @@ const deleteTodolist = async (req, res) => {
       actor: req.userLogin.user_nama,
       type: "TODOLIST",
       action: "DELETE",
-      title: `Berhasil delete Todolist`,
+      title: `Berhasil menghapus Daily Task`,
       desc: {
         before:null,
         after: { ...existing},
@@ -266,7 +266,7 @@ const deleteTodolist = async (req, res) => {
     });
     return res
       .status(200)
-      .json({ message: "Sukses delete todolist", result: null });
+      .json({ message: "Berhasil menghapus Daily Task", result: null });
   } catch (error) {
     return res
       .status(500)

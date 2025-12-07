@@ -61,13 +61,11 @@ const path = require("path");
 const app = express();
 const port = 3000;
 
-// Middleware global
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 require("dotenv").config();
 app.use(cookieParser());
 
-// Konfigurasi CORS
 app.use(
   cors({
     origin: (origin, cb) => {
@@ -89,14 +87,11 @@ app.use(
   })
 );
 
-// Folder publik untuk file upload
-// app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use(
   "/uploads",
   express.static(path.resolve(process.cwd(), "..", "uploads"))
 );
 
-// Routing utama
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/product", productRouter);
 app.use("/api/v1/todolist", todolistRouter);
@@ -104,5 +99,5 @@ app.use("/api/v1/transaction", transactionRouter);
 app.use("/api/v1/review", reviewRouter);
 app.use("/api/v1/notifikasi", notifikasiRouter);
 app.use("/api/v1/user", userRouter);
-// Jalankan server
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

@@ -1,5 +1,5 @@
 const prisma = require("../../prisma/prisma");
-const { createLog } = require('../utils/logHelper');
+const { createLog } = require("../utils/logHelper");
 const insertTransaction = async (req, res) => {
   try {
     const user = req.userLogin;
@@ -182,6 +182,112 @@ const getHistoriCustomer = async (req, res) => {
   }
 };
 
+const getTransbyId = async (req, res) => {
+  // 1. Ambil iduser dan idtrans dari query param
+  const { iduser, idtrans } = req.query;
+
+  console.log("ISI IDUSER: ", iduser);
+  console.log("ISI IDTRANS: ", idtrans);
+
+  // Validasi input
+  if (!iduser || !idtrans) {
+    return res
+      .status(400)
+      .json({ message: "ID User dan ID Transaksi diperlukan", result: null });
+  }
+
+  try {
+    // 2. Cari User berdasarkan iduser
+    const user = await prisma.user.findFirst({
+      where: { id: iduser },
+      select: {
+        id: true,
+        user_nama: true,
+        user_transaksi: true, // Ini mengambil SEMUA transaksi user dulu
+      },
+    });
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: "User tidak ditemukan", result: null });
+    }
+
+    // 3. Cari Transaksi Spesifik di dalam array user_transaksi
+    const targetTransaksi = user.user_transaksi.find(
+      (t) => t.transaksi_id === idtrans
+    );
+
+    if (!targetTransaksi) {
+      return res
+        .status(404)
+        .json({
+          message: "Transaksi tidak ditemukan pada user ini",
+          result: null,
+        });
+    }
+
+    // 4. Ambil Master Produk (untuk mapping gambar & harga)
+    const semuaProduk = await prisma.produk.findMany({
+      select: {
+        produk_nama: true,
+        produk_gambar: true,
+        produk_harga: true,
+      },
+    });
+
+    // 5. Mapping Data (Single Object)
+    // Kita tidak pakai .map() pada user_transaksi lagi, tapi langsung olah targetTransaksi
+
+    // Mapping Detail Transaksi
+    const mappedDetails = (targetTransaksi.transaksi_detail || []).map((d) => {
+      const produk = semuaProduk.find((p) => p.produk_nama === d.detail_nama);
+
+      return {
+        detail_nama: d.detail_nama,
+        detail_stok: d.detail_stok.toString(),
+        detail_sub_total: d.detail_sub_total.toString(),
+        produk_gambar: produk ? produk.produk_gambar : null,
+        produk_harga: produk ? produk.produk_harga.toString() : "0",
+      };
+    });
+
+    // Construct Single Object Result
+    const formattedData = {
+      user_id: user.id,
+      user_nama: user.user_nama,
+
+      transaksi_id: targetTransaksi.transaksi_id,
+      transaksi_img: targetTransaksi.transaksi_img,
+      transaksi_grand_total: Number(targetTransaksi.transaksi_grand_total),
+      transaksi_status: targetTransaksi.transaksi_status,
+
+      transaksi_detail: mappedDetails, // Array detail yang sudah dimapping
+
+      createdAt: targetTransaksi.createdAt,
+      updatedAt: targetTransaksi.updatedAt || null,
+    };
+
+    // 6. Finalisasi JSON (Safety untuk sisa BigInt jika ada)
+    const data = JSON.parse(
+      JSON.stringify(formattedData, (_, value) =>
+        typeof value === "bigint" ? value.toString() : value
+      )
+    );
+
+    console.log("ISI TRANS FINAL: ", JSON.stringify(data, null, 2));
+
+    return res
+      .status(200)
+      .json({ message: "Sukses ambil detail transaksi", result: {...data} });
+  } catch (error) {
+    console.log("ERROR:", error.message);
+    return res
+      .status(500)
+      .json({ message: "Terjadi kesalahan pada server", result: null });
+  }
+};
+
 const getAllTransaction = async (req, res) => {
   try {
     const { filterStatus } = req.query;
@@ -266,7 +372,6 @@ const ubahStatusTransaksi = async (req, res) => {
       data: { user_transaksi: listTransaksiBaru },
     });
 
-
     const cleanLog = (obj) =>
       JSON.parse(
         JSON.stringify(obj, (key, value) =>
@@ -298,7 +403,7 @@ const ubahStatusTransaksi = async (req, res) => {
 
     res
       .status(200)
-      .json({ message: "Status transaksi berhasil diubah", result: null });
+      .json({ message: "Berhasil update status Transaksi", result: null });
   } catch (error) {
     console.log("ERRORRRR", error);
 
@@ -390,4 +495,5 @@ module.exports = {
   getLaporanPenjualanAdmin,
   ubahStatusTransaksi,
   getAllTransaction,
+  getTransbyId,
 };
