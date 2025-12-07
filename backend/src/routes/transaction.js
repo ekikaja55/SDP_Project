@@ -22,7 +22,7 @@ router.get("/status", [cekLogin, cekRole("customer")], getStatusCustomer);
 router.get("/histori", [cekLogin, cekRole("customer")], getHistoriCustomer);
 router.get("/laporan", [cekLogin, cekRole("admin")], getLaporanPenjualanAdmin);
 router.get("/all", [cekLogin, cekRole("admin")], getAllTransaction);
-router.get("/detail", [cekLogin, cekRole("admin")], getTransbyId);
+router.get("/detail", [cekLogin], getTransbyId);
 
 router.put(
   "/status/:transaksi_id",
