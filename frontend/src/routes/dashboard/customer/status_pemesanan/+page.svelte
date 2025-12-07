@@ -1,20 +1,35 @@
 <script lang="ts">
-  import { getStatusTransaksi, loadingTrans, transaksiStore } from '$lib';
-  import { onMount } from 'svelte';
+  import { browser } from '$app/environment';
   import { goto } from '$app/navigation';
+  import { getStatusTransaksi, loadingTrans, transaksiStore, type UserAuth } from '$lib';
   import {
-    Truck,
-    PackageCheck,
-    Clock,
     ChevronRight,
+    Clock,
+    Filter,
     Loader2,
-    MapPin,
-    Filter
+    PackageCheck,
+    Truck
   } from '@lucide/svelte';
+  import { onMount } from 'svelte';
   import Whatsapp from '../../../../lib/components/Whatsapp.svelte';
+  import { jwtDecode } from 'jwt-decode';
 
   let selectedStatus = '';
+  let user: UserAuth | null = null;
 
+  if (browser) {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        user = jwtDecode(token);
+      } catch {
+        localStorage.removeItem('token');
+        user = null;
+      }
+    }
+  }
+
+  // Opsi filter manual (dropdown)
   const statusOptions = [
     '',
     'Belum Dikonfirmasi',
@@ -29,6 +44,13 @@
   async function refreshTransaksi() {
     await getStatusTransaksi(selectedStatus);
   }
+
+  $: filteredTransactions = $transaksiStore
+    ? $transaksiStore.filter(item =>
+        item.transaksi_status !== 'Pesanan Selesai' &&
+        item.transaksi_status !== 'Pesanan Dibatalkan'
+      )
+    : [];
 
   function getStatusStyles(status: string) {
     switch (status) {
@@ -62,7 +84,7 @@
   function getStatusIcon(status: string) {
     switch (status) {
       case 'Belum Dikonfirmasi': return Clock;
-      case 'Pesanan Sedang Diproses': return Loader2; // Ikon loading
+      case 'Pesanan Sedang Diproses': return Loader2;
       case 'Pesanan Sedang Dalam Pengiriman': return Truck;
       default: return Clock;
     }
@@ -82,8 +104,8 @@
   <div class="flex flex-col gap-4 border-b border-zinc-200 pb-6">
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="text-3xl font-bold tracking-tight text-zinc-800">Ordering Status</h1>
-        <p class="mt-1 text-sm text-zinc-500">Lacak proses pesanan yang sedang berjalan.</p>
+        <h1 class="text-3xl font-bold tracking-tight text-zinc-800">Status Pesanan Aktif</h1>
+        <p class="mt-1 text-sm text-zinc-500">Pantau pesanan yang sedang diproses atau dikirim.</p>
       </div>
       <div class="hidden sm:block">
         <Whatsapp/>
@@ -107,7 +129,7 @@
         on:change={refreshTransaksi}
         class="rounded-lg border-zinc-200 bg-zinc-50 py-1.5 pl-3 pr-8 text-sm font-medium text-zinc-700 focus:border-zinc-400 focus:ring-0 cursor-pointer transition hover:bg-zinc-100"
       >
-        <option value="">Semua Proses</option>
+        <option value="">Semua Proses Aktif</option>
         {#each statusOptions.slice(1) as option}
           <option value={option}>{option}</option>
         {/each}
@@ -120,8 +142,9 @@
           <div class="h-8 w-8 animate-spin rounded-full border-4 border-zinc-300 border-t-indigo-600"></div>
           <p class="mt-4 text-sm font-medium text-zinc-500">Memuat status pesanan...</p>
         </div>
-      {:else if $transaksiStore && $transaksiStore.length > 0}
-        {#each $transaksiStore as item}
+
+      {:else if filteredTransactions && filteredTransactions.length > 0}
+        {#each filteredTransactions as item (item.transaksi_id)}
           {@const styles = getStatusStyles(item.transaksi_status)}
 
           <div
@@ -136,9 +159,9 @@
                     />
                   </div>
                   <div>
-                    <h3 class="text-base font-bold text-zinc-800">{item.transaksi_id}</h3>
+                    <h3 class="text-base font-bold text-zinc-800">#{item.transaksi_id}</h3>
                     <p class="text-xs text-zinc-500 mt-0.5">
-                       Dibuat: {new Date(item.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', hour: '2-digit', minute:'2-digit' })}
+                       {new Date(item.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', hour: '2-digit', minute:'2-digit' })} WIB
                     </p>
                   </div>
                </div>
@@ -159,8 +182,8 @@
                </div>
 
                <button
-                  on:click={() => goto(`/dashboard/customer/history_pemesanan/${item.transaksi_id}`)}
-                  class="flex items-center gap-2 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-800 active:scale-95"
+                  on:click={() => goto(`/dashboard/customer/status_pemesanan/${user?.id}/${item.transaksi_id}`)}
+                  class="flex items-center gap-2 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-700 active:scale-95 shadow-sm"
                >
                   Lihat Detail
                   <ChevronRight class="h-4 w-4" />
@@ -175,10 +198,17 @@
             <PackageCheck class="h-12 w-12 text-zinc-300" />
           </div>
           <h3 class="text-lg font-bold text-zinc-800">Tidak ada pesanan aktif</h3>
-          <p class="mt-1 max-w-xs text-sm text-zinc-500">Semua pesanan Anda mungkin sudah selesai atau belum ada pesanan baru.</p>
-          <a href="/" class="mt-6 font-medium text-indigo-600 hover:text-indigo-700 hover:underline">
-             Cari Produk Baru &rarr;
-          </a>
+          <p class="mt-1 max-w-xs text-sm text-zinc-500 px-4">
+            Semua pesanan Anda mungkin sudah selesai atau Anda belum membuat pesanan baru.
+          </p>
+          <div class="mt-6 flex gap-3">
+             <a href="/dashboard/customer/history_pemesanan" class="rounded-lg px-4 py-2 text-sm font-medium text-zinc-600 bg-zinc-100 hover:bg-zinc-200 transition">
+                Cek Riwayat
+             </a>
+             <a href="/catalog" class="rounded-lg px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-sm">
+                Belanja Sekarang
+             </a>
+          </div>
         </div>
       {/if}
     </div>

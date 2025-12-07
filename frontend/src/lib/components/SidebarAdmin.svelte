@@ -12,6 +12,9 @@
   export let onLogout: () => void;
   export let data: UserAuth;
 
+  function firstTwoWords(text: string = "") {
+		return text.trim().split(/\s+/).slice(0, 2).join(' ');
+	}
   const getInitials = (name: string) => name ? name.substring(0, 2).toUpperCase() : 'AD';
 </script>
 
@@ -24,7 +27,7 @@
       </div>
       <div class="overflow-hidden">
         <h1 class="truncate text-sm font-bold text-white">Admin Panel</h1>
-        <p class="truncate text-xs text-zinc-500" title={data.user_nama}>{data.user_nama}</p>
+        <p class="truncate text-xs text-zinc-500" title={data.user_nama}>{firstTwoWords(data.user_nama)}</p>
       </div>
     </div>
 

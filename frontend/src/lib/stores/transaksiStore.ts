@@ -56,18 +56,14 @@ export const messageHandleTrans: Writable<MessageState | null> = writable<Messag
 export const messageHandleCart: Writable<MessageState | null> = writable<MessageState | null>(null);
 
 export async function getTransById(idUser:string = "",idTrans:string=""){
-  console.log("fn getTransById -> masuk");
-  console.log('fn getTransById -> idUser :',idUser);
-  console.log('fn getTransById -> idUser :', idTrans);
 
-  loadingTrans.set(false)
+  loadingTrans.set(true)
   try {
     const url = `/transaction/detail?iduser=${encodeURIComponent(idUser)}&idtrans=${encodeURIComponent(idTrans)}`
     console.log("isi url : ",url);
 
     const res= await api.get<ApiResponse<TransaksiAdmin>>(url)
 
-    console.log('fn getTransById -> res :', res.data.result);
     oneTransaksiAdminStore.set(res.data.result)
 
   } catch (err:unknown) {
@@ -192,7 +188,7 @@ export async function updateTransaksi(data: TransaksiUpdateDTO,nama:string) {
 			...data
 		});
 		getTransAdmin();
-		messageHandleTrans.set({ type: 'success', message: res.data.message });
+    messageHandleTrans.set({ type: 'success', message: res.data.message });
 
 	} catch (err: unknown) {
     throw new Error(errorHandler(err));
