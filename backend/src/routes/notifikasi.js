@@ -1,11 +1,21 @@
 const express = require("express");
-const { getAllNotifikasi, updateIsRead, updateAllIsRead } = require("../controllers/notifikasi");
+const {
+  getAllNotifikasi,
+  updateIsRead,
+  updateAllIsRead,
+  getAllNotifikasiCustomer,
+} = require("../controllers/notifikasi");
 const cekLogin = require("../middlewares/cekLogin");
 const cekRole = require("../middlewares/cekRole");
 const router = express.Router();
 
-router.get("/", [cekLogin, cekRole("admin")], getAllNotifikasi);
-router.put("/:id", [cekLogin, cekRole("admin")], updateIsRead);
-router.get("/allread", [cekLogin, cekRole("admin")], updateAllIsRead);
+router.get("/", [cekLogin, , cekRole("admin")], getAllNotifikasi);
+router.get(
+  "/cust",
+  [cekLogin, , cekRole("customer")],
+  getAllNotifikasiCustomer
+);
+router.put("/:id", [cekLogin], updateIsRead);
+router.get("/allread", [cekLogin], updateAllIsRead);
 
 module.exports = router;

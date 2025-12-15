@@ -7,6 +7,7 @@ const {
   ubahStatusTransaksi,
   getAllTransaction,
   getTransbyId,
+  getLaporanPenjualan,
 } = require("../controllers/transaction");
 const cekLogin = require("../middlewares/cekLogin");
 const cekRole = require("../middlewares/cekRole");
@@ -23,6 +24,11 @@ router.get("/histori", [cekLogin, cekRole("customer")], getHistoriCustomer);
 router.get("/laporan", [cekLogin, cekRole("admin")], getLaporanPenjualanAdmin);
 router.get("/all", [cekLogin, cekRole("admin")], getAllTransaction);
 router.get("/detail", [cekLogin], getTransbyId);
+router.get("/laporan-penjualan", [
+  cekLogin,
+  cekRole("admin"),
+  getLaporanPenjualan,
+]);
 
 router.put(
   "/status/:transaksi_id",

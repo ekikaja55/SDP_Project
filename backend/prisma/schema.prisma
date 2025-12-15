@@ -66,6 +66,9 @@ model Todolist {
 
 model Notifikasi {
   id                String    @id @default(auto()) @map("_id") @db.ObjectId
+  user_id           String?
+  role              String
+  transaksi_id      String
   notifikasi_nama   String
   notifikasi_isi    String
   notifikasi_isread String

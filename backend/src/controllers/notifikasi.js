@@ -3,8 +3,11 @@ const prisma = require("../../prisma/prisma");
 const getAllNotifikasi = async (req, res) => {
   try {
     const notifikasi = await prisma.notifikasi.findMany({
+      where: { role: "admin" },
       select: {
         id: true,
+        user_id: true,
+        transaksi_id: true,
         notifikasi_nama: true,
         notifikasi_isi: true,
         notifikasi_isread: true,
@@ -16,9 +19,39 @@ const getAllNotifikasi = async (req, res) => {
     });
     return res
       .status(200)
-      .json({ message: "Sukses ambil notifikasi", result: notifikasi });
+      .json({ message: "Sukses ambil notifikasi admin", result: notifikasi });
   } catch (error) {
-    console.error(error);
+    console.log("ERROR :", error);
+    return res
+      .status(500)
+      .json({ message: "Terjadi kesalahan pada server", result: null });
+  }
+};
+
+const getAllNotifikasiCustomer = async (req, res) => {
+  const user = req.userLogin;
+  try {
+    const notifikasi = await prisma.notifikasi.findMany({
+      where: { user_id: user.id },
+      select: {
+        id: true,
+        user_id: true,
+        transaksi_id: true,
+        notifikasi_nama: true,
+        notifikasi_isi: true,
+        notifikasi_isread: true,
+        createdAt: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    return res.status(200).json({
+      message: "Sukses ambil notifikasi Customer",
+      result: notifikasi,
+    });
+  } catch (error) {
+    console.log("ERROR :", error);
     return res
       .status(500)
       .json({ message: "Terjadi kesalahan pada server", result: null });
@@ -48,12 +81,10 @@ const updateAllIsRead = async (req, res) => {
     await prisma.notifikasi.updateMany({
       data: { notifikasi_isread: "true" },
     });
-    return res
-      .status(200)
-      .json({
-        message: "Semua notifikasi ditandai sudah dibaca",
-        result: null,
-      });
+    return res.status(200).json({
+      message: "Semua notifikasi ditandai sudah dibaca",
+      result: null,
+    });
   } catch (error) {
     console.error(error);
     return res
@@ -62,4 +93,9 @@ const updateAllIsRead = async (req, res) => {
   }
 };
 
-module.exports = { getAllNotifikasi, updateIsRead, updateAllIsRead };
+module.exports = {
+  getAllNotifikasi,
+  updateIsRead,
+  updateAllIsRead,
+  getAllNotifikasiCustomer,
+};
