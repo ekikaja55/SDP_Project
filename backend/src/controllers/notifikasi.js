@@ -32,7 +32,10 @@ const getAllNotifikasiCustomer = async (req, res) => {
   const user = req.userLogin;
   try {
     const notifikasi = await prisma.notifikasi.findMany({
-      where: { user_id: user.id },
+      where: {
+        user_id: user.id,
+        role: "customer",
+      },
       select: {
         id: true,
         user_id: true,
