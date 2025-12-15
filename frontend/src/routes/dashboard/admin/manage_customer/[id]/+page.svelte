@@ -1,3 +1,4 @@
+<!-- page -->
 <script lang="ts">
     import { page } from '$app/stores';
     import { onMount, tick } from 'svelte';
