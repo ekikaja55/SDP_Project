@@ -12,5 +12,6 @@ export * from './todolist';
 export * from './transaksi';
 export * from './user';
 export * from './transaksiDetail';
+export * from './laporanPenjualan';
 
 export * from './log';

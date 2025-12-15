@@ -1,73 +1,124 @@
 <script lang="ts">
-	import { X } from '@lucide/svelte';
-	import type { LaporanPenjualan } from '../types';
+    import { fade, scale } from 'svelte/transition';
+    import { X, Calendar, Receipt, Hash } from '@lucide/svelte';
+    import type { RawTransaction } from '$lib'; 
 
-	export let data: LaporanPenjualan;
-	export let onClose: () => void;
-	let visible = true;
+    export let data: RawTransaction;
+    export let onClose: () => void;
+    
+    const formatRupiah = (val: string | number) => {
+        return new Intl.NumberFormat('id-ID', { 
+            style: 'currency', 
+            currency: 'IDR', 
+            minimumFractionDigits: 0 
+        }).format(Number(val));
+    };
 
-	function handleClose() {
-		visible = false;
-		onClose?.();
-	}
+    function handleClose() {
+        onClose?.();
+    }
 </script>
 
-<div class="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/70 backdrop-blur-sm">
-	<div
-		class="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl bg-zinc-50 p-6 shadow-2xl border border-zinc-200"
-	>
-		<div class="flex items-center justify-between mb-4">
-			<h2 class="text-2xl font-semibold text-zinc-800">
-				Detail Transaksi – {data.nama_user}
-			</h2>
+<div 
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
+>
+    <div 
+        class="absolute inset-0 bg-zinc-900/60 backdrop-blur-sm transition-opacity"
+        transition:fade={{ duration: 200 }}
+        on:click={handleClose}
+    ></div>
 
-			<button
-				on:click={handleClose}
-				class="rounded-full p-2 text-zinc-500 hover:bg-zinc-200 hover:text-zinc-700 transition"
-				aria-label="Tutup"
-			>
-				<X size="20" />
-			</button>
-		</div>
+    <div
+        class="relative flex w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-zinc-900/5"
+        in:scale={{ duration: 200, start: 0.95 }}
+        out:fade={{ duration: 150 }}
+    >
+        <div class="flex items-center justify-between border-b border-zinc-100 bg-zinc-50/50 px-6 py-4">
+            <div class="flex items-center gap-2">
+                <div class="rounded-lg bg-zinc-100 p-2 text-zinc-600">
+                    <Receipt class="h-5 w-5" />
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-zinc-900">Detail Transaksi</h2>
+                    <p class="text-xs text-zinc-500">Rincian lengkap pesanan</p>
+                </div>
+            </div>
+            
+            <button
+                on:click={handleClose}
+                class="rounded-full p-2 text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-700"
+            >
+                <X class="h-5 w-5" />
+            </button>
+        </div>
 
-		<div class="mb-6 text-sm text-zinc-600 space-y-1">
-			<p><span class="font-medium text-zinc-700">ID Transaksi:</span> {data.transaksi_largest.transaksi_id}</p>
-			<p><span class="font-medium text-zinc-700">Tanggal:</span> {new Date(data.transaksi_largest.createdAt).toLocaleString('id-ID')}</p>
-			<p>
-				<span class="font-medium text-zinc-700">Total:</span>
-				<span class="text-zinc-900 font-semibold">
-					Rp {data.transaksi_largest.transaksi_grand_total.toLocaleString()}
-				</span>
-			</p>
-		</div>
+        <div class="max-h-[70vh] overflow-y-auto p-6">
+            
+            <div class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div class="rounded-xl border border-zinc-100 bg-zinc-50 p-4">
+                    <div class="mb-1 flex items-center gap-2 text-xs font-medium text-zinc-400 uppercase tracking-wider">
+                        <Hash class="h-3 w-3" /> ID Transaksi
+                    </div>
+                    <p class="font-mono text-sm font-semibold text-zinc-700 break-all">{data.transaksi_id}</p>
+                </div>
 
-		{#if data.transaksi_largest.detail.length > 0}
-			<div class="overflow-hidden rounded-xl border border-zinc-200 shadow-sm bg-white">
-				<table class="w-full text-sm">
-					<thead class="bg-zinc-100 text-zinc-700">
-						<tr>
-							<th class="px-4 py-2 text-left font-medium">Nama Barang</th>
-							<th class="px-4 py-2 text-center font-medium">Qty</th>
-							<th class="px-4 py-2 text-right font-medium">Subtotal</th>
-						</tr>
-					</thead>
-					<tbody>
-						{#each data.transaksi_largest.detail as d}
-							<tr class="border-t border-zinc-200 hover:bg-zinc-50 transition">
-								<td class="px-4 py-2">{d.detail_nama}</td>
-								<td class="px-4 py-2 text-center">{d.detail_stok}</td>
-								<td class="px-4 py-2 text-right">
-									Rp {d.detail_sub_total.toLocaleString()}
-								</td>
-							</tr>
-						{/each}
-					</tbody>
-				</table>
-			</div>
-		{:else}
-			<p class="text-center text-zinc-500 mt-6">Tidak ada transaksi ditemukan.</p>
-		{/if}
+                <div class="rounded-xl border border-zinc-100 bg-zinc-50 p-4">
+                    <div class="mb-1 flex items-center gap-2 text-xs font-medium text-zinc-400 uppercase tracking-wider">
+                        <Calendar class="h-3 w-3" /> Tanggal
+                    </div>
+                    <p class="text-sm font-semibold text-zinc-700">
+                        {new Date(data.createdAt).toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short' })}
+                    </p>
+                </div>
+            </div>
 
+            <div class="overflow-hidden rounded-xl border border-zinc-200 bg-white">
+                <table class="w-full text-sm">
+                    <thead class="bg-zinc-50 text-xs font-semibold text-zinc-500 uppercase tracking-wide">
+                        <tr>
+                            <th class="px-4 py-3 text-left">Produk</th>
+                            <th class="px-4 py-3 text-center">Qty</th>
+                            <th class="px-4 py-3 text-right">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-zinc-100">
+                        {#if data.transaksi_detail && data.transaksi_detail.length > 0}
+                            {#each data.transaksi_detail as item}
+                                <tr class="group hover:bg-zinc-50/50">
+                                    <td class="px-4 py-3 font-medium text-zinc-700">{item.detail_nama}</td>
+                                    <td class="px-4 py-3 text-center text-zinc-600">{item.detail_stok}</td>
+                                    <td class="px-4 py-3 text-right font-medium text-zinc-900">
+                                        {formatRupiah(item.detail_sub_total)}
+                                    </td>
+                                </tr>
+                            {/each}
+                        {:else}
+                            <tr>
+                                <td colspan="3" class="px-4 py-8 text-center text-zinc-400 italic">
+                                    Detail produk tidak tersedia.
+                                </td>
+                            </tr>
+                        {/if}
+                    </tbody>
+                    <tfoot class="bg-zinc-50/80">
+                        <tr>
+                            <td colspan="2" class="px-4 py-3 text-right text-xs font-bold text-zinc-500 uppercase tracking-wide">
+                                Grand Total
+                            </td>
+                            <td class="px-4 py-3 text-right text-base font-bold text-emerald-600">
+                                {formatRupiah(data.transaksi_grand_total)}
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            
+            <div class="mt-6 flex justify-end">
+                <div class="flex items-center gap-2 rounded-full bg-zinc-100 px-4 py-1.5 text-xs font-bold text-zinc-600">
+                    STATUS: <span class="uppercase text-zinc-900">{data.transaksi_status}</span>
+                </div>
+            </div>
 
-	</div>
+        </div>
+    </div>
 </div>

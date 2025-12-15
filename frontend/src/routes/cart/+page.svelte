@@ -14,6 +14,7 @@
 	import { fade, slide } from 'svelte/transition';
 	import TransactionModal from '../../lib/components/TransactionModal.svelte';
 	import Whatsapp from '../../lib/components/Whatsapp.svelte';
+	import NotificationModal from '$lib/components/NotificationModal.svelte';
 
 	const BASE_URL = import.meta.env.VITE_API_URL_UPLOADS;
 
@@ -95,6 +96,14 @@
 
 	{#if $messageHandleCart && $messageHandleCart.type === 'success'}
 		<TransactionModal
+			message={$messageHandleCart.message}
+			type={$messageHandleCart.type}
+			onClose={() => messageHandleCart.set(null)}
+		/>
+	{/if}
+
+	{#if $messageHandleCart && $messageHandleCart.type === 'error'}
+		<NotificationModal
 			message={$messageHandleCart.message}
 			type={$messageHandleCart.type}
 			onClose={() => messageHandleCart.set(null)}

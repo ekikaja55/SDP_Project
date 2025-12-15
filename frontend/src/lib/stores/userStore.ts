@@ -4,13 +4,13 @@
  * ini handling  function dan reactive state untuk user ( login, register, logout)
  */
 
-
 import { goto } from '$app/navigation';
 import {
 	api,
 	errorHandler,
 	type ApiResponse,
 	type Customer,
+	type CustomerDetailData,
 	type LoginDTO,
 	type MessageState,
 	type QueryCustomer,
@@ -20,7 +20,6 @@ import {
 } from '$lib';
 import { jwtDecode } from 'jwt-decode';
 import { writable, type Writable } from 'svelte/store';
-
 
 export const userStore: Writable<UserAuth | null> = writable<UserAuth | null>(null);
 export const customerStore: Writable<Customer[] | null> = writable<Customer[] | null>([]);
@@ -33,6 +32,10 @@ export let query: QueryCustomer = {
 	search: '',
 	sort: ''
 };
+
+export const customerDetailStore: Writable<CustomerDetailData | null> =
+	writable<CustomerDetailData | null>(null);
+export const loadingReport: Writable<boolean> = writable(false);
 
 /**
  * Function Handle Store Login User
@@ -59,7 +62,6 @@ export async function login(data: LoginDTO) {
 	messageHandleUser.set(null);
 
 	try {
-
 		const res = await api.post<ApiResponse<string>>('/auth/login', data);
 
 		messageHandleUser.set({
@@ -67,14 +69,14 @@ export async function login(data: LoginDTO) {
 			message: res.data.message
 		});
 
-
 		localStorage.setItem('token', res.data.result);
 
 		const dataUser: UserAuth = jwtDecode(res.data.result);
 
 		const temp: string = dataUser.user_role === 'admin' ? 'products' : 'status_pemesanan';
 
-    window.location.href = `/dashboard/${dataUser.user_role}/${temp}`;
+		// goto(`/dashboard/${dataUser.user_role}/${temp}`);
+		window.location.href = `/dashboard/${dataUser.user_role}/${temp}`;
 	} catch (err: unknown) {
 		messageHandleUser.set({
 			type: 'error',
@@ -84,7 +86,6 @@ export async function login(data: LoginDTO) {
 		loadingUser.set(false);
 	}
 }
-
 
 /**
  * Function Handle Store Register User
@@ -162,10 +163,10 @@ export async function logout() {
 	messageHandleUser.set(null);
 	try {
 		// const res = await api.get<ApiResponse<User>>('/auth/logout');
-		localStorage.removeItem("token")
-    messageHandleUser.set({
+		localStorage.removeItem('token');
+		messageHandleUser.set({
 			type: 'success',
-			message: "berhasil logout"
+			message: 'berhasil logout'
 		});
 	} catch (err: unknown) {
 		messageHandleUser.set({
@@ -180,10 +181,9 @@ export async function logout() {
 }
 
 export async function getUserData(query: QueryCustomer) {
-
 	let url = '/user';
 	const params: string[] = [];
-  if (query.search) params.push(`search=${encodeURIComponent(query.search)}`);
+	if (query.search) params.push(`search=${encodeURIComponent(query.search)}`);
 	if (query.sort) params.push(`sort=${encodeURIComponent(query.sort)}`);
 	if (params.length > 0) url += `?${params.join('&')}`;
 
@@ -194,9 +194,24 @@ export async function getUserData(query: QueryCustomer) {
 		const res = await api.get<ApiResponse<Customer[]>>(url);
 		customerStore.set(res.data.result);
 	} catch (err: unknown) {
-    throw new Error(errorHandler(err));
+		throw new Error(errorHandler(err));
 	} finally {
 		loadingCust.set(false);
 	}
+}
 
+export async function getDetailCustomer(id: string = '') {
+	loadingReport.set(true);
+	try {
+		const url = `/user/user-detail`;
+		const res = await api.get<ApiResponse<CustomerDetailData>>(url, {
+			params: { id: id }
+		});
+
+		customerDetailStore.set(res.data.result);
+	} catch (err) {
+		throw new Error(errorHandler(err));
+	} finally {
+		loadingReport.set(false);
+	}
 }

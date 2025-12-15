@@ -26,7 +26,6 @@ export interface RegisterDTO {
 	user_confirm_password: string;
 }
 
-
 export interface Customer {
 	id: string;
 	user_nama: string;
@@ -37,6 +36,58 @@ export interface Customer {
 }
 
 export interface QueryCustomer {
-	search: string ;
+	search: string;
 	sort: string;
+}
+
+export interface CustomerProfile {
+	id: string;
+	nama: string;
+	email: string;
+	role: string;
+	joinDate: string;
+	lastActive: string | null;
+}
+
+export interface CustomerStats {
+	lifetimeValue: string;
+	totalOrders: number;
+	averageOrderValue: string;
+	customerTier: 'VIP' | 'Loyal' | 'New' | string;
+}
+
+export interface SpendingTrendItem {
+	label: string;
+	value: string;
+}
+
+export interface TopProductItem {
+	productName: string;
+	qty: number;
+}
+
+export interface OrderStatusItem {
+	status: string;
+	count: number;
+}
+
+export interface CustomerCharts {
+	spendingTrend: SpendingTrendItem[];
+	topProducts: TopProductItem[];
+	orderStatusDistribution: OrderStatusItem[];
+}
+
+export interface CustomerTransactionHistory {
+	id: string;
+	date: string;
+	status: string;
+	total: string;
+	itemsCount: number;
+}
+
+export interface CustomerDetailData {
+	profile: CustomerProfile;
+	stats: CustomerStats;
+	charts: CustomerCharts;
+	transactionHistory: CustomerTransactionHistory[];
 }

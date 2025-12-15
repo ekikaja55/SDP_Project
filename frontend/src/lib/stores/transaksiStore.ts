@@ -5,18 +5,18 @@ import {
 	api,
 	cartStore,
 	errorHandler,
+	getAllNotifCust,
 	type ApiResponse,
 	type LaporanPenjualan,
+	type LaporanResponse,
 	type MessageState,
-	type QueryLaporan,
+	type queryLaporan,
 	type Transaksi,
 	type TransaksiAdmin,
 	type TransaksiDTO,
 	type TransaksiUpdateDTO
 } from '$lib';
 import { writable, type Writable } from 'svelte/store';
-
-
 
 export function getStatusColorTrans(status: string) {
 	switch (status) {
@@ -35,10 +35,6 @@ export function getStatusColorTrans(status: string) {
 	}
 }
 
-export const optionQueryLaporan: QueryLaporan[] = [
-	{ id: 'Bulan', isiFilter: 'filterbulan' },
-	{ id: 'Tahun', isiFilter: 'filtertahun' }
-];
 export let dataUpdateTrans: TransaksiUpdateDTO = {
 	transaksi_id: '',
 	transaksi_status: ''
@@ -46,32 +42,46 @@ export let dataUpdateTrans: TransaksiUpdateDTO = {
 
 export const transaksiStore: Writable<Transaksi[]> = writable<Transaksi[]>([]);
 export const transaksiAdminStore: Writable<TransaksiAdmin[]> = writable<TransaksiAdmin[]>([]);
-export const laporanPenjualanStore: Writable<LaporanPenjualan[]> = writable<LaporanPenjualan[]>([]);
-export let selectedQuery: Writable<string> = writable<string>('');
-export const oneTransaksiAdminStore: Writable<TransaksiAdmin|null> = writable<TransaksiAdmin|null>(null);
+export const laporanPenjualanStore: Writable<LaporanResponse | null> =
+	writable<LaporanResponse | null>(null);
+export const oneTransaksiAdminStore: Writable<TransaksiAdmin | null> =
+	writable<TransaksiAdmin | null>(null);
 export const loadingTrans: Writable<boolean> = writable(false);
 export const messageHandleTrans: Writable<MessageState | null> = writable<MessageState | null>(
 	null
 );
 export const messageHandleCart: Writable<MessageState | null> = writable<MessageState | null>(null);
 
-export async function getTransById(idUser:string = "",idTrans:string=""){
+export async function getLaporanPenjualan(filter?: queryLaporan) {
+	loadingTrans.set(true);
+	try {
+		const url = `/transaction/laporan-penjualan`;
+		const res = await api.get<ApiResponse<LaporanResponse>>(url, {
+			params: {
+				month: filter?.bulan,
+				year: filter?.tahun
+			}
+		});
+		laporanPenjualanStore.set(res.data.result);
+	} catch (err) {
+		console.error(err);
+	} finally {
+		loadingTrans.set(false);
+	}
+}
+export async function getTransById(idUser: string = '', idTrans: string = '') {
+	loadingTrans.set(true);
+	try {
+		const url = `/transaction/detail?iduser=${encodeURIComponent(idUser)}&idtrans=${encodeURIComponent(idTrans)}`;
 
-  loadingTrans.set(true)
-  try {
-    const url = `/transaction/detail?iduser=${encodeURIComponent(idUser)}&idtrans=${encodeURIComponent(idTrans)}`
-    console.log("isi url : ",url);
+		const res = await api.get<ApiResponse<TransaksiAdmin>>(url);
 
-    const res= await api.get<ApiResponse<TransaksiAdmin>>(url)
-
-    oneTransaksiAdminStore.set(res.data.result)
-
-  } catch (err:unknown) {
-    console.log(errorHandler(err));
-
-  }finally{
-    loadingTrans.set(false)
-  }
+		oneTransaksiAdminStore.set(res.data.result);
+	} catch (err: unknown) {
+		console.log(errorHandler(err));
+	} finally {
+		loadingTrans.set(false);
+	}
 }
 
 export async function addTransaksi(data: TransaksiDTO) {
@@ -90,10 +100,10 @@ export async function addTransaksi(data: TransaksiDTO) {
 		});
 
 		messageHandleCart.set({ type: 'success', message: res.data.message });
+		getAllNotifCust();
 		cartStore.clear();
 	} catch (err: unknown) {
 		messageHandleCart.set({ type: 'error', message: errorHandler(err) });
-		transaksiStore.set([]);
 	} finally {
 		loadingTrans.set(false);
 	}
@@ -150,33 +160,14 @@ export async function getTransAdmin(filterStatus?: string) {
 		const res = await api.get<ApiResponse<TransaksiAdmin[]>>(url);
 
 		transaksiAdminStore.set(res.data.result);
-
 	} catch (err: unknown) {
-    throw new Error(errorHandler(err));
-  } finally {
-		loadingTrans.set(false);
-	}
-}
-
-export async function getLaporanAdmin(query: string) {
-	loadingTrans.set(true);
-	messageHandleTrans.set(null);
-	try {
-		const url = query
-			? `/transaction/laporan?${encodeURIComponent(query)}`
-			: '/transaction/laporan';
-
-		const res = await api.get<ApiResponse<LaporanPenjualan[]>>(url);
-
-		laporanPenjualanStore.set(res.data.result);
-	} catch (err: unknown) {
-		messageHandleTrans.set({ type: 'error', message: errorHandler(err) });
+		throw new Error(errorHandler(err));
 	} finally {
 		loadingTrans.set(false);
 	}
 }
 
-export async function updateTransaksi(data: TransaksiUpdateDTO,nama:string) {
+export async function updateTransaksi(data: TransaksiUpdateDTO, nama: string) {
 	if (!data.transaksi_status) {
 		messageHandleTrans.set({ type: 'error', message: 'Harap isi status transaksi' });
 		return;
@@ -188,10 +179,9 @@ export async function updateTransaksi(data: TransaksiUpdateDTO,nama:string) {
 			...data
 		});
 		getTransAdmin();
-    messageHandleTrans.set({ type: 'success', message: res.data.message });
-
+		messageHandleTrans.set({ type: 'success', message: res.data.message });
 	} catch (err: unknown) {
-    throw new Error(errorHandler(err));
+		throw new Error(errorHandler(err));
 
 		messageHandleTrans.set({ type: 'error', message: errorHandler(err) });
 	} finally {

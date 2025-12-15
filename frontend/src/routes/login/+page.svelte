@@ -1,130 +1,153 @@
-<!-- src/routes/login/+page.svelte-->
 <script lang="ts">
 	import { loadingUser, login, messageHandleUser, type LoginDTO } from '$lib';
 	import NotificationModal from '../../lib/components/NotificationModal.svelte';
 	import Whatsapp from '../../lib/components/Whatsapp.svelte';
+	import { onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
+
+	// Icons
+	import { Mail, Lock, LogIn, Store } from '@lucide/svelte';
+
 	let dataLogin: LoginDTO = { user_email: '', user_password: '' };
+	let isLoaded = false;
+
+	onMount(async () => {
+		await new Promise((resolve) => setTimeout(resolve, 800));
+		isLoaded = true;
+	});
 </script>
 
-<section class="z-50 flex min-h-screen items-center justify-center bg-zinc-50">
-  <Whatsapp/>
-
-	<div class="flex w-full max-w-5xl overflow-hidden rounded-2xl bg-white shadow-lg">
+{#if !isLoaded}
+	<div
+		out:fade={{ duration: 400 }}
+		class="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-white"
+	>
 		<div
-			class="relative hidden w-1/2 bg-cover bg-center md:block"
-			style="background-image: url('/images/login_art.jpg');"
+			class="relative flex h-24 w-24 items-center justify-center rounded-full bg-zinc-50 ring-1 ring-zinc-100"
 		>
-			<div
-				class="absolute inset-0 bg-gradient-to-t from-zinc-900/70 via-zinc-900/40 to-transparent"
-			></div>
-			<div class="absolute bottom-10 left-10 text-white">
-				<h2 class="text-3xl font-bold">Selamat Datang Kembali</h2>
-				<p class="text-md mt-2 max-w-sm leading-relaxed font-bold text-zinc-100">
-					Nikmati kemewahan pengalaman berbelanja digital di Kanti’s Store.
-				</p>
-			</div>
+			<LogIn class="ml-1 h-10 w-10 animate-pulse text-zinc-800" strokeWidth={1.5} />
+			<span
+				class="absolute inline-flex h-full w-full animate-ping rounded-full bg-zinc-200 opacity-50"
+			></span>
 		</div>
 
-		<div class="w-full p-10 md:w-1/2">
-			<div class="mb-8 flex flex-col items-center">
-				<div
-					class="flex h-15 w-15 items-center justify-center rounded-full bg-zinc-800  text-white shadow-lg"
-				>
-					<img src="/icons/icon-logo-white.svg" alt="logo" class="h-8 w-8" />
-				</div>
-				<h1 class="mt-4 text-3xl font-semibold text-zinc-800">Kanti’s Store</h1>
-				<p class="text-md mt-1 font-semibold text-zinc-600">
-					Masuk untuk melanjutkan pengalaman belanjamu
-				</p>
-			</div>
-
-			<form on:submit|preventDefault={() => login(dataLogin)} class="space-y-5">
-				<div>
-					<label class="text-md mb-2 block font-semibold text-zinc-700">Email</label>
-					<div class="relative">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke-width="1.5"
-							stroke="currentColor"
-							class="absolute top-2.5 left-3 h-5 w-5 text-zinc-600"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								d="M21.75 7.5l-9.75 6-9.75-6m19.5 0v9.75A2.25 2.25 0 0119.5 19.5H4.5a2.25 2.25 0 01-2.25-2.25V7.5"
-							/>
-						</svg>
-						<input
-							type="email"
-							bind:value={dataLogin.user_email}
-							placeholder="name@example.com"
-							required
-							class="w-full rounded-xl border border-zinc-300 bg-zinc-50 px-10 py-2.5 text-sm text-zinc-700 shadow-sm placeholder:text-zinc-400 focus:border-zinc-800 focus:ring-1 focus:ring-zinc-800 focus:outline-none"
-						/>
-					</div>
-				</div>
-
-				<div>
-					<label class="text-md mb-2 block font-semibold text-zinc-700">Password</label>
-					<div class="relative">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke-width="1.5"
-							stroke="currentColor"
-							class="absolute top-2.5 left-3 h-5 w-5 text-zinc-600"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0V10.5M4.5 10.5h15v9.75H4.5V10.5z"
-							/>
-						</svg>
-						<input
-							type="password"
-							bind:value={dataLogin.user_password}
-							placeholder="••••••"
-							required
-							class="w-full rounded-xl border border-zinc-300 bg-zinc-50 px-10 py-2.5 text-sm text-zinc-700 shadow-sm placeholder:text-zinc-400 focus:border-zinc-800 focus:ring-1 focus:ring-zinc-800 focus:outline-none"
-						/>
-					</div>
-				</div>
-
-				<button
-					type="submit"
-					disabled={$loadingUser}
-					class="mt-4 w-full rounded-xl bg-zinc-900 py-2.5 font-semibold text-white shadow-sm transition hover:bg-zinc-800 disabled:opacity-50"
-				>
-					{#if $loadingUser}
-						<span>Memproses...</span>
-					{:else}
-						<span>Masuk</span>
-					{/if}
-				</button>
-
-				{#if $messageHandleUser && $messageHandleUser.type === 'error'}
-					<NotificationModal
-						message={$messageHandleUser.message}
-						type={$messageHandleUser.type}
-						onClose={() => messageHandleUser.set(null)}
-					/>
-				{/if}
-			</form>
-
-			<div class="mt-8 text-center text-sm font-semibold text-zinc-700">
-				<p>
-					Belum punya akun?
-					<a
-						href="/register"
-						class="font-bold text-zinc-900 underline underline-offset-2 hover:text-zinc-950"
-					>
-						Daftar Sekarang
-					</a>
-				</p>
-			</div>
+		<div class="mt-6 flex flex-col items-center gap-2">
+			<h1 class="text-xl font-bold tracking-wider text-zinc-900">Selamat Datang</h1>
+			<p class="text-xs tracking-widest text-zinc-500 uppercase">Memuat halaman login...</p>
 		</div>
 	</div>
-</section>
+{:else}
+	<section
+		class="relative z-50 flex min-h-screen items-center justify-center bg-zinc-50 px-4 py-12"
+	>
+		<Whatsapp />
+
+		<div
+			class="flex w-full max-w-5xl overflow-hidden rounded-2xl bg-white shadow-xl ring-1 ring-zinc-100 md:h-[600px]"
+		>
+			<div
+				class="relative hidden w-1/2 bg-cover bg-center md:block"
+				style="background-image: url('/images/login_art.jpg');"
+			>
+				<div class="absolute inset-0 bg-zinc-900/60 backdrop-blur-[2px]"></div>
+				<div class="absolute right-10 bottom-12 left-10 text-white">
+					<h2 class="text-3xl font-bold tracking-tight">Selamat Datang Kembali</h2>
+					<p class="mt-4 text-sm leading-relaxed font-medium text-zinc-200 opacity-90">
+						Nikmati kemewahan pengalaman berbelanja digital di Kanti’s Store. Kualitas terbaik
+						menanti Anda.
+					</p>
+				</div>
+			</div>
+
+			<div class="flex w-full flex-col justify-center p-8 md:w-1/2 md:p-12">
+				<div class="mb-10 flex flex-col items-center text-center">
+					<div
+						class="flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-900 text-white shadow-lg shadow-zinc-900/20"
+					>
+						<Store class="h-7 w-7" />
+					</div>
+					<h1 class="mt-6 text-2xl font-bold tracking-tight text-zinc-900">Kanti’s Store</h1>
+					<p class="mt-2 text-sm text-zinc-500">Masuk untuk melanjutkan pengalaman belanjamu</p>
+				</div>
+
+				<form
+					on:submit|preventDefault={() => {
+						login(dataLogin);
+						// Optional: Clear field after submit (hati-hati UX, biasanya user ingin retry kalau salah password tanpa ketik email ulang)
+						dataLogin.user_password = '';
+					}}
+					class="space-y-5"
+				>
+					<div class="space-y-1.5">
+						<label class="text-xs font-bold tracking-wide text-zinc-500 uppercase">Email</label>
+						<div class="group relative">
+							<Mail
+								class="absolute top-1/2 left-3.5 h-5 w-5 -translate-y-1/2 text-zinc-400 transition-colors group-focus-within:text-zinc-800"
+							/>
+							<input
+								type="email"
+								bind:value={dataLogin.user_email}
+								placeholder="name@example.com"
+								required
+								class="w-full rounded-xl border border-zinc-200 bg-zinc-50/50 py-3 pr-4 pl-11 text-sm text-zinc-900 transition-all placeholder:text-zinc-400 focus:border-zinc-800 focus:bg-white focus:ring-1 focus:ring-zinc-800 focus:outline-none"
+							/>
+						</div>
+					</div>
+
+					<div class="space-y-1.5">
+						<label class="text-xs font-bold tracking-wide text-zinc-500 uppercase">Password</label>
+						<div class="group relative">
+							<Lock
+								class="absolute top-1/2 left-3.5 h-5 w-5 -translate-y-1/2 text-zinc-400 transition-colors group-focus-within:text-zinc-800"
+							/>
+							<input
+								type="password"
+								bind:value={dataLogin.user_password}
+								placeholder="••••••"
+								required
+								class="w-full rounded-xl border border-zinc-200 bg-zinc-50/50 py-3 pr-4 pl-11 text-sm text-zinc-900 transition-all placeholder:text-zinc-400 focus:border-zinc-800 focus:bg-white focus:ring-1 focus:ring-zinc-800 focus:outline-none"
+							/>
+						</div>
+					</div>
+
+					<button
+						type="submit"
+						disabled={$loadingUser}
+						class="mt-6 w-full rounded-xl bg-zinc-900 py-3.5 text-sm font-bold text-white shadow-lg shadow-zinc-900/10 transition-all hover:bg-zinc-800 hover:shadow-zinc-900/20 active:scale-95 disabled:cursor-not-allowed disabled:opacity-70"
+					>
+						{#if $loadingUser}
+							<span class="flex items-center justify-center gap-2">
+								<span
+									class="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white"
+								></span>
+								Memproses...
+							</span>
+						{:else}
+							<span>Masuk Sekarang</span>
+						{/if}
+					</button>
+
+					{#if $messageHandleUser && $messageHandleUser.type === 'error'}
+						<NotificationModal
+							message={$messageHandleUser.message}
+							type={$messageHandleUser.type}
+							onClose={() => messageHandleUser.set(null)}
+						/>
+					{/if}
+				</form>
+
+				<div class="mt-8 text-center text-sm text-zinc-600">
+					<p>
+						Belum punya akun?
+						<a
+							href="/register"
+							class="font-bold text-zinc-900 transition hover:text-zinc-700 hover:underline hover:underline-offset-4"
+						>
+							Daftar Sekarang
+						</a>
+					</p>
+				</div>
+			</div>
+		</div>
+	</section>
+{/if}
