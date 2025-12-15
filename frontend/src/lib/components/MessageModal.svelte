@@ -16,11 +16,12 @@
 	import { Bell, X, CheckCheck, Clock, ShoppingBag, Eye, Check } from '@lucide/svelte';
 
 	export let onClose: () => void;
-	export let role: string = 'admin';
+	export let role: string = "admin";
 
 	let visible = true;
 
 	$: activeNotifikasi = role === 'admin' ? $notifikasiStoreAdmin : $notifikasiStoreCust;
+	// $: activeNotifikasi =  $notifikasiStoreCust;
 
 	onMount(() => {
 		refreshNotif();

@@ -45,9 +45,12 @@
 			if (token) {
 				try {
 					user = jwtDecode(token);
+					
 					if (user?.user_role === 'admin') {
+						
 						await getAllNotif();
 					} else if (user?.user_role === 'customer') {
+						
 						await getAllNotifCust();
 					}
 				} catch {
@@ -82,7 +85,7 @@
 </script>
 
 {#if isOpen}
-	<MessageModal onClose={() => (isOpen = false)} role={user?.user_role || 'customer'} />
+	<MessageModal onClose={() => (isOpen = false)} role={user?.user_role} />
 {/if}
 
 <div class="flex min-h-screen flex-col bg-zinc-50 font-sans text-zinc-800 selection:bg-zinc-200">
